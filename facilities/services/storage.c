@@ -586,7 +586,7 @@ SRV_CStoreResponse(DUL_ASSOCIATIONKEY ** association,
     estimatedSize = genericImageSize((*storeRequest)->classUID);
     nextCallback = estimatedSize / 10;
     while (!done) {
-	cond = SRVPRV_ReadNextPDV(association, DUL_BLOCK, 0, &pdv);
+	cond = SRVPRV_ReadNextPDV(association, DUL_BLOCK, -1, &pdv);
 	if (cond != SRV_NORMAL) {
 	    (void) MSG_Free((void **) storeRequest);
 	    return COND_PushCondition(SRV_RESPONSEFAILED,
