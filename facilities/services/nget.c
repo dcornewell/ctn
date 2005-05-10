@@ -249,10 +249,10 @@ SRV_NGetRequest(DUL_ASSOCIATIONKEY ** association,
 
     (void) DCM_CloseObject(&localResponse->dataSet);
     localResponse->dataSet = NULL;
-    (void) MSG_Free(&message);
 
     if (getResponse != NULL)
 	*getResponse = *localResponse;
+    (void) MSG_Free(&message);
     return cond;
 }
 

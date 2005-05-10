@@ -246,7 +246,6 @@ SRV_NActionRequest(DUL_ASSOCIATIONKEY ** association,
 	}
     }
     cond = actionCallback(actionRequest, localResponse, actionCtx);
-    (void) MSG_Free(&message);
     if (localResponse->actionReply != NULL) {
 	(void) DCM_CloseObject(&localResponse->actionReply);
 	localResponse->actionReply = NULL;
@@ -254,6 +253,7 @@ SRV_NActionRequest(DUL_ASSOCIATIONKEY ** association,
     if (actionResponse != NULL)
 	*actionResponse = *localResponse;
 
+    (void) MSG_Free(&message);
     if (cond != SRV_NORMAL)
 	return COND_PushCondition(SRV_CALLBACKABORTEDSERVICE,
 	     SRV_Message(SRV_CALLBACKABORTEDSERVICE), "SRV_NActionRequest");
