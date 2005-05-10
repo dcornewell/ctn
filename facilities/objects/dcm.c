@@ -1732,7 +1732,7 @@ DCM_DumpElements(DCM_OBJECT ** callerObject, long vm)
 		    (void) printf("%f \n", *(double*)elementItem->element.d.ot);
 		    break;
 		case DCM_DD:
-		    (void) printf("Unimplemented\n");
+		    (void) printf("Unimplemented VR:%d\n",elementItem->element.representation);
 		    break;
 		case DCM_FL:
 		    (void) printf("%f \n", *(float*)elementItem->element.d.ot);
@@ -1831,10 +1831,10 @@ DCM_DumpElements(DCM_OBJECT ** callerObject, long vm)
 		case DCM_OW:
 		/*case DCM_UNKNOWN:*/
 		case DCM_RET:
-		    (void) printf("Unimplemented\n");
+		    (void) printf("Unimplemented VR:%d\n",elementItem->element.representation);
 		    break;
 		default:
-		    (void) printf("Some unimplemented logic if here\n");
+		    (void) printf("Some unimplemented logic if here(VR: %d)\n",elementItem->element.representation);
 		    break;
 		}
 	    }
