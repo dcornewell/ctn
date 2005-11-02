@@ -6223,6 +6223,8 @@ readData(const char *name, unsigned char **ptr, int fd, U32 * size,
     int nBytes;
 
     pixelFlag = (e->tag == DCM_PXLPIXELDATA);
+    if ((e->tag == DCM_PXLPIXELDATA) && (e->length!=-1))
+		 pixelFlag = 1;    
     cond = newElementItem(e, ((pixelFlag == FALSE) || (fileFlag == FALSE)), elementItem);
     if (cond != DCM_NORMAL) {
 	(void) DCM_CloseObject((DCM_OBJECT **) object);
@@ -6336,7 +6338,7 @@ checkAttributeOrder(DCM_ELEMENT * e, long *lastGroup, long *lastElement,
 	if (((long) element == *lastElement) && allowRepeatElements) {
 	  return DCM_REPEATEDELEMENT;
 	}
-	if ((long) element <= *lastElement)
+	if ((long) element < *lastElement)
 	    return COND_PushCondition(DCM_ELEMENTOUTOFORDER,
 				      DCM_Message(DCM_ELEMENTOUTOFORDER),
 				      group, element, "checkAttributeOrder");
@@ -6533,7 +6535,7 @@ readFile1(const char *name, unsigned char *callerBuf, int fd, U32 size,
 	if (flag != DCM_NORMAL)
 	    goto abort;
 
-	if ((e.representation == DCM_UN) &&
+	if ((e.representation == DCM_UN || (e.representation == DCM_OB)) &&
 	    (e.length == DCM_UNSPECIFIEDLENGTH)) {
 	    e.representation = DCM_SQ;
 	}
