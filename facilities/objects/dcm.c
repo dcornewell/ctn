@@ -4691,8 +4691,8 @@ exportStream(DCM_OBJECT ** callerObject, unsigned long opt,
 	opt &= ~DCM_ORDERMASK;
 	opt |= DCM_EXPLICITLITTLEENDIAN;
 	cond = setFileOptions(callerObject, &fileOptions);
-	if (cond != DCM_NORMAL)
-	    return cond;
+//	if (cond != DCM_NORMAL)
+//	    return cond;
     }
     if ((opt & DCM_ORDERMASK) == 0)
 	return COND_PushCondition(DCM_ILLEGALOPTION,
@@ -5214,7 +5214,7 @@ readFile(char *name, unsigned char *callerBuf, int fd, long size,
 	e,
 	tagE;
     CTNBOOLEAN
-	pixelFlag,
+	pixelFlag=0,
 	convertFlag = FALSE,
 	done = FALSE,
 	knownLength = TRUE,
