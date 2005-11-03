@@ -5672,7 +5672,7 @@ readFile(char *name, unsigned char *callerBuf, int fd, long size,
 	while (groupItem != NULL) {
 	    elementItem = LST_Head(&groupItem->elementList);
 	    if (elementItem != NULL) {
-		if (DCM_TAG_ELEMENT(elementItem->element.tag) == 0x0000) {
+		if ((elementItem) && DCM_TAG_ELEMENT(elementItem->element.tag) == 0x0000) {
 		    *elementItem->element.d.ul = groupItem->baseLength;
 		}
 	    }
