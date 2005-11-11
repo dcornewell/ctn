@@ -580,7 +580,16 @@ SRV_CStoreResponse(DUL_ASSOCIATIONKEY ** association,
 	storeReply->conditionalFields |= MSG_K_C_STORERESP_ERRORCOMMENT;
 	strcpy(storeReply->errorComment,
 	       "Storage Service unable to create local file");
-    }
+	} else {
+		if (strcmp(ctx->acceptedTransferSyntax, DICOM_TRANSFERLITTLEENDIAN) == 0) {
+		} else if (strcmp(ctx->acceptedTransferSyntax, DICOM_TRANSFERBIGENDIANEXPLICIT) == 0) {
+		} else {
+			char buffer[132];
+			memset(buffer, 0, sizeof(buffer));
+			memcpy(buffer+128, "DICM", 4);
+			write(fd, buffer, sizeof(buffer));
+		}
+	}
     done = 0;
     total = 0;
     estimatedSize = genericImageSize((*storeRequest)->classUID);
