@@ -211,16 +211,16 @@ SRV_SendCommand(DUL_ASSOCIATIONKEY ** association,
 				   &callbackStructure.totalBytes);
 #endif
 
-#if 0
-    /* Removed this check 12/28/2000, smm.  We no longer require IVRLE */
-    if (strcmp(context->acceptedTransferSyntax, DICOM_TRANSFERLITTLEENDIAN)
-	== 0)
-	options = DCM_ORDERLITTLEENDIAN;
-    else
-	return COND_PushCondition(SRV_NOTRANSFERSYNTAX,
-		 SRV_Message(SRV_NOTRANSFERSYNTAX), context->abstractSyntax,
-			context->acceptedTransferSyntax, "SRV_SendCommand");
-#endif
+    if (strcmp(context->acceptedTransferSyntax, DICOM_TRANSFERLITTLEENDIAN) == 0) {
+	    options = DCM_ORDERLITTLEENDIAN;
+    } else if (strcmp(context->acceptedTransferSyntax, DICOM_TRANSFERBIGENDIANEXPLICIT) == 0) {
+	    return COND_PushCondition(SRV_NOTRANSFERSYNTAX,
+		    SRV_Message(SRV_NOTRANSFERSYNTAX),
+			context->acceptedTransferSyntax, context->abstractSyntax, "SRV_SendCommand");
+	} else {
+//		 options = DCM_EXPLICITLITTLEENDIAN;  // DRH - All other TS are explicit little endian.
+		options = DCM_ORDERLITTLEENDIAN; // All responses seem to be in LI IMPLICIT regardless of transfer.
+    }
 
     pdv.fragmentLength = 0;
     pdv.presentationContextID = context->presentationContextID;
