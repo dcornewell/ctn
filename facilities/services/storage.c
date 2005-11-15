@@ -334,11 +334,23 @@ SRV_CStoreRequest(DUL_ASSOCIATIONKEY ** association,
 	    return COND_PushCondition(SRV_REQUESTFAILED,
 		       SRV_Message(SRV_REQUESTFAILED), "SRV_CStoreRequest");
     }
+
+    // Fixing code to allow ExplicitVR v10 file transfer.
+    DCM_RemoveGroup(&dataSetObject, DCM_GROUPPAD);
+    DCM_RemoveGroup(&dataSetObject, DCM_GROUPFILEMETA);
+    COND_PopCondition(TRUE);
+
     cond = DCM_GetObjectSize(&dataSetObject, &objectSize);
     if (cond != DCM_NORMAL)
 	return COND_PushCondition(SRV_REQUESTFAILED,
 		       SRV_Message(SRV_REQUESTFAILED), "SRV_CStoreRequest");
 
+    // Fixing code to allow ExplicitVR v10 file transfer.
+	cond = DCM_ComputeExportLength(&dataSetObject, DCM_EXPLICITLITTLEENDIAN,
+					&objectSize);
+	if (cond != DCM_NORMAL)
+		return COND_PushCondition(SRV_REQUESTFAILED,
+				SRV_Message(SRV_REQUESTFAILED), "SRV_CStoreRequest");
 
     cond = SRV_SendCommand(association, presentationCtx, &commandObject);
     (void) DCM_CloseObject(&commandObject);
@@ -425,7 +437,6 @@ localCallback(unsigned long bytesTransmitted, unsigned long totalBytes,
 
     return cond;
 }
-
 
 /* SRV_CStoreResponse
 **
