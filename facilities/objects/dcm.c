@@ -4840,7 +4840,6 @@ exportStream(DCM_OBJECT ** callerObject, unsigned long opt,
 	    c -= rtnLength;
 	    bytesExported += rtnLength;
 
-	    remainingData = element.length;
 	    src = element.d.ot;
 	    elementItem->currentOffset = elementItem->dataOffset;
 
@@ -4880,22 +4879,25 @@ exportStream(DCM_OBJECT ** callerObject, unsigned long opt,
 		    bytesExported += rtnLength;
 		}
 	    } else {
-		while (remainingData > 0) {
-		    if (debug)
-			fprintf(stderr, "Export: (%08x) %d\n",
-				element.tag, element.length);
-		    if (element.d.ot != NULL)
-			remainingData = element.length -
-			    (src - ((unsigned char *) element.d.ot));
-		    else
-			remainingData = element.length -
-			    (elementItem->currentOffset - elementItem->dataOffset);
+		int elen;
+		if (element.length == DCM_UNSPECIFIEDLENGTH)
+			elen = elementItem->originalDataLength;
+		else
+			elen = elementItem->paddedDataLength;
+		if (element.d.ot != NULL)
+			 remainingData = elen - (src - ((unsigned char *) element.d.ot));
+		else
+			 remainingData = elen - (elementItem->currentOffset - elementItem->dataOffset);
 
-		    exportLength = (remainingData < c) ? remainingData : c;
-		    cond = exportData(object, elementItem, src, dst,
+		while (remainingData > 0) {
+			exportLength = (remainingData < c) ? remainingData : c;
+			cond = exportData(object, elementItem, src, dst,
 				      exportLength, byteOrder, &rtnLength);
 		    if (cond != DCM_NORMAL)
-			return cond;
+				return cond;
+			if (debug)
+				if (rtnLength)
+					fprintf(stderr, "Export: (%08x) %d of %d\n",element.tag, rtnLength, element.length);
 
 		    src += rtnLength;
 		    dst += rtnLength;
@@ -4912,6 +4914,10 @@ exportStream(DCM_OBJECT ** callerObject, unsigned long opt,
 			c = bufferlength;
 			dst = (unsigned char *) buffer;
 		    }
+			if (element.d.ot != NULL)
+				remainingData = elen - (src - ((unsigned char *) element.d.ot));
+		    else
+				remainingData = elen - (elementItem->currentOffset - elementItem->dataOffset);
 		}
 	    }
 	    elementItem = LST_Next(&groupItem->elementList);
@@ -5900,7 +5906,8 @@ readVRLength(const char *name, unsigned char **ptr, int fd, U32 * size,
 		/* transmit as OB and expect us to pull it out later */
 		/* We will just keep our VR which was based on context in */
 		/* the object */
-		e->representation = vrPtr->representation;
+			if (e->tag == DCM_PXLPIXELDATA)
+				e->representation = vrPtr->representation;
 	    } else if (e->tag == DCM_MAKETAG(0x0028, 0x0106) ||
 			e->tag == DCM_MAKETAG(0x0028, 0x0107)) {	/* Dumb implementations get this wrong all the time; accept their mistake */
 		e->representation = vrPtr->representation;
@@ -6223,8 +6230,6 @@ readData(const char *name, unsigned char **ptr, int fd, U32 * size,
     int nBytes;
 
     pixelFlag = (e->tag == DCM_PXLPIXELDATA);
-    if ((e->tag == DCM_PXLPIXELDATA) && (e->length!=-1))
-		 pixelFlag = 1;    
     cond = newElementItem(e, ((pixelFlag == FALSE) || (fileFlag == FALSE)), elementItem);
     if (cond != DCM_NORMAL) {
 	(void) DCM_CloseObject((DCM_OBJECT **) object);
@@ -6535,7 +6540,7 @@ readFile1(const char *name, unsigned char *callerBuf, int fd, U32 size,
 	if (flag != DCM_NORMAL)
 	    goto abort;
 
-	if ((e.representation == DCM_UN || (e.representation == DCM_OB)) &&
+	if (e.representation == DCM_UN &&
 	    (e.length == DCM_UNSPECIFIEDLENGTH)) {
 	    e.representation = DCM_SQ;
 	}
