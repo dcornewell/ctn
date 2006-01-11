@@ -50,6 +50,7 @@ export:
 	$(DICOM_ROOT)/apps/scripts/createdirectory $(DICOM_LIBSRC)
 	cd cfg			; make export
 	cd chr			; make export
+	cd compress		; make export
 	cd condition		; make export
 	cd database		; make export
 	cd ddr			; make export
@@ -88,6 +89,7 @@ headerexport:
 	$(DICOM_ROOT)/apps/scripts/createdirectory $(DICOM_LIBSRC)
 	cd cfg			; make headerexport
 	cd chr			; make headerexport
+	cd compress		; make headerexport
 	cd condition		; make headerexport
 	cd database		; make headerexport
 	cd ddr			; make headerexport
@@ -127,6 +129,7 @@ links:
 	$(DICOM_ROOT)/apps/scripts/createdirectory $(DICOM_LIBSRC)
 	cd cfg			; make links
 	cd chr			; make links
+	cd compress     ; make links
 	cd condition		; make links
 	cd database		; make links
 	cd ddr			; make links
@@ -203,6 +206,7 @@ links.mb:
 clean:
 	cd cfg			; make clean
 	cd chr			; make clean
+	cd compress		; make clean
 	cd condition		; make clean
 	cd database		; make clean
 	cd ddr			; make clean
@@ -314,6 +318,7 @@ checkin:
 indent:
 	cd cfg			; make indent
 	cd chr			; make indent
+	cd compress		; make indent
 	cd condition		; make indent
 	cd database		; make indent
 	cd ddr 			; make indent
@@ -351,6 +356,7 @@ indent:
 lint:
 	cd cfg			; make lint
 	cd chr			; make lint
+	cd compress		; make lint
 	cd condition		; make lint
 	cd database		; make lint
 	cd ddr			; make lint
