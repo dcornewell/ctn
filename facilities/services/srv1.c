@@ -512,7 +512,9 @@ SRV_RequestServiceClass(const char *SOPClass, DUL_SC_ROLE role,
 /* Legacy version removed 1/3/2001, smm
 	    cond = DUL_MakePresentationCtx(&ctx, role, DUL_SC_ROLE_DEFAULT,
 				       contextID, 0, SOPClass, "",
-				       DICOM_TRANSFERLITTLEENDIAN, NULL);
+				       params->preferredTransferSyntax,
+				       DICOM_TRANSFERLITTLEENDIAN, 
+				       NULL);
 	if (cond != DUL_NORMAL)
 	    return COND_PushCondition(SRV_PRESENTATIONCONTEXTERROR,
 				  SRV_Message(SRV_PRESENTATIONCONTEXTERROR),
@@ -871,16 +873,22 @@ SRV_AcceptServiceClass(DUL_PRESENTATIONCONTEXT * requestedCtx,
 	while (!transferFound && (transfer != NULL)) {
 	    if (strcmp(transfer->transferSyntax, DICOM_TRANSFERLITTLEENDIAN) == 0)
 		transferFound = TRUE;
-	    else
+//		 else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERJPEGBASELINEPROCESS1)==0)  This needs to be supported somehow
+//		transferFound = TRUE;
+//		 else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERJPEGEXTENDEDPROC2AND4)==0)
+//		transferFound = TRUE;
+//		 else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERRLE)==0)
+//		transferFound = TRUE;
+		 else
 		transfer = LST_Next(&requestedCtx->proposedTransferSyntax);
 	}
 	if (transferFound) {
-	    cond = DUL_MakePresentationCtx(&ctx,
+		cond = DUL_MakePresentationCtx(&ctx,
 					 requestedCtx->proposedSCRole, role,
 					requestedCtx->presentationContextID,
 					   DUL_PRESENTATION_ACCEPT,
 					   requestedCtx->abstractSyntax,
-	      DICOM_TRANSFERLITTLEENDIAN, DICOM_TRANSFERLITTLEENDIAN, NULL);
+	      transfer->transferSyntax, DICOM_TRANSFERLITTLEENDIAN, NULL);
 	    if (cond != DUL_NORMAL)
 		return COND_PushCondition(SRV_PRESENTATIONCONTEXTERROR,
 				  SRV_Message(SRV_PRESENTATIONCONTEXTERROR),
