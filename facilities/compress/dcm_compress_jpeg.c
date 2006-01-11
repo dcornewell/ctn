@@ -1,0 +1,807 @@
+// dcm_compress_jpeg.c
+//
+// Based on code from dcm_map_to_8.c 
+// Contains code from dcm_ctnto10.c
+//
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <setjmp.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include "dicom.h"
+#include "ctnthread.h"
+#include "condition.h"
+#include "lst.h"
+#include "dicom_objects.h"
+#include "dicom_uids.h"
+
+#ifndef JPEGBITDEPTH
+#define JPEGBITDEPTH 12
+#endif
+
+
+#if (JPEGBITDEPTH == 12)
+#include "/usr/local/src/jpeg-6b-12bit/jpeglib.h"
+#include "/usr/local/src/jpeg-6b-12bit/jversion.h"
+#else
+#include "jpeglib.h"
+#include "jversion.h"
+#endif
+
+#if (BITS_IN_JSAMPLE != JPEGBITDEPTH)
+#error Inconsistent JPEG bit depth
+#endif
+
+
+#if (JPEGBITDEPTH == 12)
+#define jpegx_std_error           jpeg12_std_error
+#define jpegx_create_compress     jpeg12_create_compress
+#define jpegx_stdio_dest          jpeg12_stdio_dest
+#define jpegx_set_defaults        jpeg12_set_defaults
+#define jpegx_set_quality         jpeg12_set_quality
+#define jpegx_start_compress      jpeg12_start_compress
+#define jpegx_write_scanlines     jpeg12_write_scanlines
+#define jpegx_finish_compress     jpeg12_finish_compress
+#define jpegx_destroy_compress    jpeg12_destroy_compress
+#define jpegx_finish_compress     jpeg12_finish_compress
+#define jpegx_destroy_compress    jpeg12_destroy_compress
+#else
+#define jpegx_std_error           jpeg_std_error
+#define jpegx_create_compress     jpeg_create_compress
+#define jpegx_stdio_dest          jpeg_stdio_dest
+#define jpegx_set_defaults        jpeg_set_defaults
+#define jpegx_set_quality         jpeg_set_quality
+#define jpegx_start_compress      jpeg_start_compress
+#define jpegx_write_scanlines     jpeg_write_scanlines
+#define jpegx_finish_compress     jpeg_finish_compress
+#define jpegx_destroy_compress    jpeg_destroy_compress
+#define jpegx_finish_compress     jpeg_finish_compress
+#define jpegx_destroy_compress    jpeg_destroy_compress
+#endif
+
+
+struct my_error_mgr {
+  struct jpeg_error_mgr pub;
+  jmp_buf setjmp_buffer;
+};
+
+static void my_error_exit_encode (j_common_ptr cinfo)
+{
+	struct my_error_mgr * myerr = (struct my_error_mgr *) cinfo->err;
+	longjmp(myerr->setjmp_buffer, 1);
+}
+
+struct memblk_struct {
+  unsigned char *memblk;
+  unsigned int memblk_alloc;
+  unsigned int used;
+  int error_flag;
+};
+
+struct my_destmgr_struct {
+  struct jpeg_destination_mgr pub; /* public fields */
+  JOCTET * buffer;      /* start of buffer */
+  struct memblk_struct *mbs;
+};
+
+
+#define OUTPUT_BUF_SIZE  4096
+int seg_header[] = {0xe000fffe, 0x00000000, 0xe000fffe, 0x00000000};
+int seg_footer[] = {0xe0ddfffe, 0x00000000};
+
+static void
+init_destination (j_compress_ptr cinfo)
+{
+	struct my_destmgr_struct * dest = (struct my_destmgr_struct *) cinfo->dest;
+
+	/* Allocate the output buffer --- it will be released when done with image */
+	dest->buffer = (JOCTET *)
+		(*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+		          OUTPUT_BUF_SIZE * sizeof(JOCTET));
+
+	dest->pub.next_output_byte = dest->buffer;
+	dest->pub.free_in_buffer = OUTPUT_BUF_SIZE;
+
+	dest->mbs->memblk_alloc = 1048576;
+	dest->mbs->memblk = malloc(dest->mbs->memblk_alloc);
+	dest->mbs->used = 0;
+	if (dest->mbs->memblk) {
+		dest->mbs->error_flag = 0;
+		memcpy(dest->mbs->memblk,seg_header,sizeof(seg_header));
+		dest->mbs->used = sizeof(seg_header);
+	} else
+		dest->mbs->error_flag = 1;
+}
+
+
+static int mbs_write_data(struct memblk_struct *mbs, void *buffer, int size)
+{
+	unsigned int space_needed;
+
+	if(size<1) return TRUE;
+
+	space_needed = mbs->used + size;
+
+	if(space_needed > mbs->memblk_alloc) {
+		// need to alloc more memory.
+
+		if(mbs->memblk_alloc >= 256*1048576) {
+			// file too big
+			mbs->error_flag = 1;
+			return 0;
+		}
+
+		// Assuming OUTPUT_BUF_SIZE < the initial size of the memory block, doubling
+		// the size of the memory block will be sufficient.
+		mbs->memblk_alloc *= 2;
+
+		//printf("reallocing to %u\n",mbs->memblk_alloc);
+		mbs->memblk = realloc(mbs->memblk, mbs->memblk_alloc);
+		if(!mbs->memblk) {
+			mbs->error_flag = 1;
+			return 0;
+		}
+
+	}
+	//printf("writing %u\n",size);
+	memcpy(&mbs->memblk[mbs->used], buffer, size);
+	mbs->used += size;
+	return 1;
+}
+
+static boolean
+empty_output_buffer (j_compress_ptr cinfo)
+{
+
+	struct my_destmgr_struct * dest = (struct my_destmgr_struct *) cinfo->dest;
+
+	if(!dest->mbs->memblk) {
+		dest->mbs->error_flag = 1;
+		return FALSE;
+	}
+	if(dest->mbs->error_flag) return FALSE;
+
+	if(!mbs_write_data(dest->mbs, dest->buffer, OUTPUT_BUF_SIZE)) {
+		return FALSE;
+	}
+
+	dest->pub.next_output_byte = dest->buffer;
+	dest->pub.free_in_buffer = OUTPUT_BUF_SIZE;
+
+	return TRUE;
+}
+
+
+static void
+term_destination (j_compress_ptr cinfo)
+{
+	struct my_destmgr_struct * dest = (struct my_destmgr_struct *) cinfo->dest;
+	int *header = (int *)dest->mbs->memblk;
+	size_t datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
+
+	/* Write any data remaining in the buffer */
+	if (datacount > 0 && !dest->mbs->error_flag) {
+		mbs_write_data(dest->mbs, dest->buffer, datacount);
+	}
+	if ((dest->mbs->used & 1)!=0) {
+		char zero = 0;
+		mbs_write_data(dest->mbs, &zero, 1);
+	}
+	header[3] = dest->mbs->used - sizeof(seg_header);
+	mbs_write_data(dest->mbs, seg_footer, sizeof(seg_footer));
+}
+
+
+
+static int init_dest_mgr(struct jpeg_compress_struct *cinfo,  struct memblk_struct *mbs)
+{
+	struct my_destmgr_struct * dest;
+
+
+	cinfo->dest = (struct jpeg_destination_mgr *)
+		(*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
+		          sizeof(struct my_destmgr_struct));
+
+	dest = (struct my_destmgr_struct *) cinfo->dest;
+	dest->pub.init_destination = init_destination;
+	dest->pub.empty_output_buffer = empty_output_buffer;
+	dest->pub.term_destination = term_destination;
+	//dest->outfile = outfile;
+
+	dest->mbs = mbs;
+
+	return 1;
+}
+
+static CONDITION get_ds_value(DCM_OBJECT *object, DCM_TAG tag, double *value)
+{
+	char stringval[32];
+	void *ctx;
+	U32 len;
+	DCM_ELEMENT p2 = { 0, DCM_OT, "", 1, 0, {(void*)stringval} };
+	CONDITION cond;
+
+	ctx=NULL;
+	*value = 0;
+	memset(stringval,0,sizeof(stringval));
+
+	p2.tag = tag;
+	p2.representation = DCM_DS;
+	p2.length = sizeof(stringval)-1;
+	len=sizeof(stringval)-1;
+
+	if ((cond = DCM_GetElementValue(&object, &p2, &len, &ctx)) != DCM_NORMAL) {
+//		fprintf(stderr, "Error retrieving element from object\n");
+//		COND_DumpConditions();
+		COND_PopCondition(FALSE);
+		return cond;
+	}
+
+	*value = atof(stringval);
+	return DCM_NORMAL;
+}
+
+
+static CONDITION set_ds_value(DCM_OBJECT *object, DCM_TAG tag, double value)
+{
+	char stringval[32];
+	U32 len;
+	DCM_ELEMENT p2 = { 0, DCM_OT, "", 1, 0, {(void*)stringval} };
+	CONDITION cond;
+
+	sprintf(stringval,"%.4f",value);
+	len=strlen(stringval);
+
+	p2.tag = tag;
+	p2.representation = DCM_DS;
+	p2.length = len;
+
+	if ((cond = DCM_AddElement(&object, &p2)) != DCM_NORMAL) {
+		fprintf(stderr, "Error adding element to object\n");
+		COND_DumpConditions();
+		return cond;
+	}
+	return DCM_NORMAL;
+}
+
+/* compression level */
+#if (JPEGBITDEPTH == 12)
+CONDITION DCM_jpeg_compress_12(DCM_OBJECT *object, int quality)
+#else
+CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
+#endif
+{
+	CONDITION cond;
+	unsigned long i;
+	unsigned long j;
+	U32 pixelLength, elementLength, frameLength;
+	unsigned char *pixels;
+	static unsigned short bitsAllocated, bitsStored, highBit, pixelRepresentation, samplesPerPixel, rows, columns;
+	int pixelCount;
+	static char photometricInterpretation[DICOM_CS_LENGTH + 1];
+	static char lossy_compression[DICOM_CS_LENGTH + 1];
+	void *ctx;
+	CONDITION retval;
+	static char qual[100];
+	int white_is_min=0;
+	struct memblk_struct mbs;
+	int has_ww, has_wc, has_int, has_slp;
+	double orig_ww, orig_wc, orig_int, orig_slp;
+
+	DCM_ELEMENT p2 = { DCM_PXLPIXELDATA, DCM_OT, "", 1, 0, { NULL } };
+
+
+	static DCM_ELEMENT list[] = {
+		{DCM_IMGBITSALLOCATED, DCM_US, "", 1, sizeof(bitsAllocated), {(void *) &bitsAllocated}},
+		{DCM_IMGBITSSTORED, DCM_US, "", 1, sizeof(bitsStored), {(void *) &bitsStored}},
+		{DCM_IMGHIGHBIT, DCM_US, "", 1, sizeof(highBit), {(void *) &highBit}},
+		{DCM_IMGPIXELREPRESENTATION, DCM_US, "", 1, sizeof(pixelRepresentation), {(void *) &pixelRepresentation}},
+		{DCM_IMGSAMPLESPERPIXEL, DCM_US, "", 1, sizeof(samplesPerPixel), {(void *) &samplesPerPixel}},
+		{DCM_IMGROWS, DCM_US, "", 1, sizeof(rows), {(void *) &rows}},
+		{DCM_IMGCOLUMNS, DCM_US, "", 1, sizeof(columns), {(void *) &columns}},
+		{DCM_IMGPHOTOMETRICINTERP, DCM_CS, "", 1, sizeof(photometricInterpretation), {photometricInterpretation}}
+		//{DCM_IMGLOSSYIMAGECOMPRESSION, DCM_CS, "", 1, sizeof(lossy_compression), {lossy_compression}}
+		//{DCM_MAKETAG(DCM_GROUPIMAGE,0x2110), DCM_??, "", 1, sizeof(derivative_description) ... }
+	};
+
+	static DCM_ELEMENT listnew[] = {
+		{DCM_IMGLOSSYIMAGECOMPRESSION, DCM_CS, "", 1, sizeof(lossy_compression), {lossy_compression}},
+		{DCM_IDDERIVATIONDESCR, DCM_ST, "", 1, sizeof(qual), {qual} }
+	};
+
+
+	static DCM_TAG deleteTags[] = {
+		DCM_IMGRESCALEINTERCEPT,
+		DCM_IMGRESCALESLOPE,
+		//DCM_IMGWINDOWCENTER,
+		//DCM_IMGWINDOWWIDTH,
+		DCM_IMGPLANARCONFIGURATION,
+		DCM_IMGPIXELPADDINGVALUE
+	};
+
+	struct jpeg_compress_struct cinfo;
+	struct my_error_mgr jerr;
+	int compress_created, compress_started;
+	//J_COLOR_SPACE jpeg_colortype;
+	JSAMPROW tmprow;
+	//int jpeg_cmpts;
+	int orig_range, new_range;
+	int orig_minval, new_minval;
+
+	//DCM_Debug(verbose);
+	retval = DCM_MALLOCFAILURE;
+	pixels = NULL;
+	compress_created=0;
+	compress_started=0;
+	tmprow = NULL;
+	mbs.memblk = NULL;
+
+	memset(&cinfo,0,sizeof(struct jpeg_compress_struct));
+	memset(&jerr,0,sizeof(struct my_error_mgr));
+
+	has_wc=0;
+	has_ww=0;
+	has_int=0;
+	has_slp=0;
+
+	orig_range=1; new_range=1;
+	orig_minval=0; new_minval=0;
+
+	cond = DCM_ParseObject(&object, list, (int) DIM_OF(list), NULL, 0, NULL);
+	if (cond != DCM_NORMAL) {
+		fprintf(stderr, "Error retrieving data elements\n");
+		COND_DumpConditions();
+		return cond;
+	}
+
+	cond = get_ds_value(object, DCM_IMGWINDOWCENTER, &orig_wc);
+	if(cond==DCM_NORMAL) {
+		has_wc=1;
+		//printf("WC: %f\n",orig_wc);
+	}
+	cond = get_ds_value(object, DCM_IMGWINDOWWIDTH, &orig_ww);
+	if(cond==DCM_NORMAL) {
+		has_ww=1;
+		//printf("WW: %f\n",orig_ww);
+	}
+	cond = get_ds_value(object, DCM_IMGRESCALEINTERCEPT, &orig_int);
+	if(cond==DCM_NORMAL) {
+		has_int=1;
+		//printf("INT: %f\n",orig_int);
+	}
+	else {
+		has_int=1;
+		orig_int=0.0;
+	}
+	cond = get_ds_value(object, DCM_IMGRESCALESLOPE, &orig_slp);
+	if(cond==DCM_NORMAL) {
+		has_slp=1;
+		//printf("SLP: %f\n",orig_slp);
+	}
+	else {
+		orig_slp = 1.0;
+	}
+
+	// find size of old pixels
+	cond = DCM_GetElementSize(&object, p2.tag, &pixelLength);
+	if (cond != DCM_NORMAL) {
+		fprintf(stderr, "Error finding length of pixel data\n");
+		COND_DumpConditions();
+		return cond;
+	}
+	frameLength = (U32) samplesPerPixel *(U32) rows *(U32) columns *(U32) (bitsAllocated / 8);
+	if (pixelLength != frameLength) {
+		fprintf(stderr, "Computed pixel length differs from actual.\n");
+		exit(2);
+	}
+
+#if 0
+	printf("bitsAllocated       %hu\n",  bitsAllocated       );
+	printf("bitsStored          %hu\n",  bitsStored          );
+	printf("highBit             %hu\n",  highBit             );
+	printf("pixelRepresentation %hu\n",  pixelRepresentation );
+	printf("samplesPerPixel     %hu\n",  samplesPerPixel     );
+	printf("rows                %hu\n",  rows                );
+	printf("columns             %hu\n",  columns             );
+	printf("photometricInt.     %s\n",   photometricInterpretation);
+#endif
+
+	if(!strcmp(photometricInterpretation, "MONOCHROME2")) {
+		white_is_min=0;
+	}
+	else if(strcmp(photometricInterpretation, "MONOCHROME1")) {
+		white_is_min=1;
+	}
+	else {
+		fprintf(stderr, "Unsupported photometricInterpretation \"%s\".\n",photometricInterpretation);
+		goto abort;
+	}
+
+	if(bitsAllocated!=8 && bitsAllocated!=16) {
+		fprintf(stderr,"Unsupported bitsAllocated (%hu)\n",bitsAllocated);
+	}
+
+	if(samplesPerPixel!=1) {
+		fprintf(stderr,"Unsupported samples/pixel (%hu)\n",samplesPerPixel);
+		goto abort;
+	}
+
+	orig_range = 1<<(bitsStored);
+	if(pixelRepresentation) {
+		orig_minval = 0-(1<<(bitsStored-1));
+	}
+	else {
+		orig_minval = 0;
+	}
+	//printf("orig_range: %d\n",orig_range);
+	//printf("orig_minval: %d\n",orig_minval);
+
+#if (JPEGBITDEPTH == 12)
+	new_range = 4096;
+#else
+	new_range = 256;
+#endif
+	new_minval = 0;
+
+	//printf("new_range: %d\n",new_range);
+	//printf("new_minval: %d\n",new_minval);
+
+	// prepare a place for the old pixels in memory
+	pixels = malloc(pixelLength);
+	if (pixels == NULL) {
+		perror("Malloc of pixel data");
+		exit(1);
+	}
+	pixelCount = (int) rows *(int) columns;
+
+
+	// read old pixels into memory
+
+	p2.length = pixelLength;
+	p2.d.ot = pixels;
+	ctx = NULL;
+
+	if ((cond = DCM_GetElementValue(&object, &p2, &elementLength, &ctx)) != DCM_NORMAL) {
+		fprintf(stderr, "Error retrieving pixels from image\n");
+		COND_DumpConditions();
+		return cond;
+	}
+
+	// remove old pixels element
+	if ((cond = DCM_RemoveElement(&object, p2.tag)) != DCM_NORMAL) {
+		fprintf(stderr, "Error removing old pixel data from object\n");
+		COND_DumpConditions();
+		return cond;
+	}
+
+	///////////////////// jpeg
+
+	cinfo.err = jpegx_std_error(&jerr.pub);
+	jerr.pub.error_exit = my_error_exit_encode;
+
+	if (setjmp(jerr.setjmp_buffer)) {
+		fprintf(stderr,"JPEG compression error\n");
+		goto abort;
+	}
+
+	jpegx_create_compress(&cinfo); compress_created=1;
+
+	init_dest_mgr(&cinfo,&mbs);
+	//	jpegx_stdio_dest(&cinfo, outf);
+
+	cinfo.image_width = columns;
+	cinfo.image_height = rows;
+	cinfo.input_components = 1;
+	cinfo.in_color_space = JCS_GRAYSCALE;
+
+	jpegx_set_defaults(&cinfo);
+
+	if(quality>=0) {
+		jpegx_set_quality(&cinfo,quality,0);
+	}
+
+	jpegx_start_compress(&cinfo, TRUE); compress_started=1;
+
+	tmprow = (JSAMPROW)calloc(sizeof(JSAMPLE)*1*cinfo.image_width,1);
+	if(!tmprow) goto abort;
+
+	j=0;
+	while(cinfo.next_scanline < cinfo.image_height) {
+		if(bitsAllocated==16) {
+			unsigned short *x2;
+			x2 = (unsigned short*)&pixels[j*2*cinfo.image_width];
+			for(i=0;i<cinfo.image_width;i++) {
+				if(highBit>(JPEGBITDEPTH-1)) tmprow[i] = (*x2)>>(highBit-(JPEGBITDEPTH-1));
+				else if(highBit<(JPEGBITDEPTH-1)) tmprow[i] = (*x2)<<((JPEGBITDEPTH-1)-highBit);
+				else tmprow[i] = (*x2);
+				x2++;
+			}
+		}
+		else {  // bitsAllocated==8
+			unsigned char *x1;
+			unsigned short tmps1;
+			x1 = (unsigned char*)&pixels[j*cinfo.image_width];
+			for(i=0;i<cinfo.image_width;i++) {
+				tmps1 = (unsigned short) (*x1);
+				if(highBit<(JPEGBITDEPTH-1)) tmprow[i] = tmps1 << ((JPEGBITDEPTH-1)-highBit);
+				else tmprow[i] = tmps1;
+				x1++;
+			}
+
+		}
+
+		if(pixelRepresentation) {  // convert signed samples to unsigned
+			for(i=0;i<cinfo.image_width;i++) {
+#if (JPEGBITDEPTH == 12)
+				if(tmprow[i]<2048) tmprow[i]+=2048;
+				else tmprow[i]-=2048;
+#else
+				if(tmprow[i]<128) tmprow[i]+=128;
+				else tmprow[i]-=128;
+#endif
+			}
+		}
+
+		if(white_is_min) {
+			for(i=0;i<cinfo.image_width;i++) {
+#if (JPEGBITDEPTH == 12)
+				tmprow[i] = 4095 - tmprow[i];
+#else
+				tmprow[i] = 255 - tmprow[i];
+#endif
+			}
+		}
+
+		jpegx_write_scanlines(&cinfo, &tmprow, 1);
+		j++;
+	}
+
+	jpegx_finish_compress(&cinfo); compress_started=0;
+	jpegx_destroy_compress(&cinfo); compress_created=0;
+
+	/////////////////////
+
+	//printf("mbs.memblk        %p\n",mbs.memblk);
+	//printf("mbs.memblk_alloc  %u\n",mbs.memblk_alloc);
+	//printf("mbs.used          %u\n",mbs.used);
+	//printf("mbs.error_flag    %d\n",mbs.error_flag);
+
+	if(mbs.error_flag) {
+		fprintf(stderr,"Failure in JPEG generation or memory allocation");
+		goto abort;
+	}
+
+	// define new pixels element
+	p2.length = mbs.used; //fsize;
+	if (p2.length & 1)
+		p2.length++;
+
+	//p2.d.ot = newPixels;
+	//p2.representation = DCM_OT;
+	p2.d.ob = mbs.memblk; //newPixels;
+	p2.representation = DCM_OB;
+
+	//printf("== newPixels: %p  size: %u\n", newPixels, fsize);
+	//printf("== p2.length: %u\n", (unsigned int)p2.length);
+
+	// add new pixels
+	if ((cond = DCM_AddEncapElement(&object, &p2)) != DCM_NORMAL) {
+		fprintf(stderr, "Error adding new pixel data to object\n");
+		COND_DumpConditions();
+		return cond;
+	}
+
+	// modify other elements
+//	bitsAllocated = JPEGBITDEPTH;
+//	bitsStored = JPEGBITDEPTH;
+	highBit = JPEGBITDEPTH-1;
+	pixelRepresentation = 0;
+	samplesPerPixel = 1;
+	strcpy(photometricInterpretation, "MONOCHROME2");
+	strcpy(lossy_compression,"01");
+	sprintf(qual, "JPEG %d:1 Q=%d (lossy)",pixelLength/mbs.used,quality);
+//printf("QUALITY: %s\n", qual);fflush(stdout);
+	if (DCM_ModifyElements(&object, list, (int) DIM_OF(list), NULL, 0, NULL) !=
+		 DCM_NORMAL) {
+		fprintf(stderr, "Error adding new pixel data to object\n");
+		COND_DumpConditions();
+	}
+
+	DCM_ModifyElements(&object, listnew, (int) DIM_OF(listnew), NULL, 0, NULL);
+
+	// delete some elements
+	for (i = 0; i < DIM_OF(deleteTags); i++) {
+		(void) DCM_RemoveElement(&object, deleteTags[i]);
+	}
+
+	if(new_minval!=orig_minval || new_range!=orig_range) {
+		DCM_RemoveElement(&object, DCM_IMGSMALLESTPIXELVALUE);
+		DCM_RemoveElement(&object, DCM_IMGLARGESTPIXELVALUE);
+		DCM_RemoveElement(&object, DCM_IMGSMALLESTIMAGEPIXELVALUE);
+		DCM_RemoveElement(&object, DCM_IMGLARGESTIMAGEPIXELVALUE);
+		DCM_RemoveElement(&object, DCM_IMGSMALLESTPIXELVALUESERIES);
+		DCM_RemoveElement(&object, DCM_IMGLARGESTPIXELVALUESERIES);
+		DCM_RemoveElement(&object, DCM_IMGSMALLESTIMAGEPIXELVALUEPLANE);
+		DCM_RemoveElement(&object, DCM_IMGLARGESTIMAGEPIXELVALUEPLANE);
+	}
+
+	if(has_ww && has_wc) {
+		// Try to keep the displayed window/level the same, by adjusting
+		// the slope and intercept.
+		double new_slp;
+		double new_int;
+
+		new_int = orig_int;
+		new_slp = orig_slp;
+
+		// If the raw sample values are increases by X, INTERCEPT needs to be decreased
+		// by SLOPE*X.
+
+		new_int -= new_slp * (double)(new_minval - orig_minval);
+
+		// If the raw sample values are multipled by X, SLOPE needs to be divided by X.
+		new_slp /= (double)new_range / (double)orig_range;
+
+
+		//printf("orig int: %f   new int: %f\n",orig_int,new_int);
+		//printf("orig slope: %f   new slope: %f\n",orig_slp, new_slp);
+
+		set_ds_value(object,DCM_IMGRESCALEINTERCEPT,new_int);
+		set_ds_value(object,DCM_IMGRESCALESLOPE,new_slp);
+
+	}
+
+//////////////////////
+//	if (DCM_WriteFile(&object, DCM_ORDERLITTLEENDIAN, "out.dcm") != DCM_NORMAL) {
+//		fprintf(stderr, "Error writing new DCM image file\n");
+//		COND_DumpConditions();
+//		THR_Shutdown();
+//		exit(1);
+//	}
+/////////////////////
+
+	retval = DCM_NORMAL;
+
+abort:
+	if(compress_started) jpegx_finish_compress(&cinfo);
+	if(compress_created) jpeg_destroy_compress(&cinfo);
+	if(tmprow) free(tmprow);
+	if(pixels) free(pixels);
+	if(mbs.memblk) free(mbs.memblk);
+
+	return DCM_NORMAL;
+}
+
+#if 0
+
+static void
+usageerror()
+{
+    static const char msg[] = "\
+Usage: [-bBL] [-v] filein fileout\n\
+    -b  Big endian output (non standard)\n\
+    -B  Big endian explicit transfer syntax\n\
+    -L  Little endian explicit transfer syntax\n";
+
+    fprintf(stderr, msg);
+    exit(1);
+}
+
+int
+main(int argc, char **argv)
+{
+    DCM_OBJECT
+    * object;
+    CONDITION
+	cond;
+    CTNBOOLEAN
+	verbose = FALSE;
+    long
+        options = DCM_ORDERLITTLEENDIAN | DCM_PART10FILE;
+    long
+        openOptions = DCM_ORDERLITTLEENDIAN;
+    DCM_FILE_META *fileMeta;
+
+    while (--argc > 0 && (*++argv)[0] == '-') {
+	switch (*(argv[0] + 1)) {
+	case 'b':
+	    options &= ~DCM_ORDERMASK;
+	    options |= DCM_ORDERBIGENDIAN;
+	    break;
+	case 'B':
+	    options &= ~DCM_ORDERMASK;
+	    options |= DCM_EXPLICITBIGENDIAN;
+	    break;
+	case 'L':
+	    options &= ~DCM_ORDERMASK;
+	    options |= DCM_EXPLICITLITTLEENDIAN;
+	    break;
+	case 't':
+	    openOptions |= DCM_PART10FILE;
+	    break;
+	case 'v':
+	    verbose = TRUE;
+	    break;
+	default:
+	    fprintf(stderr, "Unrecognized option: %c\n", *(argv[0] + 1));
+	    break;
+	}
+    }
+    if (argc < 2)
+	usageerror();
+
+    if (strcmp(argv[0], argv[1]) == 0) {
+	fprintf(stderr,
+		"This program must have different input and output files\n");
+	return 1;
+    }
+    THR_Init();
+    DCM_Debug(verbose);
+
+    cond = DCM_OpenFile(*argv, openOptions, &object);
+    if (cond != DCM_NORMAL)
+	goto abort;
+
+    if ((options & DCM_PART10FILE) != 0)
+	(void) DCM_RemoveGroup(&object, 0x0002);
+
+    cond = DCM_DefaultFileMeta(&object, &fileMeta);
+    if (cond != DCM_NORMAL)
+	goto abort;
+
+    if ((options & DCM_ORDERMASK) == DCM_EXPLICITBIGENDIAN)
+        strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERBIGENDIANEXPLICIT);
+    if ((options & DCM_ORDERMASK) == DCM_EXPLICITLITTLEENDIAN)
+        strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERLITTLEENDIANEXPLICIT);
+
+#if (JPEGBITDEPTH == 12)
+	strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERJPEGEXTENDEDPROC2AND4);
+#else
+	strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERJPEGBASELINEPROCESS1);
+#endif
+
+    cond = DCM_SetFileMeta(&object, fileMeta);
+    if (cond != DCM_NORMAL) {
+		fflush(stderr);
+		printf("SetFileMeta failed, quitting\n");
+		goto abort;
+	}
+
+    cond = DCM_FreeFileMeta(&fileMeta);
+    if (cond != DCM_NORMAL)
+	goto abort;
+
+#if (JPEGBITDEPTH == 12)
+	cond = DCM_compress_jpeg12(object, -1);
+#else
+	cond = DCM_compress_jpeg8(object, -1);
+#endif
+
+    if (cond != DCM_NORMAL) goto abort;
+
+	//fflush(stderr); fflush(stdout);
+	//COND_DumpConditions();
+	//fflush(stderr); fflush(stdout);
+	//printf("runing WriteFile\n");
+
+    cond = DCM_WriteFile(&object, options, *++argv);
+    (void) DCM_CloseObject(&object);
+    if (cond != DCM_NORMAL) {
+		fflush(stderr);
+		printf("WriteFile failed (%d / %d), aborting\n",(int)cond, (int)(DCM_NORMAL));
+		goto abort;
+	}
+
+    THR_Shutdown();
+    return 0;
+
+abort:
+    COND_DumpConditions();
+    THR_Shutdown();
+    return 1;
+}
+#endif
