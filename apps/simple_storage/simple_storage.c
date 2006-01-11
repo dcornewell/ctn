@@ -1596,7 +1596,10 @@ storeRequest(DUL_ASSOCIATIONKEY ** association,
 	    sprintf(directory, "%s/%s", baseDirectory, directoryMap[index].directory);
 	    if (createDirectory(directory) == 0)
 		return 0;
-	    sprintf(fileName, "%s/%s", directory, (*request)->instanceUID);
+		if (strlen((*request)->instanceUID) != 0)
+			sprintf(fileName, "%s/%s", directory, (*request)->instanceUID);
+		else
+			sprintf(fileName, "%s/%s", directory, "temp0.dcm");
 	}
     }
     if (strlen(fileName) == 0) {
@@ -1604,6 +1607,7 @@ storeRequest(DUL_ASSOCIATIONKEY ** association,
 	printf("simple_storage::storeRequest could not map SOP Class to a directory name\n");
 	printf("SOP Class: %s\n", (*request)->classUID);
     }
+	printf("Filename: %s\n", fileName);
     cond = SRV_CStoreResponse(association, ctx, request, &response,
 			  fileName, storageCallback, "storeRequest", "");
 
