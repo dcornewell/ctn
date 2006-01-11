@@ -695,6 +695,50 @@ DCM_AddElement(DCM_OBJECT ** callerObject, DCM_ELEMENT * element)
     return DCM_NORMAL;
 }
 
+/* DCM_AddEncapElement
+**
+** Purpose:
+**	Add an element to an existing DCM object
+**
+** Parameter Dictionary:
+**	object		Pointer to caller's existing DCM object.
+**	element		Pointer to DCM element to be added to object
+**
+** Return Values:
+**
+**	DCM_ILLEGALOBJECT
+**	DCM_ILLEGALREPRESENTATION
+**	DCM_INSERTFAILED
+**	DCM_NORMAL
+**	DCM_NULLOBJECT
+*/
+
+CONDITION
+DCM_AddEncapElement(DCM_OBJECT ** callerObject, DCM_ELEMENT * element)
+{
+    PRIVATE_OBJECT ** obj;
+    PRV_ELEMENT_ITEM * elementItem;
+    CONDITION cond;
+
+    cond = DCM_AddElement(callerObject,element);  //  Do the majic to add it.
+    if (cond!=DCM_NORMAL)
+	return cond;
+
+    obj = (PRIVATE_OBJECT **) callerObject;
+    elementItem = locateElement(obj, element->tag);  // find it, so we can tweak it.
+    if (elementItem == NULL)
+	return COND_PushCondition(DCM_ELEMENTNOTFOUND,
+		       DCM_Message(DCM_ELEMENTNOTFOUND), DCM_TAG_GROUP(element->tag),
+				  DCM_TAG_ELEMENT(element->tag),
+				  "DCM_GetElementVM");
+
+    elementItem->paddedDataLength = -1;
+    elementItem->originalDataLength = element->length;
+    elementItem->element.length = -1;
+
+    return DCM_NORMAL;
+}
+
 /* DCM_AddSequenceElement
 **
 ** Purpose:
