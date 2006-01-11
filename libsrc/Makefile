@@ -2,7 +2,7 @@
 
 include $(DICOM_MAKE)
 VPATH = ../../include
-CFLAGS = $(C_OPTS) -I$(DICOM_INCLUDE)
+CFLAGS = -I/usr/local/src/jpeg-6b-12bit $(C_OPTS) -I$(DICOM_INCLUDE)
 
 BASE_OBJS = \
  build.o cfg.o cmd_valid.o condition.o control.o ctnthread.o database.o \
@@ -19,7 +19,7 @@ BASE_OBJS = \
  record.o ref_item.o select.o send.o sequences.o set.o \
  snp.o snpcond.o sqcond.o srv1.o srv2.o srvcond.o storage.o \
  thrcond.o uid.o uidcond.o \
- update.o utility.o verify.o xutl.o
+ update.o utility.o verify.o xutl.o dcm_compress_jpeg.o dcm_compress_jpeg8.o
 
 # TBL_DB and TBLM_DB are defined in $DICOM_MAKE
 OBJS = $(BASE_OBJS) $(TBL_DB) tblcond.o idb.o idbcond.o
@@ -49,6 +49,11 @@ libctnmb.a: $(OBJS_MBCTN)
 
 libctn.so: $(OBJS)
 	$(CC) $(CFLAGS) -G -o libctn.so $(OBJS)
+
+#gcc -I/usr/local/src/jpeg-6b-12bit -g -DDEBUG -DLITTLE_ENDIAN_ARCHITECTURE -DLINUX -DSHARED_MEMORY -DSEMAPHORE -DX11 -DATHENA -DX11R4 -DUSLEEP -DMYSQLDB -I/home/horner/prj/ctn/include -I/usr/local/mysql/include -I/usr2/lesstif/lesstif-current/include/Motif-1.2 -I/usr/X11R6/include -DLONGSIZE=32 -DINTSIZE=32 -DSHORTSIZE=16 -DTIMEOFDAYARGS=2 -DMOTIF -I/home/horner/prj/ctn/include   -c -o dcm_compress_jpeg.o dcm_compress_jpeg.c
+
+dcm_compress_jpeg8.o: dcm_compress_jpeg.c
+	$(CC) -c -DJPEGBITDEPTH=8 $(C_OPTS) -I$(DICOM_INCLUDE) -o dcm_compress_jpeg8.o dcm_compress_jpeg.c
 
 shared:	libctn.so
 	cp libctn.so /usr/local/lib
