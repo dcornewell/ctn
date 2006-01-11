@@ -7,7 +7,7 @@ include $(DICOM_MAKE)
 VPATH=../../include
 CFLAGS = $(C_OPTS) -I$(DICOM_INCLUDE)
 LFLAGS = -L$(DICOM_LIB) $(LIBPATH_UCB) $(LIBS_OS_SECURE_UCB) $(LIBPATH_DATABASE)
-LIBS = $(LIBS_CTN_NODB)
+LIBS = $(LIBS_CTN_NODB) -L../../../../lib/$(MIEBUILD)/jpeg-12bit -ljpeg
 
 
 application:	$(NAME)

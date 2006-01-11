@@ -115,7 +115,7 @@ sendCallback(MSG_C_STORE_REQ * request, MSG_C_STORE_RESP * response,
 	     void *string);
 static CTNBOOLEAN responseSensitive = FALSE;
 static CTNBOOLEAN silent = FALSE;
-
+static int compressme = -1;
 
 static void
 fillFileList(const char* f, LST_HEAD** lst)
@@ -145,7 +145,7 @@ fillFileList(const char* f, LST_HEAD** lst)
   }
 }
 
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     CONDITION			/* Return values from DUL and ACR routines */
 	cond;
@@ -293,9 +293,14 @@ main(int argc, char **argv)
 	    strcpy(xferSyntaxBuf, stdXferSyntaxes);
 	    xferSyntaxCount = 3;
 	    break;
-        case 'Z':
+  case 'Z':
 	    allowVRMismatch = TRUE;
 	    break;
+  case 'z':
+      argv++;
+      compressme = atoi(*argv);
+      argc--;
+      break;
 	default:
 	    break;
 	}
@@ -467,7 +472,9 @@ sendImageSet(int argc, char **argv, DUL_NETWORKKEY ** network,
     * association = NULL;
     static char
         SOPClass[DICOM_UI_LENGTH + 1] = "",
-        lastSOPClass[DICOM_UI_LENGTH + 1] = "";
+        lastSOPClass[DICOM_UI_LENGTH + 1] = "",
+        TransferSyntax[DICOM_UI_LENGTH + 1] = "",
+  		  lastTransferSyntax[DICOM_UI_LENGTH + 1] = "";
     CONDITION
 	cond;
     DCM_OBJECT *iod;
@@ -476,6 +483,8 @@ sendImageSet(int argc, char **argv, DUL_NETWORKKEY ** network,
     DCM_ELEMENT elements[] = {
 	{DCM_IDSOPCLASSUID, DCM_UI, "", 1, sizeof(SOPClass),
 	(void *) SOPClass},
+  {DCM_METATRANSFERSYNTAX, DCM_UI, "", 1, sizeof(TransferSyntax),
+  (void *) TransferSyntax},
 	{DCM_IDSOPINSTANCEUID, DCM_UI, "", 1, sizeof(instanceUID),
 	(void *) instanceUID}
     };
@@ -531,19 +540,28 @@ sendImageSet(int argc, char **argv, DUL_NETWORKKEY ** network,
 
     cond = DCM_ParseObject(&iod, elements, DIM_OF(elements), NULL, 0, NULL);
     if (cond != DCM_NORMAL)
-      myExit(&association, 0);
+        COND_DumpConditions();    
+//      myExit(&association, 0);
+
+    if (compressme!=-1)
+      strcpy(TransferSyntax,DICOM_TRANSFERJPEGEXTENDEDPROC2AND4);
+    else if (strlen(TransferSyntax)==0)
+      strcpy(TransferSyntax,DICOM_TRANSFERLITTLEENDIAN);
 
     if (part10File) {
       getXferSyntax(&iod, fileXferSyntax);
       isEncapsulatedXferSyntax = testForEncapsulatedXferSyntax(fileXferSyntax);
     }
 
-    if (strcmp(SOPClass, lastSOPClass) != 0) {
+    if ((strcmp(SOPClass, lastSOPClass) != 0)||(strcmp(TransferSyntax, lastTransferSyntax)!=0)) {
       if (strlen(lastSOPClass) != 0) {
 	(void) DUL_ReleaseAssociation(&association);
 	(void) DUL_DropAssociation(&association);
       }
       (void) DUL_ClearServiceParameters(params);
+
+      strncpy(params->preferredTransferSyntax,TransferSyntax,sizeof(params->preferredTransferSyntax));
+
       if (isEncapsulatedXferSyntax) {
 	char* xfer[1];
 	xfer[0] = fileXferSyntax;
@@ -577,13 +595,52 @@ sendImageSet(int argc, char **argv, DUL_NETWORKKEY ** network,
 	replaceSOPInstanceUID(&iod, sopInstanceUID);
     }
 
-    cond = sendImage(&association, params, &iod, SOPClass,
-			 instanceUID, "");
+    cond = DCM_NORMAL;
+    if (compressme!=-1) {
+        DCM_FILE_META *fileMeta;
+  
+      if (DCM_GetFileMeta(&iod, &fileMeta)==DCM_NORMAL)
+        if (strcmp(fileMeta->transferSyntaxUID,"")!=0)
+          goto abort;
+  
+        if ((options & DCM_PART10FILE) != 0)
+      (void) DCM_RemoveGroup(&iod, 0x0002);
+  
+        cond = DCM_DefaultFileMeta(&iod, &fileMeta);
+        if (cond != DCM_NORMAL)
+      goto abort;
+  
+        //    strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERJPEGBASELINEPROCESS1);
+        strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERJPEGEXTENDEDPROC2AND4);
+  
+        cond = DCM_SetFileMeta(&iod, fileMeta);
+        if (cond != DCM_NORMAL) {
+      fflush(stderr);
+      printf("SetFileMeta failed, quitting\n");
+      goto abort;
+        }
+  
+        cond = DCM_FreeFileMeta(&fileMeta);
+        if (cond != DCM_NORMAL)
+      goto abort;
+  
+  
+        cond = DCM_jpeg_compress_12(iod, compressme);
+        if (cond != DCM_NORMAL)	goto abort;
+    }
+abort:
+
+    if (cond == DCM_NORMAL) {
+      if (silent) DCM_DumpElements(&iod, 0);
+      cond = sendImage(&association, params, &iod, SOPClass,
+          instanceUID, "");
+    }
     if (cond != SRV_NORMAL) {
       myExit(&association, cond);
     }
 
     strcpy(lastSOPClass, SOPClass);
+    strncpy(lastTransferSyntax, TransferSyntax, sizeof(lastTransferSyntax));
     (void) DCM_CloseObject(&iod);
     if (timeTransfer) {
       deltaTime = UTL_DeltaTime(timeStamp);
@@ -737,6 +794,7 @@ send_image [-a application] [-c called] [-m maxPDU] [-p] [-q] [-r] [-s SOPName] 
     -w    Set open options; flag can be REPEAT \n\
     -Y    Use set of standard Xfer syntaxes. This is a shortcut for -X\n\
     -Z    Allow VR mismatch in input files\n\
+    -z    [quality] compress with quality\n\
   \n\
     node  Node name for network connection\n\
     port  TCP / IP port number of server application\n\
