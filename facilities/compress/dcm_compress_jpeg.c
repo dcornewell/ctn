@@ -280,10 +280,11 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	unsigned long j;
 	U32 pixelLength, elementLength, frameLength;
 	unsigned char *pixels;
-	static unsigned short bitsAllocated, bitsStored, highBit, pixelRepresentation, samplesPerPixel, rows, columns;
+	unsigned short bitsAllocated, bitsStored, highBit, pixelRepresentation, samplesPerPixel, rows, columns;
 	int pixelCount;
-	static char photometricInterpretation[DICOM_CS_LENGTH + 1];
-	static char lossy_compression[DICOM_CS_LENGTH + 1];
+	char photometricInterpretation[DICOM_CS_LENGTH + 1];
+	char lossy_compression[DICOM_CS_LENGTH + 1];
+	char sop_inst_id[80];
 	void *ctx;
 	CONDITION retval;
 	static char qual[100];
@@ -295,7 +296,9 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	DCM_ELEMENT p2 = { DCM_PXLPIXELDATA, DCM_OT, "", 1, 0, { NULL } };
 
 
-	static DCM_ELEMENT list[] = {
+	DCM_ELEMENT list[] = {
+
+		{DCM_IDSOPINSTANCEUID, DCM_UI, "", 1, sizeof(sop_inst_id), {(void *) &sop_inst_id}},
 		{DCM_IMGBITSALLOCATED, DCM_US, "", 1, sizeof(bitsAllocated), {(void *) &bitsAllocated}},
 		{DCM_IMGBITSSTORED, DCM_US, "", 1, sizeof(bitsStored), {(void *) &bitsStored}},
 		{DCM_IMGHIGHBIT, DCM_US, "", 1, sizeof(highBit), {(void *) &highBit}},
@@ -308,7 +311,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		//{DCM_MAKETAG(DCM_GROUPIMAGE,0x2110), DCM_??, "", 1, sizeof(derivative_description) ... }
 	};
 
-	static DCM_ELEMENT listnew[] = {
+	DCM_ELEMENT listnew[] = {
 		{DCM_IMGLOSSYIMAGECOMPRESSION, DCM_CS, "", 1, sizeof(lossy_compression), {lossy_compression}},
 		{DCM_IDDERIVATIONDESCR, DCM_ST, "", 1, sizeof(qual), {qual} }
 	};
@@ -597,13 +600,14 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 
 	// modify other elements
 //	bitsAllocated = JPEGBITDEPTH;
-//	bitsStored = JPEGBITDEPTH;
+	bitsStored = JPEGBITDEPTH;
 	highBit = JPEGBITDEPTH-1;
 	pixelRepresentation = 0;
 	samplesPerPixel = 1;
 	strcpy(photometricInterpretation, "MONOCHROME2");
 	strcpy(lossy_compression,"01");
-	sprintf(qual, "JPEG %d:1 Q=%d (lossy)",pixelLength/mbs.used,quality);
+	sprintf(qual, "JPEG %.1f:1 Q=%d (lossy)",(float)pixelLength/(float)mbs.used,quality);
+	//sprintf(sop_inst_id, "1.2.823.23902.111");
 //printf("QUALITY: %s\n", qual);fflush(stdout);
 	if (DCM_ModifyElements(&object, list, (int) DIM_OF(list), NULL, 0, NULL) !=
 		 DCM_NORMAL) {
@@ -628,7 +632,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		DCM_RemoveElement(&object, DCM_IMGSMALLESTIMAGEPIXELVALUEPLANE);
 		DCM_RemoveElement(&object, DCM_IMGLARGESTIMAGEPIXELVALUEPLANE);
 	}
-
+	DCM_RemoveElement(&object, DCM_MEDIAICONIMAGE);//0088:0200
 	if(has_ww && has_wc) {
 		// Try to keep the displayed window/level the same, by adjusting
 		// the slope and intercept.
@@ -649,9 +653,10 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 
 		//printf("orig int: %f   new int: %f\n",orig_int,new_int);
 		//printf("orig slope: %f   new slope: %f\n",orig_slp, new_slp);
-
-		set_ds_value(object,DCM_IMGRESCALEINTERCEPT,new_int);
-		set_ds_value(object,DCM_IMGRESCALESLOPE,new_slp);
+		if ((new_int!=0.0)||(new_slp!=1.0)) {
+			set_ds_value(object,DCM_IMGRESCALEINTERCEPT,new_int);
+			set_ds_value(object,DCM_IMGRESCALESLOPE,new_slp);
+		}
 
 	}
 
