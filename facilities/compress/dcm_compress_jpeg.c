@@ -64,6 +64,9 @@
 #endif
 
 
+//#define DEBUGFILE
+//#define DEBUGMAIN
+
 struct my_error_mgr {
   struct jpeg_error_mgr pub;
   jmp_buf setjmp_buffer;
@@ -268,6 +271,73 @@ static CONDITION set_ds_value(DCM_OBJECT *object, DCM_TAG tag, double value)
 	return DCM_NORMAL;
 }
 
+void find_min_max_samples_16unsigned(unsigned char *pixels, int npixels,
+  int *pminval, int *pmaxval)
+{
+	int i;
+	unsigned short *px;
+	unsigned short v;
+	int minval, maxval;
+
+	minval = 65536;
+	maxval = 0;
+	px = (unsigned short*)pixels;
+
+	for(i=0;i<npixels;i++) {
+		v = *px; px+=1;
+		if(v<minval) minval = v;
+		if(v>maxval) maxval = v;
+	}
+	*pminval = minval;
+	*pmaxval = maxval;
+}
+
+void find_min_max_samples_16signed(unsigned char *pixels, int npixels,
+  int *pminval, int *pmaxval)
+{
+	int i;
+	signed short *px;
+	signed short v;
+	int minval, maxval;
+
+	minval = 32767;
+	maxval = -32768;
+	px = (signed short*)pixels;
+
+	for(i=0;i<npixels;i++) {
+		v = *px; px+=1;
+		if(v<minval) minval = v;
+		if(v>maxval) maxval = v;
+	}
+	*pminval = minval;
+	*pmaxval = maxval;
+}
+
+
+void find_min_max_samples(unsigned char *pixels, int npixels,
+  int bitsAllocated, int bitsStored, int highBit, int pixelRepresentation,
+  int *pminval, int *pmaxval)
+{
+
+	// start with some default values
+	if(pixelRepresentation) {
+		*pmaxval = (1<<highBit)-1;
+		*pminval = -(1<<highBit);
+	}
+	else {
+		*pmaxval = (1<<(highBit+1))-1;
+		*pminval = 0;
+	}
+
+	// call the appropriate scan function, if available
+	if(pixelRepresentation && bitsAllocated==16 && (highBit==bitsStored-1)) {
+		find_min_max_samples_16signed(pixels,npixels,pminval,pmaxval);
+	}
+	else if(pixelRepresentation==0 && bitsAllocated==16 && (highBit==bitsStored-1)) {
+		find_min_max_samples_16unsigned(pixels,npixels,pminval,pmaxval);
+	}
+}
+
 /* compression level */
 #if (JPEGBITDEPTH == 12)
 CONDITION DCM_jpeg_compress_12(DCM_OBJECT *object, int quality)
@@ -288,10 +358,11 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	void *ctx;
 	CONDITION retval;
 	static char qual[100];
-	int white_is_min=0;
 	struct memblk_struct mbs;
 	int has_ww, has_wc, has_int, has_slp;
 	double orig_ww, orig_wc, orig_int, orig_slp;
+	int minsampleval, maxsampleval;
+	int handle_signed_values=0;
 
 	DCM_ELEMENT p2 = { DCM_PXLPIXELDATA, DCM_OT, "", 1, 0, { NULL } };
 
@@ -335,6 +406,12 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	int orig_range, new_range;
 	int orig_minval, new_minval;
 
+	unsigned short adjusted_highBit;
+	unsigned short adjusted_pixelRepresentation;
+	int adjusted_orig_minval;
+	int adjusted_orig_range;
+
+
 	//DCM_Debug(verbose);
 	retval = DCM_MALLOCFAILURE;
 	pixels = NULL;
@@ -350,6 +427,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	has_ww=0;
 	has_int=0;
 	has_slp=0;
+	orig_int=0.0; orig_slp=1.0;
 
 	orig_range=1; new_range=1;
 	orig_minval=0; new_minval=0;
@@ -402,7 +480,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		exit(2);
 	}
 
-#if 0
+#ifdef DEBUGFILE
 	printf("bitsAllocated       %hu\n",  bitsAllocated       );
 	printf("bitsStored          %hu\n",  bitsStored          );
 	printf("highBit             %hu\n",  highBit             );
@@ -413,13 +491,9 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	printf("photometricInt.     %s\n",   photometricInterpretation);
 #endif
 
-	if(!strcmp(photometricInterpretation, "MONOCHROME2")) {
-		white_is_min=0;
-	}
-	else if(strcmp(photometricInterpretation, "MONOCHROME1")) {
-		white_is_min=1;
-	}
-	else {
+	if(strcmp(photometricInterpretation, "MONOCHROME2") && 
+	    strcmp(photometricInterpretation, "MONOCHROME1"))
+	{
 		fprintf(stderr, "Unsupported photometricInterpretation \"%s\".\n",photometricInterpretation);
 		goto abort;
 	}
@@ -440,8 +514,6 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	else {
 		orig_minval = 0;
 	}
-	//printf("orig_range: %d\n",orig_range);
-	//printf("orig_minval: %d\n",orig_minval);
 
 #if (JPEGBITDEPTH == 12)
 	new_range = 4096;
@@ -450,8 +522,12 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 #endif
 	new_minval = 0;
 
-	//printf("new_range: %d\n",new_range);
-	//printf("new_minval: %d\n",new_minval);
+#ifdef DEBUGFILE
+	printf("orig_range: %d\n",orig_range);
+	printf("orig_minval: %d\n",orig_minval);
+	printf("new_range: %d\n",new_range);
+	printf("new_minval: %d\n",new_minval);
+#endif
 
 	// prepare a place for the old pixels in memory
 	pixels = malloc(pixelLength);
@@ -480,6 +556,66 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		COND_DumpConditions();
 		return cond;
 	}
+
+	/////////////////////////////////
+	// Optimize use of new bits.
+
+	find_min_max_samples(pixels, pixelCount,
+	  bitsAllocated, bitsStored, highBit, pixelRepresentation,
+  	  &minsampleval, &maxsampleval);
+#ifdef DEBUGFILE
+	printf("minsampleval:       %d\n",  minsampleval);
+	printf("maxsampleval:       %d\n",  maxsampleval);
+#endif
+
+	adjusted_orig_minval = orig_minval;
+	adjusted_orig_range = orig_range;
+	adjusted_highBit = highBit;
+	adjusted_pixelRepresentation = pixelRepresentation;
+
+	if(bitsAllocated==16 && highBit==15) {
+		// Find the maximum amount that we can shift the bits
+		// without losing the most significant bits.
+
+		if(minsampleval>=0) {
+			// All samples are >=0.
+			// Treat as unsigned, whether or not the original was signed.
+			for(i=8;i<=15;i++) {
+				if(maxsampleval<(1<<i)) {
+					adjusted_orig_minval = 0;
+					adjusted_orig_range = 1<<i;
+					adjusted_highBit = i-1;
+					adjusted_pixelRepresentation = 0;
+					break;
+				}
+			}
+		}
+		else {
+			// Some samples are negative.
+			for(i=8;i<=15;i++) {
+				if( (maxsampleval<(1<<(i-1))) &&  (minsampleval>= -(int)(1<<(i-1)))) {
+					adjusted_orig_minval = -(int)(1<<(i-1));
+					adjusted_orig_range = 1<<i;
+					adjusted_highBit = i-1;
+					adjusted_pixelRepresentation = 1;
+					handle_signed_values=1;
+					break;
+				}
+			}
+		}
+	}
+
+	orig_minval = adjusted_orig_minval;
+	orig_range  = adjusted_orig_range;
+	highBit     = adjusted_highBit;
+	pixelRepresentation = adjusted_pixelRepresentation;
+#ifdef DEBUGFILE
+	printf("adj_orig_range: %d\n",orig_range);
+	printf("adj_orig_minval: %d\n",orig_minval);
+	printf("adj_highBit: %d\n",(int)highBit);
+	printf("adj_pixRep: %d\n",(int)pixelRepresentation);
+	printf("signed: %d\n",handle_signed_values);
+#endif
 
 	///////////////////// jpeg
 
@@ -516,11 +652,21 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	while(cinfo.next_scanline < cinfo.image_height) {
 		if(bitsAllocated==16) {
 			unsigned short *x2;
+			unsigned short v;
+			int tmp1;
+
 			x2 = (unsigned short*)&pixels[j*2*cinfo.image_width];
 			for(i=0;i<cinfo.image_width;i++) {
-				if(highBit>(JPEGBITDEPTH-1)) tmprow[i] = (*x2)>>(highBit-(JPEGBITDEPTH-1));
-				else if(highBit<(JPEGBITDEPTH-1)) tmprow[i] = (*x2)<<((JPEGBITDEPTH-1)-highBit);
-				else tmprow[i] = (*x2);
+				v = *x2;
+				if(handle_signed_values && v>=32768) {
+					tmp1 = ((int)v)-65536;
+					tmp1 += 1<<((int)highBit+1);
+					v = (unsigned short)tmp1;
+				}
+
+				if(highBit>(JPEGBITDEPTH-1)) tmprow[i] = v>>(highBit-(JPEGBITDEPTH-1));
+				else if(highBit<(JPEGBITDEPTH-1)) tmprow[i] = v<<((JPEGBITDEPTH-1)-highBit);
+				else tmprow[i] = v;
 				x2++;
 			}
 		}
@@ -545,16 +691,6 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 #else
 				if(tmprow[i]<128) tmprow[i]+=128;
 				else tmprow[i]-=128;
-#endif
-			}
-		}
-
-		if(white_is_min) {
-			for(i=0;i<cinfo.image_width;i++) {
-#if (JPEGBITDEPTH == 12)
-				tmprow[i] = 4095 - tmprow[i];
-#else
-				tmprow[i] = 255 - tmprow[i];
 #endif
 			}
 		}
@@ -600,11 +736,15 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 
 	// modify other elements
 //	bitsAllocated = JPEGBITDEPTH;
+#if (JPEGBITDEPTH == 12)
+	bitsAllocated = 16;
+#else
+	bitsAllocated = 8;
+#endif
 	bitsStored = JPEGBITDEPTH;
 	highBit = JPEGBITDEPTH-1;
 	pixelRepresentation = 0;
 	samplesPerPixel = 1;
-	strcpy(photometricInterpretation, "MONOCHROME2");
 	strcpy(lossy_compression,"01");
 	sprintf(qual, "JPEG %.1f:1 Q=%d (lossy)",(float)pixelLength/(float)mbs.used,quality);
 	//sprintf(sop_inst_id, "1.2.823.23902.111");
@@ -642,7 +782,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		new_int = orig_int;
 		new_slp = orig_slp;
 
-		// If the raw sample values are increases by X, INTERCEPT needs to be decreased
+		// If the raw sample values are increased by X, INTERCEPT needs to be decreased
 		// by SLOPE*X.
 
 		new_int -= new_slp * (double)(new_minval - orig_minval);
@@ -681,7 +821,7 @@ abort:
 	return DCM_NORMAL;
 }
 
-#if 0
+#ifdef DEBUGMAIN
 
 static void
 usageerror()
@@ -781,9 +921,9 @@ main(int argc, char **argv)
 	goto abort;
 
 #if (JPEGBITDEPTH == 12)
-	cond = DCM_compress_jpeg12(object, -1);
+	cond = DCM_jpeg_compress_12(object, -1);
 #else
-	cond = DCM_compress_jpeg8(object, -1);
+	cond = DCM_jpeg_compress_8(object, -1);
 #endif
 
     if (cond != DCM_NORMAL) goto abort;
