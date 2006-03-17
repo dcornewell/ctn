@@ -220,6 +220,58 @@ static int init_dest_mgr(struct jpeg_compress_struct *cinfo,  struct memblk_stru
 	return 1;
 }
 
+// signed 16-bit int
+static CONDITION get_ss_value(DCM_OBJECT *object, DCM_TAG tag, int *pvalue)
+{
+	signed short v;
+	void *ctx;
+	U32 len;
+	DCM_ELEMENT p2 = { 0, DCM_OT, "", 1, 0, {(void*)&v} };
+	CONDITION cond;
+
+	ctx=NULL;
+	*pvalue = 0;
+
+	p2.tag = tag;
+	p2.representation = DCM_SS;
+	p2.length = sizeof(v);
+	len= sizeof(v);
+
+	if ((cond = DCM_GetElementValue(&object, &p2, &len, &ctx)) != DCM_NORMAL) {
+		COND_PopCondition(FALSE);
+		return cond;
+	}
+
+	*pvalue = (int)v;
+	return DCM_NORMAL;
+}
+
+// unsigned 16-bit int
+static CONDITION get_us_value(DCM_OBJECT *object, DCM_TAG tag, int *pvalue)
+{
+	signed short v;
+	void *ctx;
+	U32 len;
+	DCM_ELEMENT p2 = { 0, DCM_OT, "", 1, 0, {(void*)&v} };
+	CONDITION cond;
+
+	ctx=NULL;
+	*pvalue = 0;
+
+	p2.tag = tag;
+	p2.representation = DCM_US;
+	p2.length = sizeof(v);
+	len= sizeof(v);
+
+	if ((cond = DCM_GetElementValue(&object, &p2, &len, &ctx)) != DCM_NORMAL) {
+		COND_PopCondition(FALSE);
+		return cond;
+	}
+
+	*pvalue = (int)v;
+	return DCM_NORMAL;
+}
+
 static CONDITION get_ds_value(DCM_OBJECT *object, DCM_TAG tag, double *value)
 {
 	char stringval[32];
@@ -272,7 +324,7 @@ static CONDITION set_ds_value(DCM_OBJECT *object, DCM_TAG tag, double value)
 }
 
 void find_min_max_samples_16unsigned(unsigned char *pixels, int npixels,
-  int *pminval, int *pmaxval)
+  int *pminval, int *pmaxval, int has_padding, int paddingValue)
 {
 	int i;
 	unsigned short *px;
@@ -285,15 +337,17 @@ void find_min_max_samples_16unsigned(unsigned char *pixels, int npixels,
 
 	for(i=0;i<npixels;i++) {
 		v = *px; px+=1;
+		if(has_padding && v==paddingValue) continue;
 		if(v<minval) minval = v;
 		if(v>maxval) maxval = v;
 	}
+	if(minval>maxval) minval=maxval;
 	*pminval = minval;
 	*pmaxval = maxval;
 }
 
 void find_min_max_samples_16signed(unsigned char *pixels, int npixels,
-  int *pminval, int *pmaxval)
+  int *pminval, int *pmaxval, int has_padding, int paddingValue)
 {
 	int i;
 	signed short *px;
@@ -306,9 +360,11 @@ void find_min_max_samples_16signed(unsigned char *pixels, int npixels,
 
 	for(i=0;i<npixels;i++) {
 		v = *px; px+=1;
+		if(has_padding && v==paddingValue) continue;
 		if(v<minval) minval = v;
 		if(v>maxval) maxval = v;
 	}
+	if(minval>maxval) minval=maxval;
 	*pminval = minval;
 	*pmaxval = maxval;
 }
@@ -316,7 +372,7 @@ void find_min_max_samples_16signed(unsigned char *pixels, int npixels,
 
 void find_min_max_samples(unsigned char *pixels, int npixels,
   int bitsAllocated, int bitsStored, int highBit, int pixelRepresentation,
-  int *pminval, int *pmaxval)
+  int *pminval, int *pmaxval, int has_padding, int paddingValue)
 {
 
 	// start with some default values
@@ -331,10 +387,10 @@ void find_min_max_samples(unsigned char *pixels, int npixels,
 
 	// call the appropriate scan function, if available
 	if(pixelRepresentation && bitsAllocated==16 && (highBit==bitsStored-1)) {
-		find_min_max_samples_16signed(pixels,npixels,pminval,pmaxval);
+		find_min_max_samples_16signed(pixels,npixels,pminval,pmaxval,has_padding,paddingValue);
 	}
 	else if(pixelRepresentation==0 && bitsAllocated==16 && (highBit==bitsStored-1)) {
-		find_min_max_samples_16unsigned(pixels,npixels,pminval,pmaxval);
+		find_min_max_samples_16unsigned(pixels,npixels,pminval,pmaxval,has_padding,paddingValue);
 	}
 }
 
@@ -363,6 +419,9 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	double orig_ww, orig_wc, orig_int, orig_slp;
 	int minsampleval, maxsampleval;
 	int handle_signed_values=0;
+	int has_padding, paddingValue, convert_padding, new_paddingValue;
+	unsigned short ori_pv_as_us;
+	unsigned short new_pv_as_us;
 
 	DCM_ELEMENT p2 = { DCM_PXLPIXELDATA, DCM_OT, "", 1, 0, { NULL } };
 
@@ -378,7 +437,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		{DCM_IMGSAMPLESPERPIXEL, DCM_US, "", 1, sizeof(samplesPerPixel), {(void *) &samplesPerPixel}},
 		{DCM_IMGROWS, DCM_US, "", 1, sizeof(rows), {(void *) &rows}},
 		{DCM_IMGCOLUMNS, DCM_US, "", 1, sizeof(columns), {(void *) &columns}},
-		{DCM_IMGPHOTOMETRICINTERP, DCM_CS, "", 1, sizeof(photometricInterpretation), {photometricInterpretation}}
+		{DCM_IMGPHOTOMETRICINTERP, DCM_CS, "", 1, sizeof(photometricInterpretation), {photometricInterpretation}},
 		//{DCM_IMGLOSSYIMAGECOMPRESSION, DCM_CS, "", 1, sizeof(lossy_compression), {lossy_compression}}
 		//{DCM_MAKETAG(DCM_GROUPIMAGE,0x2110), DCM_??, "", 1, sizeof(derivative_description) ... }
 	};
@@ -471,6 +530,22 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		orig_slp = 1.0;
 	}
 
+	has_padding=0;
+	paddingValue=0;
+	if(bitsAllocated==16 && pixelRepresentation) {
+		cond = get_ss_value(object, DCM_IMGPIXELPADDINGVALUE, &paddingValue);
+		if(cond==DCM_NORMAL) has_padding=1;
+	}
+	else if(bitsAllocated==16 && !pixelRepresentation) {
+		cond = get_us_value(object, DCM_IMGPIXELPADDINGVALUE, &paddingValue);
+		if(cond==DCM_NORMAL) has_padding=1;
+	}
+
+	if(paddingValue<0)
+		ori_pv_as_us = (unsigned short)(paddingValue+65536);
+	else
+		ori_pv_as_us = (unsigned short)paddingValue;
+
 	// find size of old pixels
 	cond = DCM_GetElementSize(&object, p2.tag, &pixelLength);
 	if (cond != DCM_NORMAL) {
@@ -493,6 +568,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	printf("rows                %hu\n",  rows                );
 	printf("columns             %hu\n",  columns             );
 	printf("photometricInt.     %s\n",   photometricInterpretation);
+	if(has_padding) printf("padding value:      %d\n",paddingValue);
 #endif
 
 	if(strcmp(photometricInterpretation, "MONOCHROME2") && 
@@ -561,12 +637,32 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		return cond;
 	}
 
+	// Zero out unused bits
+	if(bitsAllocated==16 && highBit<15) {
+		unsigned short *tmp_pix;
+		unsigned short tmp_mask;
+		tmp_mask = 0xffff >> (bitsAllocated-highBit-1);
+		//printf("mask: %d\n",(int)tmp_mask);
+		tmp_pix=(unsigned short*)pixels;
+		for(i=0;i<pixelCount;i++) {
+			*tmp_pix = (*tmp_pix) & tmp_mask;
+			tmp_pix++;
+		}
+	}
+	else if(bitsAllocated==8 && highBit<7) {
+		unsigned char tmp_mask;
+		tmp_mask = 0xff >> (bitsAllocated-highBit-1);
+		for(i=0;i<pixelCount;i++) {
+			pixels[i] = pixels[i] & tmp_mask;
+		}
+	}
+
 	/////////////////////////////////
 	// Optimize use of new bits.
 
 	find_min_max_samples(pixels, pixelCount,
 	  bitsAllocated, bitsStored, highBit, pixelRepresentation,
-  	  &minsampleval, &maxsampleval);
+  	  &minsampleval, &maxsampleval, has_padding, paddingValue);
 #ifdef DEBUGFILE
 	printf("minsampleval:       %d\n",  minsampleval);
 	printf("maxsampleval:       %d\n",  maxsampleval);
@@ -577,7 +673,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	adjusted_highBit = highBit;
 	adjusted_pixelRepresentation = pixelRepresentation;
 
-	if(bitsAllocated==16 && highBit==15) {
+	if(bitsAllocated==16) {
 		// Find the maximum amount that we can shift the bits
 		// without losing the most significant bits.
 
@@ -613,12 +709,34 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	orig_range  = adjusted_orig_range;
 	highBit     = adjusted_highBit;
 	pixelRepresentation = adjusted_pixelRepresentation;
+
+	convert_padding=0; new_paddingValue=0; new_pv_as_us = 0;
+	if(paddingValue < adjusted_orig_minval) {
+		convert_padding = 1;
+		new_paddingValue = adjusted_orig_minval;
+		if(pixelRepresentation)
+			new_pv_as_us = 2048;
+		else
+			new_pv_as_us = 0;
+	}
+	else if(paddingValue > (adjusted_orig_minval+adjusted_orig_range-1)) {
+		convert_padding = 1;
+		new_paddingValue = adjusted_orig_minval+adjusted_orig_range-1;
+		if(pixelRepresentation)
+			new_pv_as_us = 2047;
+		else
+			new_pv_as_us = 4095;
+	}
+
 #ifdef DEBUGFILE
 	printf("adj_orig_range: %d\n",orig_range);
 	printf("adj_orig_minval: %d\n",orig_minval);
 	printf("adj_highBit: %d\n",(int)highBit);
 	printf("adj_pixRep: %d\n",(int)pixelRepresentation);
-	printf("signed: %d\n",handle_signed_values);
+	printf("fix_signed_values: %d\n",handle_signed_values);
+	if(convert_padding) printf("new_paddingValue: %d\n",new_paddingValue);
+	if(convert_padding) printf("    ori PV as US: %d\n",(int)ori_pv_as_us);
+	if(convert_padding) printf("    new PV as US: %d\n",(int)new_pv_as_us);
 #endif
 
 	///////////////////// jpeg
@@ -662,6 +780,12 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 			x2 = (unsigned short*)&pixels[j*2*cinfo.image_width];
 			for(i=0;i<cinfo.image_width;i++) {
 				v = *x2;
+
+				if(v==ori_pv_as_us && convert_padding) {
+					tmprow[i]=new_pv_as_us;
+					goto nextpix;
+				}
+
 				if(handle_signed_values && v>=32768) {
 					tmp1 = ((int)v)-65536;
 					tmp1 += 1<<((int)highBit+1);
@@ -671,6 +795,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 				if(highBit>(JPEGBITDEPTH-1)) tmprow[i] = v>>(highBit-(JPEGBITDEPTH-1));
 				else if(highBit<(JPEGBITDEPTH-1)) tmprow[i] = v<<((JPEGBITDEPTH-1)-highBit);
 				else tmprow[i] = v;
+nextpix:
 				x2++;
 			}
 		}
