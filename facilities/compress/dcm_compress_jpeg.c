@@ -354,7 +354,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	int pixelCount;
 	char photometricInterpretation[DICOM_CS_LENGTH + 1];
 	char lossy_compression[DICOM_CS_LENGTH + 1];
-	char sop_inst_id[80];
+	char sop_inst_id[80], series_uid[80];
 	void *ctx;
 	CONDITION retval;
 	static char qual[100];
@@ -370,6 +370,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	DCM_ELEMENT list[] = {
 
 		{DCM_IDSOPINSTANCEUID, DCM_UI, "", 1, sizeof(sop_inst_id), {(void *) &sop_inst_id}},
+		{DCM_RELSERIESINSTANCEUID, DCM_UI, "", 1, sizeof(series_uid), {(void *) &series_uid}},
 		{DCM_IMGBITSALLOCATED, DCM_US, "", 1, sizeof(bitsAllocated), {(void *) &bitsAllocated}},
 		{DCM_IMGBITSSTORED, DCM_US, "", 1, sizeof(bitsStored), {(void *) &bitsStored}},
 		{DCM_IMGHIGHBIT, DCM_US, "", 1, sizeof(highBit), {(void *) &highBit}},
@@ -384,7 +385,8 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 
 	DCM_ELEMENT listnew[] = {
 		{DCM_IMGLOSSYIMAGECOMPRESSION, DCM_CS, "", 1, sizeof(lossy_compression), {lossy_compression}},
-		{DCM_IDDERIVATIONDESCR, DCM_ST, "", 1, sizeof(qual), {qual} }
+		{DCM_IDDERIVATIONDESCR, DCM_ST, "", 1, sizeof(qual), {qual} },
+		{DCM_IDSOPINSTANCEUID, DCM_UI, "", 1, sizeof(sop_inst_id), {(void *) &sop_inst_id}}
 	};
 
 
@@ -431,6 +433,8 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 
 	orig_range=1; new_range=1;
 	orig_minval=0; new_minval=0;
+
+	series_uid[0] = 0;
 
 	cond = DCM_ParseObject(&object, list, (int) DIM_OF(list), NULL, 0, NULL);
 	if (cond != DCM_NORMAL) {
@@ -747,7 +751,14 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	samplesPerPixel = 1;
 	strcpy(lossy_compression,"01");
 	sprintf(qual, "JPEG %.1f:1 Q=%d (lossy)",(float)pixelLength/(float)mbs.used,quality);
-	//sprintf(sop_inst_id, "1.2.823.23902.111");
+	{
+		char temp[200];
+		sprintf(temp, ".69.%d", quality);
+		strcat(sop_inst_id, temp);
+
+		if (strlen(series_uid))
+			strcat(series_uid, temp);
+	}
 //printf("QUALITY: %s\n", qual);fflush(stdout);
 	if (DCM_ModifyElements(&object, list, (int) DIM_OF(list), NULL, 0, NULL) !=
 		 DCM_NORMAL) {
