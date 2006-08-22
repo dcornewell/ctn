@@ -407,7 +407,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	U32 pixelLength, elementLength, frameLength;
 	unsigned char *pixels;
 	unsigned short bitsAllocated, bitsStored, highBit, pixelRepresentation, samplesPerPixel, rows, columns;
-	unsigned short planarConfig;
+	unsigned short planarConfig, new_planarConfig;
 	int pixelCount;
 	int sampleCount;
 	char photometricInterpretation[DICOM_CS_LENGTH + 1];
@@ -425,6 +425,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	unsigned short ori_pv_as_us;
 	unsigned short new_pv_as_us;
 	int is_rgb;
+	int left_shift, right_shift;
 
 	DCM_ELEMENT p2 = { DCM_PXLPIXELDATA, DCM_OT, "", 1, 0, { NULL } };
 
@@ -452,7 +453,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	};
 
 	DCM_ELEMENT list_rgbonly[] = {
-		{DCM_IMGPLANARCONFIGURATION, DCM_US, "", 1, sizeof(planarConfig), {(void *) &planarConfig}}
+		{DCM_IMGPLANARCONFIGURATION, DCM_US, "", 1, sizeof(new_planarConfig), {(void *) &new_planarConfig}}
 	};
 
 
@@ -615,7 +616,21 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		fprintf(stderr,"Unsupported samples/pixel (%hu)\n",samplesPerPixel);
 		goto abort;
 	}
-	if(is_rgb && planarConfig!=0) {
+
+	if(!is_rgb) {
+		planarConfig=0;
+	}
+
+	if(!is_rgb) {
+		; // planarConfig is meaningless for grayscale images
+	}
+	else if(is_rgb && planarConfig==0) {
+		; // RGB planarConfig=contiguous images are supported.
+	}
+	else if(is_rgb && planarConfig==1 && bitsAllocated==8) {
+		; // 8-bit RGB planarConfig=separated images are supported.
+	}
+	else {
 		fprintf(stderr,"Unsupported planarConfig (%hu)\n",planarConfig);
 		goto abort;
 	}
@@ -817,12 +832,20 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		goto abort;
 	}
 
-#ifdef DEBUGFILE
-	if(highBit>(JPEGBITDEPTH-1)) {
-		printf("bit-shift: right %d\n",(int)(highBit-(JPEGBITDEPTH-1)));
+	left_shift=0; right_shift=0;
+	if(highBit>(JPEGBITDEPTH-1) && bitsAllocated==16) {
+		right_shift = highBit-(JPEGBITDEPTH-1);
 	}
 	else if(highBit<(JPEGBITDEPTH-1)) {
-		printf("bit-shift: left %d\n",(int)((JPEGBITDEPTH-1)-highBit));
+		left_shift = (JPEGBITDEPTH-1)-highBit;
+	}
+
+#ifdef DEBUGFILE
+	if(highBit>(JPEGBITDEPTH-1)) {
+		printf("bit-shift: right %d\n",right_shift);
+	}
+	else if(highBit<(JPEGBITDEPTH-1)) {
+		printf("bit-shift: left %d\n",left_shift);
 	}
     else {
 		printf("bit-shift: 0\n");
@@ -851,21 +874,41 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 					v = (unsigned short)tmp1;
 				}
 
-				if(highBit>(JPEGBITDEPTH-1)) tmprow[i] = v>>(highBit-(JPEGBITDEPTH-1));
-				else if(highBit<(JPEGBITDEPTH-1)) tmprow[i] = v<<((JPEGBITDEPTH-1)-highBit);
+				if(right_shift>0) tmprow[i] = v>>right_shift;
+				else if(left_shift>0) tmprow[i] = v<<left_shift;
 				else tmprow[i] = v;
 nextpix:
 				x2++;
 			}
 		}
-		else {  // bitsAllocated==8
+		else if(bitsAllocated==8 && planarConfig==1) {
+			unsigned char v;
+			// color-separated RGB
+			for(i=0;i<cinfo.image_width;i++) {
+				// red
+				v = pixels[j*cinfo.image_width+i];
+				tmprow[i*3]=v;
+				if(left_shift>0) tmprow[i*3]<<=left_shift;
+
+				// green
+				v = pixels[cinfo.image_width*(cinfo.image_height+j)+i];
+				tmprow[i*3+1]=v;
+				if(left_shift>0) tmprow[i*3+1]<<=left_shift;
+
+				// blue
+				v = pixels[cinfo.image_width*(2*cinfo.image_height+j)+i];
+				tmprow[i*3+2]=v;
+				if(left_shift>0) tmprow[i*3+2]<<=left_shift;
+			}
+		}
+		else if(bitsAllocated==8) {
 			unsigned char *x1;
 			unsigned short tmps1;
 			x1 = (unsigned char*)&pixels[j*in_bytes_per_row];
 
 			for(i=0;i<samples_per_row;i++) {
 				tmps1 = (unsigned short) (*x1);
-				if(highBit<(JPEGBITDEPTH-1)) tmprow[i] = tmps1 << ((JPEGBITDEPTH-1)-highBit);
+				if(left_shift>0) tmprow[i] = tmps1<<left_shift;
 				else tmprow[i] = tmps1;
 				x1++;
 			}
@@ -965,6 +1008,7 @@ nextpix:
 	}
 
 	if(is_rgb) {
+		new_planarConfig=0; // always consider JPEG images to be planarConfig=contiguous
 		DCM_ModifyElements(&object, list_rgbonly, (int) DIM_OF(list_rgbonly), NULL, 0, NULL);
 	}
 
