@@ -407,7 +407,9 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	U32 pixelLength, elementLength, frameLength;
 	unsigned char *pixels;
 	unsigned short bitsAllocated, bitsStored, highBit, pixelRepresentation, samplesPerPixel, rows, columns;
+	unsigned short planarConfig;
 	int pixelCount;
+	int sampleCount;
 	char photometricInterpretation[DICOM_CS_LENGTH + 1];
 	char lossy_compression[DICOM_CS_LENGTH + 1];
 	char sop_inst_id[80], series_uid[80];
@@ -422,6 +424,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	int has_padding, paddingValue, convert_padding, new_paddingValue;
 	unsigned short ori_pv_as_us;
 	unsigned short new_pv_as_us;
+	int is_rgb;
 
 	DCM_ELEMENT p2 = { DCM_PXLPIXELDATA, DCM_OT, "", 1, 0, { NULL } };
 
@@ -448,6 +451,10 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		{DCM_IDSOPINSTANCEUID, DCM_UI, "", 1, sizeof(sop_inst_id), {(void *) &sop_inst_id}}
 	};
 
+	DCM_ELEMENT list_rgbonly[] = {
+		{DCM_IMGPLANARCONFIGURATION, DCM_US, "", 1, sizeof(planarConfig), {(void *) &planarConfig}}
+	};
+
 
 	static DCM_TAG deleteTags[] = {
 		DCM_IMGRESCALEINTERCEPT,
@@ -471,10 +478,13 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	unsigned short adjusted_pixelRepresentation;
 	int adjusted_orig_minval;
 	int adjusted_orig_range;
-
+	int in_bytes_per_row;
+	int out_bytes_per_row;
+	int samples_per_row;
+	int tmp_int;
 
 	//DCM_Debug(verbose);
-	retval = DCM_MALLOCFAILURE;
+	retval = DCM_ELEMENTCREATEFAILED;
 	pixels = NULL;
 	compress_created=0;
 	compress_started=0;
@@ -530,6 +540,12 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		orig_slp = 1.0;
 	}
 
+	planarConfig=0;
+	cond = get_us_value(object, DCM_IMGPLANARCONFIGURATION, &tmp_int);
+	if(cond==DCM_NORMAL) {
+		planarConfig=(unsigned short)tmp_int;
+	}
+
 	has_padding=0;
 	paddingValue=0;
 	if(bitsAllocated==16 && pixelRepresentation) {
@@ -568,12 +584,21 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	printf("rows                %hu\n",  rows                );
 	printf("columns             %hu\n",  columns             );
 	printf("photometricInt.     %s\n",   photometricInterpretation);
+	printf("planarConfig        %hu\n",  planarConfig);
 	if(has_padding) printf("padding value:      %d\n",paddingValue);
 #endif
 
-	if(strcmp(photometricInterpretation, "MONOCHROME2") && 
-	    strcmp(photometricInterpretation, "MONOCHROME1"))
-	{
+	is_rgb=0;
+	if(!strcmp(photometricInterpretation, "RGB")) {
+		is_rgb=1;
+	}
+	else if(!strcmp(photometricInterpretation, "MONOCHROME2")) {
+		;
+	}
+	else if(!strcmp(photometricInterpretation, "MONOCHROME1")) {
+		;
+	}
+	else {
 		fprintf(stderr, "Unsupported photometricInterpretation \"%s\".\n",photometricInterpretation);
 		goto abort;
 	}
@@ -582,8 +607,16 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		fprintf(stderr,"Unsupported bitsAllocated (%hu)\n",bitsAllocated);
 	}
 
-	if(samplesPerPixel!=1) {
+	if(is_rgb && (samplesPerPixel!=3)) {
 		fprintf(stderr,"Unsupported samples/pixel (%hu)\n",samplesPerPixel);
+		goto abort;
+	}
+	if((!is_rgb) && (samplesPerPixel!=1)) {
+		fprintf(stderr,"Unsupported samples/pixel (%hu)\n",samplesPerPixel);
+		goto abort;
+	}
+	if(is_rgb && planarConfig!=0) {
+		fprintf(stderr,"Unsupported planarConfig (%hu)\n",planarConfig);
 		goto abort;
 	}
 
@@ -616,6 +649,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		exit(1);
 	}
 	pixelCount = (int) rows *(int) columns;
+	sampleCount = pixelCount * samplesPerPixel;
 
 
 	// read old pixels into memory
@@ -644,7 +678,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 		tmp_mask = 0xffff >> (bitsAllocated-highBit-1);
 		//printf("mask: %d\n",(int)tmp_mask);
 		tmp_pix=(unsigned short*)pixels;
-		for(i=0;i<pixelCount;i++) {
+		for(i=0;i<sampleCount;i++) {
 			*tmp_pix = (*tmp_pix) & tmp_mask;
 			tmp_pix++;
 		}
@@ -652,7 +686,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	else if(bitsAllocated==8 && highBit<7) {
 		unsigned char tmp_mask;
 		tmp_mask = 0xff >> (bitsAllocated-highBit-1);
-		for(i=0;i<pixelCount;i++) {
+		for(i=0;i<sampleCount;i++) {
 			pixels[i] = pixels[i] & tmp_mask;
 		}
 	}
@@ -660,7 +694,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	/////////////////////////////////
 	// Optimize use of new bits.
 
-	find_min_max_samples(pixels, pixelCount,
+	find_min_max_samples(pixels, sampleCount,
 	  bitsAllocated, bitsStored, highBit, pixelRepresentation,
   	  &minsampleval, &maxsampleval, has_padding, paddingValue);
 #ifdef DEBUGFILE
@@ -756,8 +790,14 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 
 	cinfo.image_width = columns;
 	cinfo.image_height = rows;
-	cinfo.input_components = 1;
-	cinfo.in_color_space = JCS_GRAYSCALE;
+	if(is_rgb) {
+		cinfo.input_components = 3;
+		cinfo.in_color_space = JCS_RGB;
+	}
+	else {
+		cinfo.input_components = 1;
+		cinfo.in_color_space = JCS_GRAYSCALE;
+	}
 
 	jpegx_set_defaults(&cinfo);
 
@@ -767,8 +807,27 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 
 	jpegx_start_compress(&cinfo, TRUE); compress_started=1;
 
-	tmprow = (JSAMPROW)calloc(sizeof(JSAMPLE)*1*cinfo.image_width,1);
-	if(!tmprow) goto abort;
+	samples_per_row = cinfo.image_width*samplesPerPixel;
+	in_bytes_per_row = samples_per_row * ((bitsAllocated>8)?2:1);
+	out_bytes_per_row = samples_per_row*sizeof(JSAMPLE);
+
+	tmprow = (JSAMPROW)calloc(out_bytes_per_row,1);
+	if(!tmprow) {
+		retval = DCM_MALLOCFAILURE;
+		goto abort;
+	}
+
+#ifdef DEBUGFILE
+	if(highBit>(JPEGBITDEPTH-1)) {
+		printf("bit-shift: right %d\n",(int)(highBit-(JPEGBITDEPTH-1)));
+	}
+	else if(highBit<(JPEGBITDEPTH-1)) {
+		printf("bit-shift: left %d\n",(int)((JPEGBITDEPTH-1)-highBit));
+	}
+    else {
+		printf("bit-shift: 0\n");
+	}
+#endif
 
 	j=0;
 	while(cinfo.next_scanline < cinfo.image_height) {
@@ -777,8 +836,8 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 			unsigned short v;
 			int tmp1;
 
-			x2 = (unsigned short*)&pixels[j*2*cinfo.image_width];
-			for(i=0;i<cinfo.image_width;i++) {
+			x2 = (unsigned short*)&pixels[j*in_bytes_per_row];
+			for(i=0;i<samples_per_row;i++) {
 				v = *x2;
 
 				if(v==ori_pv_as_us && convert_padding) {
@@ -802,8 +861,9 @@ nextpix:
 		else {  // bitsAllocated==8
 			unsigned char *x1;
 			unsigned short tmps1;
-			x1 = (unsigned char*)&pixels[j*cinfo.image_width];
-			for(i=0;i<cinfo.image_width;i++) {
+			x1 = (unsigned char*)&pixels[j*in_bytes_per_row];
+
+			for(i=0;i<samples_per_row;i++) {
 				tmps1 = (unsigned short) (*x1);
 				if(highBit<(JPEGBITDEPTH-1)) tmprow[i] = tmps1 << ((JPEGBITDEPTH-1)-highBit);
 				else tmprow[i] = tmps1;
@@ -813,7 +873,7 @@ nextpix:
 		}
 
 		if(pixelRepresentation) {  // convert signed samples to unsigned
-			for(i=0;i<cinfo.image_width;i++) {
+			for(i=0;i<samples_per_row;i++) {
 #if (JPEGBITDEPTH == 12)
 				if(tmprow[i]<2048) tmprow[i]+=2048;
 				else tmprow[i]-=2048;
@@ -873,7 +933,13 @@ nextpix:
 	bitsStored = JPEGBITDEPTH;
 	highBit = JPEGBITDEPTH-1;
 	pixelRepresentation = 0;
-	samplesPerPixel = 1;
+	if(is_rgb) {
+		samplesPerPixel = 3;
+		strcpy(photometricInterpretation,"YBR_FULL_422");
+	}
+	else {
+		samplesPerPixel = 1;
+	}
 	strcpy(lossy_compression,"01");
 	sprintf(qual, "JPEG %.1f:1 Q=%d (lossy)",(float)pixelLength/(float)mbs.used,quality);
 	{
@@ -896,6 +962,10 @@ nextpix:
 	// delete some elements
 	for (i = 0; i < DIM_OF(deleteTags); i++) {
 		(void) DCM_RemoveElement(&object, deleteTags[i]);
+	}
+
+	if(is_rgb) {
+		DCM_ModifyElements(&object, list_rgbonly, (int) DIM_OF(list_rgbonly), NULL, 0, NULL);
 	}
 
 	if(new_minval!=orig_minval || new_range!=orig_range) {
@@ -954,7 +1024,7 @@ abort:
 	if(pixels) free(pixels);
 	if(mbs.memblk) free(mbs.memblk);
 
-	return DCM_NORMAL;
+	return retval;
 }
 
 #ifdef DEBUGMAIN
@@ -1062,7 +1132,13 @@ main(int argc, char **argv)
 	cond = DCM_jpeg_compress_8(object, -1);
 #endif
 
-    if (cond != DCM_NORMAL) goto abort;
+    if (cond == DCM_NORMAL) {
+		printf("Compression successful.\n");
+	}
+	else {
+		printf("Compression failed (condition=%u).\n",(unsigned int)cond);
+		goto abort;
+	}
 
 	//fflush(stderr); fflush(stdout);
 	//COND_DumpConditions();
