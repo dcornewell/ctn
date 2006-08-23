@@ -5966,7 +5966,10 @@ readVRLength(const char *name, unsigned char **ptr, int fd, U32 * size,
 		e->representation = vrPtr->representation;
 	    } else {
 		if (e->tag != DCM_PXLPIXELDATA)
-		    return COND_PushCondition(DCM_VRMISMATCH,
+//We should just warn and not abort. --DRH.
+//		    return COND_PushCondition(DCM_VRMISMATCH,
+//			       DCM_Message(DCM_VRMISMATCH), vrCode, e->tag);
+		    COND_PushCondition(DCM_VRMISMATCH,
 			       DCM_Message(DCM_VRMISMATCH), vrCode, e->tag);
 	    }
 	}
