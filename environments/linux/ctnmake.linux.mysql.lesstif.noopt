@@ -10,10 +10,10 @@ LIBPATH_DATABASE =-L$(MYSQL_LIB)
 LIBS_X11 = -lXext -lXt -lX11
 LIBS_MOTIF = -lXm
 LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm
-LIBS_OS = -lz
-LIBS_DATABASE = -ltbl_mysql -lmysqlclient -lcrypt
+LIBS_OS = -lz -lm
+LIBS_DATABASE = -ltbl_mysql -lmysqlclient -lcrypt -lm -lz
 LIBS_LEX = -lfl
-LIBS_CTN = -lctn $(LIBPATH_DATABASE) -lmysqlclient -lcrypt
+LIBS_CTN = -lctn $(LIBPATH_DATABASE) -lmysqlclient -lcrypt -lz
 LIBS_CTN_NODB = -lctn 
 
 TBL_DB = tbl_mysql.o
