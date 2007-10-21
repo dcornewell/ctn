@@ -426,6 +426,7 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	unsigned short new_pv_as_us;
 	int is_rgb;
 	int left_shift, right_shift;
+	DCM_FILE_META *fileMeta;
 
 	DCM_ELEMENT p2 = { DCM_PXLPIXELDATA, DCM_OT, "", 1, 0, { NULL } };
 
@@ -987,11 +988,11 @@ nextpix:
 	sprintf(qual, "JPEG %.1f:1 Q=%d (lossy)",(float)pixelLength/(float)mbs.used,quality);
 	{
 		char temp[200];
-		sprintf(temp, ".69.%d", quality);
+		sprintf(temp, ".%d", quality);
 		strcat(sop_inst_id, temp);
 
 		if (strlen(series_uid))
-			strcat(series_uid, temp);
+			strlcat(series_uid, temp, DICOM_UI_LENGTH);
 	}
 //printf("QUALITY: %s\n", qual);fflush(stdout);
 	if (DCM_ModifyElements(&object, list, (int) DIM_OF(list), NULL, 0, NULL) !=
@@ -1050,7 +1051,14 @@ nextpix:
 
 	}
 
-//////////////////////
+	DCM_GetFileMeta(&object, &fileMeta);
+	(void) DCM_RemoveGroup(&object, DCM_GROUPFILEMETA);
+	DCM_DefaultFileMeta(&object, &fileMeta);
+	strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERJPEGEXTENDEDPROC2AND4);
+	DCM_SetFileMeta(&object, fileMeta);
+	DCM_FreeFileMeta(&fileMeta);
+
+	//////////////////////
 //	if (DCM_WriteFile(&object, DCM_ORDERLITTLEENDIAN, "out.dcm") != DCM_NORMAL) {
 //		fprintf(stderr, "Error writing new DCM image file\n");
 //		COND_DumpConditions();
