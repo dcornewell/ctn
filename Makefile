@@ -32,6 +32,7 @@ tools:
 	cd libsrc;		make install
 	cd apps;		make tools
 
+.PHONY: clean
 clean:
 	cd libsrc;		make clean
 	cd apps;		make clean
