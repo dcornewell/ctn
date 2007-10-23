@@ -1,0 +1,16 @@
+#!/bin/csh
+
+source ./environments/linux/linux.mysql.lesstif.noopt.env
+make clean
+if (`uname` == Darwin) then
+ find . -name "*.[oa]" -print0|xargs -0 rm
+ find libsrc -type l -print0|xargs -0 rm
+else
+ find . -name "*.[oa]" -print0|xargs -0 -r rm
+ find libsrc -type l -print0|xargs -0 -r rm
+endif
+rm -rf dist/bin
+rm -rf dist/runtime
+rm -f include/*.h
+rm -f apps/dcm_modify_object/gram.h
+
