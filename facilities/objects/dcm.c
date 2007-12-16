@@ -5464,7 +5464,13 @@ readFile(char *name, unsigned char *callerBuf, int fd, long size,
 	if (e.representation == DCM_CTX)
 	    ctxSensitiveLookup(object, &e);
 
-	if (e.representation == DCM_SQ) {
+	//
+	// DWJ - 12/14/2007
+	// If the element length is of unspecified length and the representation is unknown the can assume that this
+	// is a sequence.
+	//
+	if (e.representation == DCM_SQ ||
+		/* DWJ - 12/14/2007 */(e.length == (long)DCM_UNSPECIFIEDLENGTH && (e.representation == DCM_UN || e.representation == DCM_UNKNOWN))) {
 	    cond = newElementItem(&e, FALSE, &elementItem);
 	    if (cond != DCM_NORMAL)
 		return cond;
