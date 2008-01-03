@@ -64,7 +64,7 @@ extern "C" {
 */
 CONDITION
 SRV_AcceptServiceClass(DUL_PRESENTATIONCONTEXT * requestedCtx,
-		 DUL_SC_ROLE role, DUL_ASSOCIATESERVICEPARAMETERS * params);
+		 DUL_SC_ROLE role, DUL_ASSOCIATESERVICEPARAMETERS * params, int mode);
 CONDITION
 SRV_AcceptServiceClassWithOneXferSyntax(DUL_PRESENTATIONCONTEXT * requestedCtx,
 		 DUL_SC_ROLE role, DUL_ASSOCIATESERVICEPARAMETERS * params,

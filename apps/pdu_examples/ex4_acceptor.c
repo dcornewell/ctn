@@ -306,7 +306,7 @@ setuid root (see chmod)\n";
 			break;
 		    }
 		    cond = SRV_AcceptServiceClass(requestedCtx, scRole,
-						  &service);
+						  &service,0);
 		    if (cond == SRV_NORMAL) {
 			classCount++;
 		    } else {
