@@ -792,7 +792,7 @@ SRV_ProposeSOPClassWithXfer(const char*SOPClass, DUL_SC_ROLE role,
 
 CONDITION
 SRV_AcceptServiceClass(DUL_PRESENTATIONCONTEXT * requestedCtx,
-		  DUL_SC_ROLE role, DUL_ASSOCIATESERVICEPARAMETERS * params)
+		  DUL_SC_ROLE role, DUL_ASSOCIATESERVICEPARAMETERS * params, int mode)
 {
     int
         index;
@@ -873,13 +873,15 @@ SRV_AcceptServiceClass(DUL_PRESENTATIONCONTEXT * requestedCtx,
 	while (!transferFound && (transfer != NULL)) {
 	    if (strcmp(transfer->transferSyntax, DICOM_TRANSFERLITTLEENDIAN) == 0)
 		transferFound = TRUE;
-//		 else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERJPEGBASELINEPROCESS1)==0)  This needs to be supported somehow
-//		transferFound = TRUE;
-//		 else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERJPEGEXTENDEDPROC2AND4)==0)
-//		transferFound = TRUE;
-//		 else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERRLE)==0)
-//		transferFound = TRUE;
-		 else
+		 if (mode) {
+			 if (strcmp(transfer->transferSyntax, DICOM_TRANSFERJPEGBASELINEPROCESS1)==0)  //This needs to be supported somehow
+				 transferFound = TRUE;
+			 else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERJPEGEXTENDEDPROC2AND4)==0)
+				 transferFound = TRUE;
+			 else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERRLE)==0)
+				 transferFound = TRUE;
+		 }
+		 if (!transferFound)
 		transfer = LST_Next(&requestedCtx->proposedTransferSyntax);
 	}
 	if (transferFound) {
