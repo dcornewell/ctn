@@ -871,8 +871,12 @@ SRV_AcceptServiceClass(DUL_PRESENTATIONCONTEXT * requestedCtx,
 		    SRV_Message(SRV_LISTFAILURE), "SRV_AcceptServiceClass");
 	(void) LST_Position(&requestedCtx->proposedTransferSyntax, transfer);
 	while (!transferFound && (transfer != NULL)) {
-	    if (strcmp(transfer->transferSyntax, DICOM_TRANSFERLITTLEENDIAN) == 0)
-		transferFound = TRUE;
+	    if (strcmp(transfer->transferSyntax, DICOM_TRANSFERLITTLEENDIAN) == 0) {
+			 transferFound = TRUE;
+		 } else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERLITTLEENDIANEXPLICIT) == 0) {
+			 transferFound = TRUE;
+		 }
+
 		 if (mode) {
 			 if (strcmp(transfer->transferSyntax, DICOM_TRANSFERJPEGBASELINEPROCESS1)==0)  //This needs to be supported somehow
 				 transferFound = TRUE;
