@@ -513,7 +513,7 @@ SRV_RequestServiceClass(const char *SOPClass, DUL_SC_ROLE role,
 	    cond = DUL_MakePresentationCtx(&ctx, role, DUL_SC_ROLE_DEFAULT,
 				       contextID, 0, SOPClass, "",
 				       params->preferredTransferSyntax,
-				       DICOM_TRANSFERLITTLEENDIAN, 
+				     //  DICOM_TRANSFERLITTLEENDIAN, 
 				       NULL);
 	if (cond != DUL_NORMAL)
 	    return COND_PushCondition(SRV_PRESENTATIONCONTEXTERROR,
