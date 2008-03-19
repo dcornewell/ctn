@@ -1015,8 +1015,14 @@ nextpix:
 	sprintf(qual, "JPEG %.1f:1 Q=%d (lossy)",(float)pixelLength/(float)mbs.used,quality);
 	{
 		char temp[200];
+		int l;
+
 		sprintf(temp, ".%d", quality);
-		strcat(sop_inst_id, temp);
+		strlcat(sop_inst_id, temp, DICOM_UI_LENGTH);
+		l=strlen(sop_inst_id);
+		if (l) {
+			if (sop_inst_id[l-1]=='.') sop_inst_id[l-1]=0;  //truncate off the period if it was the last char.
+		}
 
 		if (strlen(series_uid))
 			strlcat(series_uid, temp, DICOM_UI_LENGTH);
