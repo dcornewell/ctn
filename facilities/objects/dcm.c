@@ -5989,7 +5989,7 @@ readVRLength(const char *name, unsigned char **ptr, int fd, U32 * size,
 	    } else if (e->tag == DCM_MAKETAG(0x0040, 0x0253)) {	/* Dumb implementations again, Performed Procedure Step ID */
 		;
 		/* Use the dictionary definition */
-	    } else if (e->representation == DCM_UN ||
+	    } else if (e->representation == DCM_UN || e->representation == DCM_UNKNOWN ||
 		       e->representation == DCM_CTX ||
 		       e->representation == DCM_RET ||
 		       vrPtr->representation == DCM_OW ||
