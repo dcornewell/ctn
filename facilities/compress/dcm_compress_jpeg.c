@@ -210,7 +210,7 @@ static void
 term_destination (j_compress_ptr cinfo)
 {
 	struct my_destmgr_struct * dest = (struct my_destmgr_struct *) cinfo->dest;
-	int *header = (int *)dest->mbs->memblk;
+	int *header;
 	size_t datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
 
 	/* Write any data remaining in the buffer */
@@ -221,6 +221,7 @@ term_destination (j_compress_ptr cinfo)
 		char zero = 0;
 		mbs_write_data(dest->mbs, &zero, 1);
 	}
+	header = (int *)dest->mbs->memblk;
 	header[3] = dest->mbs->used - sizeof(seg_header);
 	mbs_write_data(dest->mbs, seg_footer, sizeof(seg_footer));
 }
