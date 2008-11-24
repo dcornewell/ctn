@@ -461,8 +461,8 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 
 	DCM_ELEMENT list[] = {
 
-		{DCM_IDSOPINSTANCEUID, DCM_UI, "", 1, sizeof(sop_inst_id), {(void *) &sop_inst_id}},
-		{DCM_RELSERIESINSTANCEUID, DCM_UI, "", 1, sizeof(series_uid), {(void *) &series_uid}},
+		{DCM_IDSOPINSTANCEUID, DCM_UI, "", 1, DICOM_UI_LENGTH, {(void *) &sop_inst_id}},
+		{DCM_RELSERIESINSTANCEUID, DCM_UI, "", 1, DICOM_UI_LENGTH, {(void *) &series_uid}},
 		{DCM_IMGBITSALLOCATED, DCM_US, "", 1, sizeof(bitsAllocated), {(void *) &bitsAllocated}},
 		{DCM_IMGBITSSTORED, DCM_US, "", 1, sizeof(bitsStored), {(void *) &bitsStored}},
 		{DCM_IMGHIGHBIT, DCM_US, "", 1, sizeof(highBit), {(void *) &highBit}},
@@ -1019,14 +1019,14 @@ nextpix:
 		int l;
 
 		sprintf(temp, ".%d", quality);
-		strlcat(sop_inst_id, temp, DICOM_UI_LENGTH);
+		strlcat(sop_inst_id, temp, DICOM_UI_LENGTH-1);
 		l=strlen(sop_inst_id);
 		if (l) {
 			if (sop_inst_id[l-1]=='.') sop_inst_id[l-1]=0;  //truncate off the period if it was the last char.
 		}
 
 		if (strlen(series_uid))
-			strlcat(series_uid, temp, DICOM_UI_LENGTH);
+			strlcat(series_uid, temp, DICOM_UI_LENGTH-1);
 	}
 //printf("QUALITY: %s\n", qual);fflush(stdout);
 	if (DCM_ModifyElements(&object, list, (int) DIM_OF(list), NULL, 0, NULL) !=
