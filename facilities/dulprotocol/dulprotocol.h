@@ -112,6 +112,8 @@ typedef struct {
     char calledImplementationClassUID[DICOM_UI_LENGTH + 1];
     char calledImplementationVersionName[16 + 1];
     unsigned long peerMaxPDU;
+    char preferredTransferSyntax[DICOM_UI_LENGTH + 1];
+    int allowdup_PresCtx;
 }   DUL_ASSOCIATESERVICEPARAMETERS;
 
 typedef enum {
