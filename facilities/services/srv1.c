@@ -473,7 +473,8 @@ SRV_RequestServiceClass(const char *SOPClass, DUL_SC_ROLE role,
 	(void) LST_Position(&params->requestedPresentationContext, ctx);
     while (ctx != NULL) {
 	contextID += 2;
-	if (strcmp(SOPClass, ctx->abstractSyntax) == 0)
+	if (!&params->allowdup_PresCtx)
+		if (strcmp(SOPClass, ctx->abstractSyntax) == 0)
 	    return SRV_NORMAL;
 
 	ctx = LST_Next(&params->requestedPresentationContext);
