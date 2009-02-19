@@ -987,7 +987,7 @@ AE_3_AssociateConfirmationAccept(PRIVATE_NETWORKKEY ** network,
 					  "AE_3_AssociateConfirmationAccept",
 					  sizeof(*userPresentationCtx));
 
-	    (void) memset(userPresentationCtx, 0, sizeof(userPresentationCtx));
+	    (void) memset(userPresentationCtx, 0, sizeof(*userPresentationCtx));
 	    userPresentationCtx->result = prvCtx->result;
 	    userPresentationCtx->presentationContextID = prvCtx->contextID;
 	    userPresentationCtx->proposedTransferSyntax = NULL;
