@@ -47,8 +47,13 @@
 #define jpegx_write_scanlines     jpeg12_write_scanlines
 #define jpegx_finish_compress     jpeg12_finish_compress
 #define jpegx_destroy_compress    jpeg12_destroy_compress
-#define jpegx_finish_compress     jpeg12_finish_compress
-#define jpegx_destroy_compress    jpeg12_destroy_compress
+#define jpegx_create_decompress   jpeg12_create_decompress
+#define jpegx_read_header         jpeg12_read_header
+#define jpegx_destroy_decompress  jpeg12_destroy_decompress
+#define jpegx_resync_to_restart   jpeg12_resync_to_restart
+#define jpegx_start_decompress    jpeg12_start_decompress
+#define jpegx_read_scanlines      jpeg12_read_scanlines
+#define jpegx_finish_decompress   jpeg12_finish_decompress
 #else
 #define jpegx_std_error           jpeg_std_error
 #define jpegx_create_compress     jpeg_create_compress
@@ -59,8 +64,13 @@
 #define jpegx_write_scanlines     jpeg_write_scanlines
 #define jpegx_finish_compress     jpeg_finish_compress
 #define jpegx_destroy_compress    jpeg_destroy_compress
-#define jpegx_finish_compress     jpeg_finish_compress
-#define jpegx_destroy_compress    jpeg_destroy_compress
+#define jpegx_create_decompress   jpeg_create_decompress
+#define jpegx_read_header         jpeg_read_header
+#define jpegx_destroy_decompress  jpeg_destroy_decompress
+#define jpegx_resync_to_restart   jpeg_resync_to_restart
+#define jpegx_start_decompress    jpeg_start_decompress
+#define jpegx_read_scanlines      jpeg_read_scanlines
+#define jpegx_finish_decompress   jpeg_finish_decompress
 #endif
 
 
@@ -78,6 +88,23 @@ static void my_error_exit_encode (j_common_ptr cinfo)
 	longjmp(myerr->setjmp_buffer, 1);
 }
 
+static void my_error_exit_decode (j_common_ptr cinfo)
+{
+	struct my_error_mgr * myerr = (struct my_error_mgr *) cinfo->err;
+	longjmp(myerr->setjmp_buffer, 1);
+}
+
+struct ucontext {
+	int jpeg_image_data_len;
+	unsigned char *jpeg_image_data;
+	DCM_OBJECT *object;
+	void *ctx;  // context pointer for DCM_GetSequenceList
+	int source_data_pos;
+	JSAMPLE *unc_data;
+	int unc_data_len; // measured in bytes
+	int nsamples;
+};
+
 struct memblk_struct {
   unsigned char *memblk;
   unsigned int memblk_alloc;
@@ -91,10 +118,18 @@ struct my_destmgr_struct {
   struct memblk_struct *mbs;
 };
 
+struct my_srcmgr_struct {
+  struct jpeg_source_mgr pub; /* public fields */
+  JOCTET * buffer;      /* start of buffer */
+  struct ucontext *uc;
+};
 
 #define OUTPUT_BUF_SIZE  4096
 int seg_header[] = {0xe000fffe, 0x00000000, 0xe000fffe, 0x00000000};
 int seg_footer[] = {0xe0ddfffe, 0x00000000};
+
+#define MY_JPEG_INPUT_BUF_SIZE 16384
+
 
 static size_t strlcat(char *dst, const char *src, size_t siz)
 {
@@ -351,7 +386,92 @@ static CONDITION set_ds_value(DCM_OBJECT *object, DCM_TAG tag, double value)
 	return DCM_NORMAL;
 }
 
-void find_min_max_samples_16unsigned(unsigned char *pixels, int npixels,
+static CONDITION get_ui_value(DCM_OBJECT *object, DCM_TAG tag, char *value, int value_len)
+{
+	DCM_ELEMENT ele;
+	CONDITION cond;
+	U32 elementLength = 0;
+	void *ctx;
+
+	memset(&ele,0,sizeof(DCM_ELEMENT));
+
+	ele.tag = tag;
+	ele.length = value_len - 1;
+	ele.d.ot = value;
+	ctx = NULL;
+
+	cond = DCM_GetElementValue(&object, &ele, &elementLength, &ctx);
+	if(cond != DCM_NORMAL) {
+		return cond;
+	}
+	if(elementLength>(value_len-2)) return DCM_ELEMENTNOTFOUND;
+	value[elementLength] = '\0';
+	return DCM_NORMAL;
+}
+
+static CONDITION set_cs_value(DCM_OBJECT *object, DCM_TAG tag, char *value)
+{
+	DCM_ELEMENT ele;
+	CONDITION cond;
+	char tmpstring[DICOM_CS_LENGTH + 1];
+	int len;
+
+
+	memset(&ele,0,sizeof(DCM_ELEMENT));
+	memset(tmpstring,' ',sizeof(tmpstring));
+
+	len = strlen(value);
+	if(len>DICOM_CS_LENGTH) len=DICOM_CS_LENGTH;
+	memcpy(tmpstring,value,len);
+	if(len%2) len++;
+
+	ele.tag = tag;
+	ele.representation = DCM_CS;
+	ele.multiplicity = 1;
+	ele.length = len;
+
+	ele.d.string = tmpstring;
+
+	DCM_RemoveElement(&object,tag);
+	cond = DCM_AddElement(&object, &ele);
+	if (cond != DCM_NORMAL) {
+		fprintf(stderr, "Error adding element to object\n");
+		COND_DumpConditions();
+	}
+	return cond;
+}
+
+static CONDITION set_ui_value(DCM_OBJECT *object, DCM_TAG tag, char *value)
+{
+	DCM_ELEMENT ele;
+	CONDITION cond;
+	int len;
+
+	memset(&ele,0,sizeof(DCM_ELEMENT));
+
+	len = strlen(value);
+
+	// Include the trailing NUL if and only if it's necessary to pad the
+	// length to an even number.
+	if(len%2) len++;
+
+	ele.tag = tag;
+	ele.representation = DCM_UI;
+	ele.multiplicity = 1;
+	ele.length = len;
+
+	ele.d.string = value;
+
+	DCM_RemoveElement(&object,tag);
+	cond = DCM_AddElement(&object, &ele);
+	if (cond != DCM_NORMAL) {
+		fprintf(stderr, "Error adding element to object\n");
+		COND_DumpConditions();
+	}
+	return cond;
+}
+
+static void find_min_max_samples_16unsigned(unsigned char *pixels, int npixels,
   int *pminval, int *pmaxval, int has_padding, int paddingValue)
 {
 	int i;
@@ -374,7 +494,7 @@ void find_min_max_samples_16unsigned(unsigned char *pixels, int npixels,
 	*pmaxval = maxval;
 }
 
-void find_min_max_samples_16signed(unsigned char *pixels, int npixels,
+static void find_min_max_samples_16signed(unsigned char *pixels, int npixels,
   int *pminval, int *pmaxval, int has_padding, int paddingValue)
 {
 	int i;
@@ -398,7 +518,7 @@ void find_min_max_samples_16signed(unsigned char *pixels, int npixels,
 }
 
 
-void find_min_max_samples(unsigned char *pixels, int npixels,
+static void find_min_max_samples(unsigned char *pixels, int npixels,
   int bitsAllocated, int bitsStored, int highBit, int pixelRepresentation,
   int *pminval, int *pmaxval, int has_padding, int paddingValue)
 {
@@ -1113,7 +1233,547 @@ abort:
 	return retval;
 }
 
+#ifdef DEBUGFILE
+static void dumpmem(const unsigned char *mem, int len)
+{
+	int i;
+	for(i=0;i<len;i++) {
+		printf("%02x ",(int)mem[i]);
+	}
+	printf("\n");
+}
+#endif
+
+// Read the next 'len' bytes of pixel data.
+// Returns nonzero if successful.
+static int read_pixel_data(DCM_OBJECT *object, void **pctx, void *buf, int len)
+{
+	CONDITION cond;
+	DCM_ELEMENT ele;
+	unsigned long amtread = 0;
+
+	memset(&ele,0,sizeof(DCM_ELEMENT));
+
+	ele.tag = DCM_PXLPIXELDATA;
+	ele.length = len;
+	ele.d.ot = buf;
+
+	cond = DCM_GetElementValue(&object,&ele,&amtread,pctx);
+#ifdef DEBUGFILE
+	fprintf(stderr,"Read %d bytes\n",(int)amtread);
+	dumpmem((unsigned char*)ele.d.ot,len>50?50:len);
+#endif
+	
+	// (cond & 0xf) is the severity. 2==error, 4==fatal.
+	// We can't just compare to DCM_NORMAL, because it will return a warning
+	// code if not all the data was read, and by design we don't read all the
+	// data at once.
+	if((cond&0xf)==2 || (cond&0xf)==4) {
+		fprintf(stderr,"Error calling GetElementValue (%d)\n",(int)cond);
+		COND_DumpConditions();
+		return 0;
+	}
+
+	return 1;
+}
+
+static void my_init_source_fn(j_decompress_ptr cinfo)
+{
+	struct my_srcmgr_struct *src;
+	src = (struct my_srcmgr_struct*)cinfo->src;
+
+	// This memory will (we assume) be automatically freed by libjpeg at some point,
+	// when it frees the memory pool.
+	src->buffer = (JOCTET*) (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+            MY_JPEG_INPUT_BUF_SIZE * sizeof(JOCTET));
+	src->pub.next_input_byte = src->buffer;
+	src->pub.bytes_in_buffer = 0;
+}
+
+static boolean my_fill_input_buffer_fn(j_decompress_ptr cinfo)
+{
+	struct my_srcmgr_struct *src;
+	int i,j;
+	int bytes_to_copy;
+
+	src = (struct my_srcmgr_struct*)cinfo->src;
+
+	bytes_to_copy = src->uc->jpeg_image_data_len - src->uc->source_data_pos;
+	if(bytes_to_copy > MY_JPEG_INPUT_BUF_SIZE) bytes_to_copy = MY_JPEG_INPUT_BUF_SIZE;
+#ifdef DEBUGFILE
+	fprintf(stderr,"[read: %d bytes]\n",bytes_to_copy);
+#endif
+	if(bytes_to_copy>0) {
+		memcpy(src->buffer, &src->uc->jpeg_image_data[src->uc->source_data_pos], bytes_to_copy);
+	}
+
+	src->pub.next_input_byte = src->buffer;
+
+	if(bytes_to_copy<MY_JPEG_INPUT_BUF_SIZE) {
+		// If we didn't fill the whole buffer (presumably because end-of-file
+		// was reached), fill remaining bytes with EOI markers. Libjpeg
+		// doesn't care about the exact file size.
+		j=0;
+		for(i=bytes_to_copy;i<MY_JPEG_INPUT_BUF_SIZE;i++) {
+			if(j==0) src->buffer[i]=0xff;
+			else src->buffer[i]=0xd9;
+			j = !j;
+		}
+	}
+	src->pub.bytes_in_buffer = MY_JPEG_INPUT_BUF_SIZE;
+	src->uc->source_data_pos += bytes_to_copy;
+	return TRUE;
+}
+
+static void my_skip_input_data_fn(j_decompress_ptr cinfo, long num_bytes)
+{
+	struct my_srcmgr_struct *src;
+	src = (struct my_srcmgr_struct*)cinfo->src;
+
+	if(num_bytes<=0) return;
+	// If the skip doesn't advance beyond the end of data already
+	// buffered, just advance the buffer pointer, and decrease
+	// the bytes-left count.
+	if(num_bytes<(long)src->pub.bytes_in_buffer) {
+		src->pub.next_input_byte += num_bytes;
+		src->pub.bytes_in_buffer -= num_bytes;
+		return;
+	}
+
+	src->uc->source_data_pos += num_bytes;
+	src->pub.next_input_byte = src->buffer;
+	src->pub.bytes_in_buffer = 0;
+}
+
+static void my_term_source_fn(j_decompress_ptr cinfo)
+{
+}
+
+// Set up custom read-JPEG functions
+static int init_src_mgr(j_decompress_ptr cinfo, struct ucontext *uc)
+{
+	struct my_srcmgr_struct *src;
+	cinfo->src = (struct jpeg_source_mgr *)
+	       (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
+                  sizeof(struct my_srcmgr_struct));
+
+	src = (struct my_srcmgr_struct*)cinfo->src;
+	src->uc = uc;
+	src->buffer = NULL;
+	src->pub.init_source = my_init_source_fn;
+	src->pub.fill_input_buffer = my_fill_input_buffer_fn;
+	src->pub.skip_input_data = my_skip_input_data_fn;
+	src->pub.resync_to_restart = jpegx_resync_to_restart; // use default
+	src->pub.term_source = my_term_source_fn;
+	return 1;
+}
+
+
+// Reads data representing a (presumably) jpeg image, and returns it in
+// the ucontext struct.
+// Returns nonzero if successful.
+// If successful and uc->jpeg_image_data_len>0, uc->jpeg_image_data will be
+// a malloc'd block of memory.
+static int read_next_image_item(struct ucontext *uc)
+{
+	unsigned char buf[4];
+	int ret;
+
+#ifdef DEBUGFILE
+	fprintf(stderr,"Reading next image item...\n");
+#endif
+
+	if(uc->jpeg_image_data) {
+		free(uc->jpeg_image_data);
+		uc->jpeg_image_data = NULL;
+	}
+
+	uc->jpeg_image_data_len=0;
+
+	// Read the group/element, which should be either (fffe,e000) for "Item",
+	// or (fffe,e0dd) for "Sequence Delimitation item".
+	ret = read_pixel_data(uc->object,&uc->ctx,(void*)buf,4);
+	if(!ret) return 0;
+
+	if(buf[0]==0xfe && buf[1]==0xff && buf[2]==0x00 && buf[3]==0xe0) {
+		;
+	}
+	else {
+		return 0;
+	}
+
+	// Read the item length.
+	ret = read_pixel_data(uc->object,&uc->ctx,(void*)buf,4);
+	if(!ret) return 0;
+
+	uc->jpeg_image_data_len = buf[0] | (buf[1]<<8) | (buf[2]<<16) | (buf[3]<<24);
+	if(uc->jpeg_image_data_len<0 || uc->jpeg_image_data_len>200000000) return 0; // image too big, or invalid length
+
+	if(uc->jpeg_image_data_len==0) {
+		// Data is zero-length. That's okay.
+		return 1;
+	}
+
+	uc->jpeg_image_data = malloc(uc->jpeg_image_data_len);
+	if(!uc->jpeg_image_data) {
+		uc->jpeg_image_data_len=0;
+		return 0;
+	}
+
+
+	ret = read_pixel_data(uc->object,&uc->ctx,uc->jpeg_image_data,uc->jpeg_image_data_len);
+	if(!ret) {
+		free(uc->jpeg_image_data);
+		uc->jpeg_image_data=NULL;
+		return 0;
+	}
+
+	return 1;
+}
+
+// Uncompress the memory-mapped jpeg file in uc->jpeg_image_data.
+// Put uncompressed image in uc->u_image_data.
+static int uncompress_routine(struct ucontext *uc)
+{
+	struct jpeg_decompress_struct cinfo;
+	struct my_error_mgr jerr;
+	int cinfo_valid;
+	int retval;
+	char errmsg[JMSG_LENGTH_MAX];
+	int j_width;
+	int j_height;
+	int j_linesize;
+	int j_samplesperrow;
+	int j;
+	JSAMPROW rowptr[1];
+
+	retval=0;
+	cinfo_valid=0;
+
+	memset(&cinfo,0,sizeof(struct jpeg_decompress_struct));
+	memset(&jerr,0,sizeof(struct my_error_mgr));
+
+	cinfo.err = jpeg_std_error(&jerr.pub);
+	jerr.pub.error_exit = my_error_exit_decode;
+	if (setjmp(jerr.setjmp_buffer)) {
+		(*cinfo.err->format_message) ((j_common_ptr)&cinfo, errmsg);
+		fprintf(stderr,"JPEG decompression error: %s\n",errmsg);
+		goto done;
+	}
+
+	jpegx_create_decompress(&cinfo);
+	cinfo_valid = 1;
+
+	uc->source_data_pos = 0;
+
+	init_src_mgr(&cinfo,uc);
+	jpegx_read_header(&cinfo,TRUE);
+
+
+	jpegx_start_decompress(&cinfo);
+
+	uc->nsamples = cinfo.output_components;
+	if(uc->nsamples!=1 && uc->nsamples!=3) {
+		fprintf(stderr,"Unsupported JPEG number of components\n");
+		goto done;
+	}
+
+	j_width = cinfo.output_width;
+	j_height = cinfo.output_height;
+	j_samplesperrow = j_width * uc->nsamples;
+	j_linesize =j_samplesperrow * sizeof(JSAMPLE);
+
+	uc->unc_data_len = j_linesize * j_height;
+	uc->unc_data = malloc(uc->unc_data_len);
+	if(!uc->unc_data) {
+		fprintf(stderr,"Failed to allocate uncompressed image data\n");
+		goto done;
+	}
+
+	while (cinfo.output_scanline < cinfo.output_height) {
+		j=cinfo.output_scanline;
+		rowptr[0] = &uc->unc_data[j*j_samplesperrow];
+		jpegx_read_scanlines(&cinfo, rowptr, 1);
+	}
+
+	jpegx_finish_decompress(&cinfo);
+	retval = 1;
+
+done:
+
+	if(cinfo_valid) jpegx_destroy_decompress(&cinfo);
+
+	return retval;
+}
+
+#if (JPEGBITDEPTH == 12)
+CONDITION DCM_jpeg_uncompress_12(DCM_OBJECT *object)
+#else
+CONDITION DCM_jpeg_uncompress_8(DCM_OBJECT *object)
+#endif
+{
+	CONDITION retval = DCM_ELEMENTCREATEFAILED;
+	CONDITION cond;
+	DCM_ELEMENT ele;
+	DCM_ELEMENT ele_pix;
+	U32 pixelLength;
+	int ret;
+	struct ucontext uc;
+	char buf[200];
+
+	memset(&uc,0,sizeof(struct ucontext));
+	uc.object = object;
+
+	// find size of old pixels
+	cond = DCM_GetElement(&object, DCM_PXLPIXELDATA, &ele);
+	if (cond != DCM_NORMAL) {
+		fprintf(stderr, "Error getting info about PixelData element\n");
+		COND_DumpConditions();
+		retval = cond;
+		goto done;
+	}
+
+#ifdef DEBUGFILE
+	fprintf(stderr,"tag = %d\n",(int)ele.tag);
+	fprintf(stderr,"rep = %d\n",(int)ele.representation);
+	ele.description[47] = '\0';
+	fprintf(stderr,"descr = %s\n", ele.description);
+    fprintf(stderr,"mult = %d\n",(int)ele.multiplicity);
+    fprintf(stderr,"len = %u\n",(unsigned int)ele.length);
+	fprintf(stderr,"val = %p\n",ele.d.ot);
+#endif
+
+	// find size of old pixels
+	cond = DCM_GetElementSize(&object, DCM_PXLPIXELDATA, &pixelLength);
+	if (cond != DCM_NORMAL) {
+		fprintf(stderr, "Error finding length of pixel data\n");
+		COND_DumpConditions();
+		retval = cond;
+		goto done;
+	}
+#ifdef DEBUGFILE
+	fprintf(stderr,"pixel length: %d\n",(int)pixelLength);
+#endif
+
+	if(pixelLength == 0xffffffff) {
+
+		uc.ctx = NULL;
+
+		// Read the first item (an index that we don't need)
+		ret = read_next_image_item(&uc);
+		if(!ret) goto done;
+
+		// Read the second item (the first image)
+		ret = read_next_image_item(&uc);
+		if(!ret) goto done;
+		if(uc.jpeg_image_data_len<1) goto done;
+
+		ret = uncompress_routine(&uc);
+		if(!ret) goto done;
+
+	}
+	else {
+		fprintf(stderr,"This type of DICOM image is not supported.\n");
+	}
+
+	// Removed the old (compressed) image
+	DCM_RemoveElement(&object, DCM_PXLPIXELDATA);
+
+	// Add the new (uncompressed) image
+	memset(&ele_pix,0,sizeof(DCM_ELEMENT));
+	ele_pix.tag = DCM_PXLPIXELDATA;
+#if (JPEGBITDEPTH == 12)
+	ele_pix.representation = DCM_OW;
+#else
+	ele_pix.representation = DCM_OB;
+#endif
+	ele_pix.multiplicity = 1;
+	ele_pix.length = (U32)uc.unc_data_len;
+	ele_pix.d.ot = uc.unc_data;
+
+	cond = DCM_AddElement(&object,&ele_pix);
+	if (cond != DCM_NORMAL) {
+		fprintf(stderr, "Error adding pixel data\n");
+		COND_DumpConditions();
+		retval = cond;
+		goto done;
+	}
+
+	if(uc.nsamples==3) {
+		cond = set_cs_value(object,DCM_IMGPHOTOMETRICINTERP,"RGB");
+		if(cond!=DCM_NORMAL) {
+			retval=cond;
+			goto done;
+		}
+	}
+
+	cond = set_cs_value(object,DCM_IMGLOSSYIMAGECOMPRESSION,"01");
+	if(cond!=DCM_NORMAL) {
+		retval=cond;
+		goto done;
+	}
+
+	cond = get_ui_value(object,DCM_IDSOPINSTANCEUID,buf,sizeof(buf));
+	if(cond==DCM_NORMAL) {
+		// FIXME: figure out the best way to modify the SOP instance ID.
+		strlcat(buf,".123",sizeof(buf));
+
+		cond = set_ui_value(object,DCM_IDSOPINSTANCEUID,buf);
+		if(cond!=DCM_NORMAL) {
+			retval=cond;
+			goto done;
+		}
+	}
+
+	cond = get_ui_value(object,DCM_RELSERIESINSTANCEUID,buf,sizeof(buf));
+	if(cond==DCM_NORMAL) {
+		// FIXME: figure out the best way to modify the series ID.
+		strlcat(buf,".123",sizeof(buf));
+
+		cond = set_ui_value(object,DCM_RELSERIESINSTANCEUID,buf);
+		if(cond!=DCM_NORMAL) {
+			retval=cond;
+			goto done;
+		}
+	}
+
+
+	retval=DCM_NORMAL;
+
+done:
+	if(uc.jpeg_image_data) free(uc.jpeg_image_data);
+	if(uc.unc_data) free(uc.unc_data);
+	return retval;
+}
+
+
 #ifdef DEBUGMAIN
+
+// Higher-level function than DCM_jpeg_compress_12. Sets the transfer syntax, etc.
+#if (JPEGBITDEPTH == 12)
+CONDITION DCM_jpeg_compress_12_highlevel(DCM_OBJECT *object, int options, int quality)
+#else
+CONDITION DCM_jpeg_compress_8_highlevel(DCM_OBJECT *object, int options, int quality)
+#endif
+{
+	DCM_FILE_META *fileMeta;
+	CONDITION cond = DCM_ELEMENTCREATEFAILED;
+ 
+
+	if ((options & DCM_PART10FILE) != 0)
+		(void) DCM_RemoveGroup(&object, 0x0002);
+
+	cond = DCM_DefaultFileMeta(&object, &fileMeta);
+	if (cond != DCM_NORMAL)
+		goto done;
+
+	if ((options & DCM_ORDERMASK) == DCM_EXPLICITBIGENDIAN)
+		strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERBIGENDIANEXPLICIT);
+	if ((options & DCM_ORDERMASK) == DCM_EXPLICITLITTLEENDIAN)
+		strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERLITTLEENDIANEXPLICIT);
+
+#if (JPEGBITDEPTH == 12)
+	strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERJPEGEXTENDEDPROC2AND4);
+#else
+	strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERJPEGBASELINEPROCESS1);
+#endif
+
+	cond = DCM_SetFileMeta(&object, fileMeta);
+	if (cond != DCM_NORMAL) {
+		fflush(stderr);
+		fprintf(stderr,"SetFileMeta failed, quitting\n");
+		goto done;
+	}
+
+	cond = DCM_FreeFileMeta(&fileMeta);
+	if (cond != DCM_NORMAL) {
+		goto done;
+	}
+
+#if (JPEGBITDEPTH == 12)
+	cond = DCM_jpeg_compress_12(object, -1);
+#else
+	cond = DCM_jpeg_compress_8(object, -1);
+#endif
+
+done:
+	return cond;
+}
+
+
+// Higher-level function than DCM_jpeg_uncompress_x. Sets the transfer syntax, etc.
+#if (JPEGBITDEPTH == 12)
+CONDITION DCM_jpeg_uncompress_12_highlevel(DCM_OBJECT *object, int options)
+#else
+CONDITION DCM_jpeg_uncompress_8_highlevel(DCM_OBJECT *object, int options)
+#endif
+{
+	DCM_FILE_META *fileMeta;
+	CONDITION cond = DCM_ELEMENTCREATEFAILED;
+	unsigned int order_and_vr;
+
+	order_and_vr = (options & DCM_ORDERMASK);
+	switch(order_and_vr) {
+	case DCM_ORDERNATIVE:
+	case DCM_ORDERLITTLEENDIAN:
+	case DCM_EXPLICITLITTLEENDIAN:
+		break;
+	case DCM_ORDERBIGENDIAN:
+	case DCM_EXPLICITBIGENDIAN:
+		fprintf(stderr,"Big-endian order not supported\n");
+		goto done;
+	default:
+		fprintf(stderr,"'Order' setting not support\n");
+		goto done;
+	}
+
+ 
+	if (options & DCM_PART10FILE) {
+		cond = DCM_DefaultFileMeta(&object, &fileMeta);
+		if (cond != DCM_NORMAL)
+			goto done;
+	
+		switch(order_and_vr) {
+		case DCM_EXPLICITBIGENDIAN:
+			strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERBIGENDIANEXPLICIT);
+			break;
+		case DCM_EXPLICITLITTLEENDIAN:
+			strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERLITTLEENDIANEXPLICIT);
+			break;
+		case DCM_ORDERLITTLEENDIAN:
+		case DCM_ORDERNATIVE:
+			strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERLITTLEENDIAN);
+			break;
+		}
+
+		cond = DCM_SetFileMeta(&object, fileMeta);
+		if (cond != DCM_NORMAL) {
+			fflush(stderr);
+			fprintf(stderr,"SetFileMeta failed, quitting\n");
+			goto done;
+		}
+	
+		cond = DCM_FreeFileMeta(&fileMeta);
+		if (cond != DCM_NORMAL) {
+			goto done;
+		}
+	}
+	else {
+		(void) DCM_RemoveGroup(&object, 0x0002);
+	}
+
+
+
+#if (JPEGBITDEPTH == 12)
+	cond = DCM_jpeg_uncompress_12(object);
+#else
+	cond = DCM_jpeg_uncompress_8(object);
+#endif
+
+done:
+	return cond;
+}
+
 
 static void
 usageerror()
@@ -1141,7 +1801,7 @@ main(int argc, char **argv)
         options = DCM_ORDERLITTLEENDIAN | DCM_PART10FILE;
     long
         openOptions = DCM_ORDERLITTLEENDIAN;
-    DCM_FILE_META *fileMeta;
+	int uncompress = 0;
 
     while (--argc > 0 && (*++argv)[0] == '-') {
 	switch (*(argv[0] + 1)) {
@@ -1159,6 +1819,9 @@ main(int argc, char **argv)
 	    break;
 	case 't':
 	    openOptions |= DCM_PART10FILE;
+	    break;
+	case 'u':
+	    uncompress = 1;
 	    break;
 	case 'v':
 	    verbose = TRUE;
@@ -1179,51 +1842,44 @@ main(int argc, char **argv)
     THR_Init();
     DCM_Debug(verbose);
 
+	if(uncompress) {
+		openOptions = (openOptions & ~DCM_ORDERMASK) | DCM_EXPLICITLITTLEENDIAN 
+		   | DCM_PART10FILE;
+	}
+
     cond = DCM_OpenFile(*argv, openOptions, &object);
     if (cond != DCM_NORMAL)
 	goto abort;
 
-    if ((options & DCM_PART10FILE) != 0)
-	(void) DCM_RemoveGroup(&object, 0x0002);
-
-    cond = DCM_DefaultFileMeta(&object, &fileMeta);
-    if (cond != DCM_NORMAL)
-	goto abort;
-
-    if ((options & DCM_ORDERMASK) == DCM_EXPLICITBIGENDIAN)
-        strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERBIGENDIANEXPLICIT);
-    if ((options & DCM_ORDERMASK) == DCM_EXPLICITLITTLEENDIAN)
-        strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERLITTLEENDIANEXPLICIT);
-
+	if(uncompress) {
 #if (JPEGBITDEPTH == 12)
-	strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERJPEGEXTENDEDPROC2AND4);
+		cond = DCM_jpeg_uncompress_12_highlevel(object, options);
 #else
-	strcpy(fileMeta->transferSyntaxUID, DICOM_TRANSFERJPEGBASELINEPROCESS1);
+		cond = DCM_jpeg_uncompress_8_highlevel(object, options);
 #endif
 
-    cond = DCM_SetFileMeta(&object, fileMeta);
-    if (cond != DCM_NORMAL) {
-		fflush(stderr);
-		printf("SetFileMeta failed, quitting\n");
-		goto abort;
-	}
-
-    cond = DCM_FreeFileMeta(&fileMeta);
-    if (cond != DCM_NORMAL)
-	goto abort;
-
-#if (JPEGBITDEPTH == 12)
-	cond = DCM_jpeg_compress_12(object, -1);
-#else
-	cond = DCM_jpeg_compress_8(object, -1);
-#endif
-
-    if (cond == DCM_NORMAL) {
-		printf("Compression successful.\n");
+		if (cond == DCM_NORMAL) {
+			fprintf(stderr,"Decompression successful.\n");
+		}
+		else {
+			fprintf(stderr,"Decompression failed (condition=%u).\n",(unsigned int)cond);
+			goto abort;
+		}
 	}
 	else {
-		printf("Compression failed (condition=%u).\n",(unsigned int)cond);
-		goto abort;
+#if (JPEGBITDEPTH == 12)
+		cond = DCM_jpeg_compress_12_highlevel(object, options, -1);
+#else
+		cond = DCM_jpeg_compress_8_highlevel(object, options, -1);
+#endif
+
+		if (cond == DCM_NORMAL) {
+			fprintf(stderr,"Compression successful.\n");
+		}
+		else {
+			fprintf(stderr,"Compression failed (condition=%u).\n",(unsigned int)cond);
+			goto abort;
+		}
 	}
 
 	//fflush(stderr); fflush(stdout);
@@ -1235,7 +1891,7 @@ main(int argc, char **argv)
     (void) DCM_CloseObject(&object);
     if (cond != DCM_NORMAL) {
 		fflush(stderr);
-		printf("WriteFile failed (%d / %d), aborting\n",(int)cond, (int)(DCM_NORMAL));
+		fprintf(stderr,"WriteFile failed (%d / %d), aborting\n",(int)cond, (int)(DCM_NORMAL));
 		goto abort;
 	}
 
