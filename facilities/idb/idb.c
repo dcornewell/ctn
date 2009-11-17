@@ -51,6 +51,7 @@
 
 static char rcsid[] = "$Revision: 1.48 $ $RCSfile: idb.c,v $";
 #include <stdio.h>
+#include <stdlib.h>
 #ifndef IRIX
 /*#include <unistd.h> */
 #endif
