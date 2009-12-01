@@ -721,8 +721,10 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	}
 	frameLength = (U32) samplesPerPixel *(U32) rows *(U32) columns *(U32) (bitsAllocated / 8);
 	if (pixelLength != frameLength) {
-		fprintf(stderr, "Computed pixel length differs from actual.\n");
-		exit(2);
+		fprintf(stderr, "Computed pixel length differs from actual (computed=%u, actual=%d). "
+		  "This probably means that this type of DICOM file is not supported by "
+		  "the compression utility.\n",(unsigned int)frameLength,(int)pixelLength);
+		goto abort;
 	}
 
 #ifdef DEBUGFILE
@@ -810,7 +812,8 @@ CONDITION DCM_jpeg_compress_8(DCM_OBJECT *object, int quality)
 	pixels = malloc(pixelLength);
 	if (pixels == NULL) {
 		perror("Malloc of pixel data");
-		exit(1);
+		retval = DCM_MALLOCFAILURE;
+		goto abort;
 	}
 	pixelCount = (int) rows *(int) columns;
 	sampleCount = pixelCount * samplesPerPixel;
@@ -1803,6 +1806,8 @@ main(int argc, char **argv)
         openOptions = DCM_ORDERLITTLEENDIAN;
 	int uncompress = 0;
 
+    object = NULL;
+
     while (--argc > 0 && (*++argv)[0] == '-') {
 	switch (*(argv[0] + 1)) {
 	case 'b':
@@ -1889,6 +1894,7 @@ main(int argc, char **argv)
 
     cond = DCM_WriteFile(&object, options, *++argv);
     (void) DCM_CloseObject(&object);
+    object = NULL;
     if (cond != DCM_NORMAL) {
 		fflush(stderr);
 		fprintf(stderr,"WriteFile failed (%d / %d), aborting\n",(int)cond, (int)(DCM_NORMAL));
@@ -1899,6 +1905,7 @@ main(int argc, char **argv)
     return 0;
 
 abort:
+    if(object) (void)DCM_CloseObject(&object);
     COND_DumpConditions();
     THR_Shutdown();
     return 1;
