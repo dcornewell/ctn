@@ -1150,6 +1150,10 @@ nextpix:
 
 		if (strlen(series_uid))
 			strlcat(series_uid, temp, DICOM_UI_LENGTH-1);
+		l=strlen(series_uid);
+		if (l) {
+			if (series_uid[l-1]=='.') series_uid[l-1]=0;  //truncate off the period if it was the last char.
+		}
 	}
 //printf("QUALITY: %s\n", qual);fflush(stdout);
 	if (DCM_ModifyElements(&object, list, (int) DIM_OF(list), NULL, 0, NULL) !=
@@ -1619,24 +1623,28 @@ CONDITION DCM_jpeg_uncompress_8(DCM_OBJECT *object)
 	cond = get_ui_value(object,DCM_IDSOPINSTANCEUID,buf,sizeof(buf));
 	if(cond==DCM_NORMAL) {
 		// FIXME: figure out the best way to modify the SOP instance ID.
-		strlcat(buf,".123",sizeof(buf));
+		if (strlen(buf) < DICOM_UI_LENGTH-3) {
+			strlcat(buf,".0",DICOM_UI_LENGTH-1);
 
-		cond = set_ui_value(object,DCM_IDSOPINSTANCEUID,buf);
-		if(cond!=DCM_NORMAL) {
-			retval=cond;
-			goto done;
+			cond = set_ui_value(object,DCM_IDSOPINSTANCEUID,buf);
+			if(cond!=DCM_NORMAL) {
+				retval=cond;
+				goto done;
+			}
 		}
 	}
 
 	cond = get_ui_value(object,DCM_RELSERIESINSTANCEUID,buf,sizeof(buf));
 	if(cond==DCM_NORMAL) {
 		// FIXME: figure out the best way to modify the series ID.
-		strlcat(buf,".123",sizeof(buf));
+		if (strlen(buf) < DICOM_UI_LENGTH-3) {
+			strlcat(buf,".0",sizeof(buf));
 
-		cond = set_ui_value(object,DCM_RELSERIESINSTANCEUID,buf);
-		if(cond!=DCM_NORMAL) {
-			retval=cond;
-			goto done;
+			cond = set_ui_value(object,DCM_RELSERIESINSTANCEUID,buf);
+			if(cond!=DCM_NORMAL) {
+				retval=cond;
+				goto done;
+			}
 		}
 	}
 
