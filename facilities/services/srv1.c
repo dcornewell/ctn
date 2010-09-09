@@ -271,6 +271,20 @@ static char *syntaxList[] = {
 
 };
 
+// DWJ - do not allow explicit transfer syntax for these abstract syntaxes.
+static char *syntaxExplicitNotAllowed[] = {
+	DICOM_SOPPATIENTQUERY_FIND,
+	DICOM_SOPPATIENTQUERY_MOVE,
+	DICOM_SOPPATIENTQUERY_GET,
+	DICOM_SOPSTUDYQUERY_FIND,
+	DICOM_SOPSTUDYQUERY_MOVE,
+	DICOM_SOPSTUDYQUERY_GET,
+	DICOM_SOPPATIENTSTUDYQUERY_FIND,
+	DICOM_SOPPATIENTSTUDYQUERY_MOVE,
+	DICOM_SOPPATIENTSTUDYQUERY_GET,
+	DICOM_SOPMODALITYWORKLIST_FIND
+};
+
 typedef struct {
     void *reserved[2];
     DUL_ASSOCIATIONKEY **association;
@@ -876,6 +890,15 @@ SRV_AcceptServiceClass(DUL_PRESENTATIONCONTEXT * requestedCtx,
 			 transferFound = TRUE;
 		 } else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERLITTLEENDIANEXPLICIT) == 0) {
 			 transferFound = TRUE;
+			 // DWJ 09/09/2010
+			 // There are abstractSyntax's that CTN doesn't support in lower layers with explicit LE, so don't propose them
+			 // as accept transfer syntaxes.
+			 for (index = 0; index < (int)DIM_OF(syntaxExplicitNotAllowed); index++) {
+				 if (strcmp(requestedCtx->abstractSyntax,syntaxExplicitNotAllowed[index]) == 0) {
+					 transferFound = FALSE;
+					 break;
+				 }
+			 }
 		 }
 
 		 if (mode) {
