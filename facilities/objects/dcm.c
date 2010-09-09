@@ -1551,43 +1551,41 @@ CONDITION
 DCM_ImportStream(unsigned char *buf, unsigned long length,
 		 unsigned long opt, DCM_OBJECT ** callerObject)
 {
-#ifdef DEBUG
-    if (debug) {
-		 (void) fprintf(stderr, "DCM_ImportStream, %ld bytes\n", length);
-		 { // DWJ - 12/16/2007, Add capability to dump the DCM object that was just read off the wire, very handy for debug.
-			 time_t now;
-			 char filename[100 + 1];
-			 int ret=-1,fd=-1;
-
-			 now = time(NULL);
-
-			 //
-			 // P = PID
-			 // L = Length
-			 // T = Time
-			 // 
-			 snprintf(filename,sizeof(filename),"dcm_stream-T%ld-P%d-L%lu.dcm",now,getpid(),length);
-			 fd = open(filename,O_CREAT|O_RDWR,S_IRWXU|S_IRWXG);
-			 if (fd != -1) {
-				 ret = write(fd,buf,length);
-				 if (ret == -1) {
-					 fprintf(stderr,"ERROR: Unable to write dcm_stream file dump! (%d) - %s\n",errno,strerror(errno));
-				 }
-				 close(fd);
-			 } else {
-				 fprintf(stderr,"ERROR: Unable to create dcm_stream file dump! (%d) - %s\n",errno,strerror(errno));
-			 }
-		 }
-	 }
-#endif
+	CONDITION conn;
 
     if ((opt & DCM_ORDERMASK) == 0)
 	return COND_PushCondition(DCM_ILLEGALOPTION,
 			       DCM_Message(DCM_ILLEGALOPTION), "Byte order",
 				  "DCM_ImportStream");
 
-    return readFile1("", buf, -1, length, 0, 0, opt, NULL, callerObject, NULL, NULL,
+	conn = readFile1("", buf, -1, length, 0, 0, opt, NULL, callerObject, NULL, NULL,
 		    NULL, NULL, NULL);
+
+   // DWJ - 12/16/2007, Add capability to dump the DCM object that was just read off the wire, very handy for debug.
+   if (conn != DCM_NORMAL) {
+	   time_t now;
+	   char filename[100 + 1];
+	   int ret=-1,fd=-1;
+
+	   now = time(NULL);
+	   fprintf(stderr, "DCM_ImportStream, %ld bytes\n", length);
+
+	   //
+	   // P = PID
+	   // L = Length
+	   // T = Time
+	   // 
+	   snprintf(filename,sizeof(filename),"dcm_stream-T%ld-P%d-L%lu.dcm",now,getpid(),length);
+	   fd = open(filename,O_CREAT|O_RDWR,S_IRWXU|S_IRWXG);
+	   if (fd != -1) {
+		   ret = write(fd,buf,length);
+		   if (ret == -1) fprintf(stderr,"ERROR: Unable to write dcm_stream file dump! (%d) - %s\n",errno,strerror(errno));
+		   close(fd);
+	   } else {
+		   fprintf(stderr,"ERROR: Unable to create dcm_stream file dump! (%d) - %s\n",errno,strerror(errno));
+	   }
+   }
+   return conn;
 }
 
 /* DCM_ExportStream
