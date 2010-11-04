@@ -1,0 +1,7 @@
+*.o
+*.d
+apps
+include
+libsrc
+dist
+lib/linux.mysql/
