@@ -908,6 +908,8 @@ SRV_AcceptServiceClass(DUL_PRESENTATIONCONTEXT * requestedCtx,
 				 transferFound = TRUE;
 			 else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERRLE)==0)
 				 transferFound = TRUE;
+			 else if (strcmp(transfer->transferSyntax, DICOM_TRANSFERJPEGLOSSLESSPROCFIRSTORDERREDICT)==0) // DWJ - 08/05/2011
+				 transferFound = TRUE;
 		 }
 		 if (!transferFound)
 		transfer = LST_Next(&requestedCtx->proposedTransferSyntax);
