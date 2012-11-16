@@ -131,7 +131,7 @@ int seg_footer[] = {0xe0ddfffe, 0x00000000};
 #define MY_JPEG_INPUT_BUF_SIZE 16384
 
 
-static size_t strlcat(char *dst, const char *src, size_t siz)
+static size_t strlcat_(char *dst, const char *src, size_t siz)
 {
 	register char *d = dst;
 	register const char *s = src;
@@ -1142,14 +1142,14 @@ nextpix:
 		int l;
 
 		sprintf(temp, ".%d", quality);
-		strlcat(sop_inst_id, temp, DICOM_UI_LENGTH-1);
+		strlcat_(sop_inst_id, temp, DICOM_UI_LENGTH-1);
 		l=strlen(sop_inst_id);
 		if (l) {
 			if (sop_inst_id[l-1]=='.') sop_inst_id[l-1]=0;  //truncate off the period if it was the last char.
 		}
 
 		if (strlen(series_uid))
-			strlcat(series_uid, temp, DICOM_UI_LENGTH-1);
+			strlcat_(series_uid, temp, DICOM_UI_LENGTH-1);
 		l=strlen(series_uid);
 		if (l) {
 			if (series_uid[l-1]=='.') series_uid[l-1]=0;  //truncate off the period if it was the last char.
@@ -1624,7 +1624,7 @@ CONDITION DCM_jpeg_uncompress_8(DCM_OBJECT *object)
 	if(cond==DCM_NORMAL) {
 		// FIXME: figure out the best way to modify the SOP instance ID.
 		if (strlen(buf) < DICOM_UI_LENGTH-3) {
-			strlcat(buf,".0",DICOM_UI_LENGTH-1);
+			strlcat_(buf,".0",DICOM_UI_LENGTH-1);
 
 			cond = set_ui_value(object,DCM_IDSOPINSTANCEUID,buf);
 			if(cond!=DCM_NORMAL) {
@@ -1638,7 +1638,7 @@ CONDITION DCM_jpeg_uncompress_8(DCM_OBJECT *object)
 	if(cond==DCM_NORMAL) {
 		// FIXME: figure out the best way to modify the series ID.
 		if (strlen(buf) < DICOM_UI_LENGTH-3) {
-			strlcat(buf,".0",sizeof(buf));
+			strlcat_(buf,".0",sizeof(buf));
 
 			cond = set_ui_value(object,DCM_RELSERIESINSTANCEUID,buf);
 			if(cond!=DCM_NORMAL) {
