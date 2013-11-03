@@ -1,0 +1,23 @@
+#!/bin/csh
+
+# This script is used to check an environment variable.  It
+# takes two arguments:
+#  variable name
+#  value
+#
+# If the second argument is "", then we assume the caller did
+# not set the variable properly and we exit with a status of 1
+#
+# For example:  checkEnvironment DICOM_LIBSRC $DICOM_LIBSRC
+
+if ($1 == "") then
+  echo "Usage: <variable name> <variable value>
+  exit 2
+endif
+
+if ($2 == "") then
+  echo No value set for $1
+  exit 1
+endif
+
+exit 0

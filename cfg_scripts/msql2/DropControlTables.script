@@ -1,0 +1,16 @@
+DROP TABLE ApplicationEntity
+\g
+DROP TABLE GroupNames
+\g
+DROP TABLE StorageAccess
+\g
+DROP TABLE StorageControl
+\g
+DROP TABLE SecurityMatrix
+\g
+DROP TABLE FISAccess
+\g
+DROP TABLE PrintServerCFG
+\g
+DROP TABLE VideoImageDest
+\g

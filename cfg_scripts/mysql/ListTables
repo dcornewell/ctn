@@ -1,0 +1,33 @@
+#!/bin/csh
+#
+# ListTables
+#
+if ($1 == "" || $2 == "" ) then
+  echo " "
+  echo Usage: "$0 <DIM|Control> <Database Name>"
+  echo " "
+  exit
+endif
+#
+#
+if( $1 == "Control" )then
+mysqlshow -pctn -uctn $2 ApplicationEntity
+mysqlshow -pctn -uctn $2 GroupNames
+mysqlshow -pctn -uctn $2 StorageAccess
+mysqlshow -pctn -uctn $2 StorageControl
+mysqlshow -pctn -uctn $2 InstanceTable
+mysqlshow -pctn -uctn $2 FISAccess
+mysqlshow -pctn -uctn $2 PrintServerCFG
+mysqlshow -pctn -uctn $2 VideoImageDest
+endif
+#
+#
+#
+if( $1 == "DIM" )then
+mysqlshow -pctn -uctn $2 ApplicationEntity
+mysqlshow -pctn -uctn $2 PatientLevel
+mysqlshow -pctn -uctn $2 StudyLevel
+mysqlshow -pctn -uctn $2 SeriesLevel
+mysqlshow -pctn -uctn $2 ImageLevel
+mysqlshow -pctn -uctn $2 InstanceTable
+endif

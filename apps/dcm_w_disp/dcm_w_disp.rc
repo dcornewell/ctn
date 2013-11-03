@@ -1,0 +1,14 @@
+/* Resource file for windows display application */
+
+#include <windows.h>
+#include "menu_windows.h"
+
+smm MENU
+{
+	POPUP "&File"
+	{
+		MENUITEM "&Open", IDM_OPEN
+		MENUITEM "&Close", IDM_CLOSE
+		MENUITEM "&Exit", IDM_EXIT
+	}
+}

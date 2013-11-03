@@ -1,0 +1,116 @@
+#!/bin/csh
+#
+# Intent:	This script creates the layout for an imaging demonstration
+# $Revision: 1.3 $
+
+echo This script is used to create a layout for the imaging demonstration
+echo with MIR software.  This is not necessarily the final layout, but it
+echo will serve for testing purposes.  This script is picky about input
+echo so please type carefully \(avoid extra spaces when you type\).
+echo ""
+
+set ROOT = /mir_ctn
+echo The default root directory for the MIR CTN data files is $ROOT.
+echo You can choose a different directory at this point by entering
+echo the directory name.  If you wish to use the default, just hit RETURN.
+echo ""
+set a = $<
+if ($a != "") then
+echo Do you wish to use $a as the root directory "(y/n)?"
+set b = $<
+if (($b != "y") && ($b != "Y")) then
+echo Script exiting.  Please try again.
+exit
+endif
+set ROOT = $a
+endif
+
+if (! (-e $ROOT)) then
+echo This script requires the directory $ROOT to exist before running.
+echo Please create this directory and then run this script again.
+exit
+endif
+
+umask 0
+# Create several subdirectories for the imaging demonstration
+
+echo Making the imaging subdirectories starting from $ROOT
+set I = $ROOT/img/db
+if (! (-e $ROOT/img)) then
+mkdir $ROOT/img
+endif
+if (! (-e $ROOT/img/config)) then
+mkdir $ROOT/img/config
+endif
+if (! (-e $ROOT/img/db)) then
+mkdir $ROOT/img/db
+endif
+if (! (-e $ROOT/img/q)) then
+mkdir $ROOT/img/q
+endif
+
+# Now make the common directory and the directories for
+# individual vendors.
+
+echo Making the common directory.
+if (! (-e $I/common)) then
+mkdir $I/common
+endif
+
+echo Making public and private directories for each vendor.
+echo If the directories already exist, they are not recreated.
+echo ""
+
+foreach i (3m aaai acuson adac agfa ali atl cemax dupont gems isg kodak)
+echo $i $i"_prv1" $i"_prv2" $i"_pub"
+if (! (-e $I/$i"_prv1")) then
+mkdir $I/$i"_prv1"
+endif
+if (! (-e $I/$i"_prv2")) then
+mkdir $I/$i"_prv2"
+endif
+if (! (-e $I/$i"_pub")) then
+mkdir $I/$i"_pub"
+endif
+end
+
+foreach i (konica loral merge mitra philips picker siemens star)
+echo $i $i"_prv1" $i"_prv2" $i"_pub"
+if (! (-e $I/$i"_prv1")) then
+mkdir $I/$i"_prv1"
+endif
+if (! (-e $I/$i"_prv2")) then
+mkdir $I/$i"_prv2"
+endif
+if (! (-e $I/$i"_pub")) then
+mkdir $I/$i"_pub"
+endif
+end
+
+echo ""
+echo This step will now create empty databases in the directories you
+echo specify.  This is not a mandatory step.  As you send images to
+echo the img_server program, it will automatically create databases.
+echo You may choose to do this to create your database files or to create
+echo empty database files for other vendors.  You will enter one company
+echo name per line.
+
+set a = "none"
+while ($a != "quit")
+echo ""
+echo Enter one of these company names \(or quit\)
+echo 3m aaai acuson adac agfa ali atl cemax dupont gems isg kodak
+echo konica loral merge mitra philips picker siemens star
+echo  ""
+set a = $<
+if ((-e $I/$a"_prv1") && (-e $I/$a"_prv2") && (-e $I/$a"_pub")) then
+echo Now creating public and private databases for $a
+dbnew $I/$a"_pub"/db
+dbnew $I/$a"_prv1"/db
+dbnew $I/$a"_prv2"/db
+else if ($a != "quit") then
+echo Could not create public and private databases because one or more
+echo directies did not exist.  Please reenter company name and/or check
+echo that the image directories were created properly.
+endif
+

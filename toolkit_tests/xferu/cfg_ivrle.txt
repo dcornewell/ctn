@@ -1,0 +1,10 @@
+# This configuration file for storage is used to support on
+# the IVRLE xfer syntax.  Files are stored in Part 10 format.
+#
+# The Transfer Syntaxes that we accept
+ACCEPT/XFER/STORAGE 1.2.840.10008.1.2
+
+# Set the flag to 1 to always store as Part 10 when we
+# receive storage SOP instances.
+# Set the flag to 0 to store CTN format for IVRLE.
+STORAGE/PART10FLAG 1

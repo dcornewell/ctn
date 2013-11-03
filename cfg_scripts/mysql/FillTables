@@ -1,0 +1,15 @@
+#!/bin/csh
+#
+# FillTables
+#
+if ($1 == "" || $2 == "" ) then
+  echo " "
+  echo Usage: "$0 <DIM> <Database Name>"
+  echo " "
+  exit
+endif
+mysql -uctn -pctn $2 < Fill$1Tables.script
+if ($status != 0) then
+  echo Could not drop database: $1
+  exit 1
+endif

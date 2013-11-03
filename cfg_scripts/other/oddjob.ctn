@@ -1,0 +1,14 @@
+! ApplicationEntity
+# AE Title	^ Node	^ Port	^ Org	^ Comment
+ODDJOB	^ oddjob	^ 2100	^ ERL	^ERL
+
+! Security Matrix
+ODDJOB	^ ODDJOB
+
+! StorageAccess
+# Flag	^ SCP Title	^ Key	^ Owner	^ Group	^ Comment
+0	^ ODDJOB	^ ODDJOB	^ ERL	^ ERL	^ERL
+
+! StorageControl
+# Requesting	^ Responding	^ Medium	^ Root
+ODDJOB		^ ODDJOB	^ x	^ D:\prj\oddjob

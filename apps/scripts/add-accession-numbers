@@ -1,0 +1,26 @@
+#!/bin/csh
+# This script takes the RSNA cases and adds Accession numbers to
+# them.  Our print software requires Accession numbers and few vendors
+# provide it.
+#
+# This script should be run from the "rsna-cases" directory.  It assumes
+# that it will see directories like acuson-1, acuson-2, ...
+
+mkdir ../rsna-cases-acc
+@ a = 1000
+@ b = 1
+foreach i (*)
+echo $i $a
+rm -f /tmp/accession
+echo 0008 0050 $a > /tmp/accession
+@ a += 1
+
+mkdir ../rsna-cases-acc/$i
+
+foreach j ($i/*)
+echo $b $j
+dcm_modify_elements $j ../rsna-cases-acc/$j < /tmp/accession > /dev/null
+@ b += 1
+end
+
+end

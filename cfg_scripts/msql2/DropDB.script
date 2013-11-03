@@ -1,0 +1,16 @@
+/* DropDB.script 1.0 8-Mar-94 */
+/* set nocount on */
+print " "
+go
+print " "
+go
+
+drop database <DATABASENAME>
+go
+print "Dropped Database <DATABASENAME>"
+go
+
+print " "
+go
+print " "
+go

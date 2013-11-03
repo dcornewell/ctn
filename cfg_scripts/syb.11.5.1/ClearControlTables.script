@@ -1,0 +1,33 @@
+/* CreateControlTables.script 1.0 8-Mar-94 */
+/* set nocount on */
+
+print " "
+go
+print " "
+go
+
+use <DATABASENAME>
+go
+delete from ApplicationEntity
+go
+
+delete from GroupNames
+go
+
+delete from StorageAccess
+go
+
+delete from StorageControl
+go
+
+delete from SecurityMatrix
+go
+
+delete from FISAccess
+go
+
+delete from PrintServerCFG
+go
+
+delete from VideoImageDest
+go

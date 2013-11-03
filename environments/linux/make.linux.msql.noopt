@@ -1,0 +1,52 @@
+#  Global rules for compilation for sunos
+
+XM_INCLUDE = /usr/X11R6/include
+
+LIBPATH_X11 = -L/usr/X11R6/lib
+LIBPATH_MOTIF = -L/usr/X11R6/lib
+LIBPATH_UCB =
+LIBPATH_DATABASE =-L$(MSQL_ROOT)/lib
+LIBS_X11 = -lXext -lXt -lX11
+LIBS_MOTIF = -lXm
+LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm
+LIBS_OS = 
+LIBS_DATABASE = -ltbl_msql -lmsql
+LIBS_LEX = -lfl
+LIBS_CTN =  \
+	-lmut \
+	-lmanage \
+	-liap \
+	-licon \
+	-lprint \
+	-lsnp \
+	-lfis -lidb \
+	$(LIBPATH_DATABASE) $(LIBS_DATABASE) \
+	-ldatabase -lhunk_man \
+	-lcfg \
+	-lservices \
+	-lmessages \
+	-lsq -ldcmobjects \
+	-ldulprotocol \
+	-luid \
+	-llst \
+	-lgq \
+	-lie \
+	-lutility \
+	-lcondition \
+	-lctnthread
+
+CFLAGS_X11 =
+CFLAGS_MOTIF = -I$(XM_INCLUDE)
+SYBASE_INCLUDE = .
+
+#DEBUG_LIBS = -lmalloc
+LONGSIZE=32
+INTSIZE=32
+SHORTSIZE=16
+C_OPTS = -g -DDEBUG -D$(ARCHITECTURE) -D$(OS) -DSHARED_MEMORY \
+-DSEMAPHORE -DX11 -DATHENA -DMOTIF -DX11R4 -DUSLEEP -DMSQL -DUSEREGCOMP\
+-DTBL_REQUIRES_HAT_ESCAPE \
+-I$(DICOM_INCLUDE) -I$(MSQL_ROOT)/include \
+$(CFLAGS_MOTIF) $(CFLAGS_X11) \
+-DLONGSIZE=$(LONGSIZE) -DINTSIZE=$(INTSIZE) -DSHORTSIZE=$(SHORTSIZE) \
+-DTIMEOFDAYARGS=2

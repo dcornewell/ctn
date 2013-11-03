@@ -1,0 +1,167 @@
+#!/bin/csh
+#
+# Intent:	Script for creating icon database for all studies in common area
+# $Revision: 1.8 $
+
+echo This is the top level script for creating the files needed for the
+echo print_mgr application.  It invokes a separate script for each study
+echo that we wish to include in the print demonstration.  The parent
+echo directory for the source files is variable.  Each study directory
+echo is hard-coded.
+
+set SRC = /dicomctnc/release-2.7/images
+set DST = /dicomctnc/print
+
+echo ""
+echo The default root directory for source images is
+echo "                    " $SRC
+echo ""
+echo You can change this default at this point by entering a new
+echo directory name.  You can use the default by hitting return.
+echo ""
+echo Please enter new default directory for source images or RTN.
+
+set a = $<
+if ($a != "") then
+set SRC = $a
+endif
+
+echo ""
+echo Checking for our known set of source images
+echo ""
+
+# When MONOCHROME1 is handled by the print routines, add the following :
+# 	   fuji/FUJI95701 \
+#	   fuji/FUJI95706 \
+#	   fuji/FUJI95707 \
+#	   fuji/FUJI95714 \
+#	   kodak/KHIS073006030 \
+#	   kodak/KHIS073013420 \
+#	   kodak/KHIS080105590 \
+#	   kodak/KHIS080107130 \
+
+set PASS = TRUE
+foreach i (acuson/ACN000001 \
+	   acuson/ACN000004 \
+	   acuson/ACN000104 \
+	   algotec/ALGO00000 \
+	   algotec/ALGO00002 \
+	   atl/ATL000001 \
+	   atl/ATL000007 \
+	   atl/ATL000013 \
+	   atl/ATL000015 \
+	   ge/1.2.840.113674.1115.261.200 \
+	   ge/1.2.840.113674.1118.54.200 \
+	   ge/1.2.840.113674.1140.196.200 \
+	   ge/1.2.840.113674.1242.214.200 \
+	   ge/1.2.840.113674.1335.106.200 \
+	   ge/THU9948 \
+	   picker/2.16.840.1.113662.2.1.53544936282433.12345.336.16650 \
+	   picker/2.16.840.1.113662.4.8796818069641.798806497.93296077602350.10 \
+	   picker/2.16.840.1.113662.4.8796818069641.798806497.93296077602350.20 \
+	   picker/2.16.840.1.113662.4.8796818069641.798806497.93296077602350.30 \
+	   siemens/SMS000005 \
+	   siemens/SMS000009 \
+	   siemens/SMS000013 \
+	   siemens/SMS000018 \
+	   siemens/SMS000023 \
+	   toshiba/TMS061001)
+if (!(-e $SRC/$i)) then
+echo Missing $SRC/$i
+set PASS = FALSE
+endif
+end
+
+if ($PASS != "TRUE") then
+echo One or more source directories were not found.  Please check your
+echo directory structure or list of source directories and rerun this script.
+exit
+endif
+
+echo ""
+echo The default target directory for the print demonstration is
+echo "                    " $DST
+echo You can change this default at this point by entering a new
+echo directory name.  You can use the default by hitting return.
+echo ""
+echo Please enter new default directory for target images or RTN.
+
+set a = $<
+if ($a != "") then
+set DST = $a
+endif
+
+set PASS = TRUE
+foreach i (config db images)
+if (!(-e $DST/$i)) then
+echo missing $DST/$i
+set PASS = FALSE
+endif
+end
+if ($PASS != "TRUE") then
+echo One or more target directories were not found.  Please check your
+echo directory structure or list of source directories and rerun this script.
+exit
+endif
+
+if (-e $DST/db/print.db) then
+echo It is suspicious that you have an existing print database in
+echo "              " $DST/db/print.db
+echo Continuing with this script may cause existing print files to be
+echo deleted.  Do you wish to continue "(y/n)?"
+set a = $<
+if (($a != "y") && ($a != "Y")) then
+exit
+endif
+endif
+
+echo The script will now create all of the print files and icon files
+echo needed for the print demonstration.  On a Sparc 10, this takes
+echo 90-110 minutes.
+echo Please his RTN when you are ready to proceed.
+set a = $<
+
+# When MONOCHROME1 is handled by the print routines, add the following :
+# 	   fuji/FUJI95701 \
+#	   fuji/FUJI95706 \
+#	   fuji/FUJI95707 \
+#	   fuji/FUJI95714 \
+#	   kodak/KHIS073006030 \
+#	   kodak/KHIS073013420 \
+#	   kodak/KHIS080105590 \
+#	   kodak/KHIS080107130 \
+
+foreach i (acuson/ACN000001 \
+	   acuson/ACN000004 \
+	   acuson/ACN000104 \
+	   algotec/ALGO00000 \
+	   algotec/ALGO00002 \
+	   atl/ATL000001 \
+	   atl/ATL000007 \
+	   atl/ATL000013 \
+	   atl/ATL000015 \
+	   ge/1.2.840.113674.1115.261.200 \
+	   ge/1.2.840.113674.1118.54.200 \
+	   ge/1.2.840.113674.1140.196.200 \
+	   ge/1.2.840.113674.1242.214.200 \
+	   ge/1.2.840.113674.1335.106.200 \
+	   ge/THU9948 \
+	   picker/2.16.840.1.113662.2.1.53544936282433.12345.336.16650 \
+	   picker/2.16.840.1.113662.4.8796818069641.798806497.93296077602350.10 \
+	   picker/2.16.840.1.113662.4.8796818069641.798806497.93296077602350.20 \
+	   picker/2.16.840.1.113662.4.8796818069641.798806497.93296077602350.30 \
+	   siemens/SMS000005 \
+	   siemens/SMS000009 \
+	   siemens/SMS000013 \
+	   siemens/SMS000018 \
+	   siemens/SMS000023 \
+	   toshiba/TMS061001)
+echo Working on source directory $SRC/$i
+set file_list = `ls $SRC/$i`
+icon_script $SRC $DST/images $i $DST/db/print.db $DST/db/icon.index \
+$DST/db/icon.file $file_list
+if ($status != 0) then
+echo icon_script failed
+exit
+endif
+end

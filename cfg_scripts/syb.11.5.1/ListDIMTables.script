@@ -1,0 +1,16 @@
+/* ListDIMTables.script 1.0 8-Mar-94 */
+
+use <DATABASENAME>
+go
+
+sp_help PatientLevel
+go
+
+sp_help StudyLevel
+go
+
+sp_help SeriesLevel
+go
+
+sp_help ImageLevel
+go

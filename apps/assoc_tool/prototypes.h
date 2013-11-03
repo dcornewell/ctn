@@ -1,0 +1,15 @@
+void load_sopclassList();
+void load();
+void addsop_scrolledList2();
+void selected_sop_fromList();
+void request_association();
+void copyWtext2();
+void copyWtest();
+void update();
+void set_options();
+void request_release();
+void closeNetworkConnection();
+void delete_sop_fromList2();
+void set_options_toDefault();
+void update_selected_sop_inList2();
+void selected_sop_fromList1(int);

@@ -1,0 +1,93 @@
+#  Global rules for compilation for solaris w/o sybase
+
+X11_LIBS = -L/usr/openwin/lib -lX11 
+XAW_LIBS = -lXaw -lXmu -lXt -lXext -lm
+XM_INCLUDE = /usr/dt/include
+X11_INCLUDE = /usr/openwin/share/include
+SYBASE_INCLUDE =
+
+LIBPATH_X11 = -L/usr/openwin/lib
+LIBPATH_MOTIF = -L/usr/dt/lib
+LIBPATH_UCB = -L/usr/ucblib
+LIBPATH_XIL = -L$(XILHOME)/lib
+LIBPATH_DATABASE = -L$(MSQL_ROOT)/lib
+#LIBPATH_STL = -L$(STL_ROOT)/lib
+#LIBS_STL = -lospace
+LIBS_X11 = -lXt -lX11
+LIBS_MOTIF = -lXm
+LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm
+LIBS_OS = -lm -lsocket -lnsl -lgen -lelf -lc -lucb
+# Added this macro so we could link explicitly with libucb.  The shared
+# library is not considered secure by Solaris and does not work with
+# setuid apps.
+LIBS_OS_SECURE_UCB = -lm -lsocket -lnsl -lgen -lelf -lc /usr/ucblib/libucb.a
+LIBS_DATABASE = -ltbl_msql -lmsql
+LIBS_LEX = -ll
+LIBS_CTN =  -lctn $(LIBPATH_DATABASE) -lmsql
+LIBS_CTN_NODB =  -lctn
+
+#	-lmut \
+#	-lmanage \
+#        -liap \
+#	-licon \
+#	-lprint \
+#	-lfis -lidb \
+#	$(LIBPATH_DATABASE) $(LIBS_DATABASE) \
+#	-ldatabase -lhunk_man \
+#	-lcfg \
+#        -lservices \
+#        -lmessages \
+#        -lsq -ldcmobjects \
+#        -ldulprotocol -lsnp \
+#        -luid \
+#        -llst \
+#        -lgq \
+#	-lie \
+#	-lutility \
+#        -lcondition \
+#	-lctnthread
+
+LIBS_CTN_STATIC =  -lctn $(LIBPATH_DATABASE) -lmsql $(LIBS_OS_SECURE_UCB)
+
+#	-lmut \
+#	-lmanage \
+#        -liap \
+#	-licon \
+#	-lprint \
+#	-lfis -lidb \
+#	$(LIBPATH_DATABASE) $(LIBS_DATABASE) \
+#	-ldatabase -lhunk_man \
+#	-lcfg \
+#        -lservices \
+#        -lmessages \
+#        -lsq -ldcmobjects \
+#        -ldulprotocol -lsnp \
+#        -luid \
+#        -llst \
+#        -lgq \
+#	-lie \
+#	-lutility \
+#        -lcondition \
+#	-lctnthread \
+#	$(LIBS_OS_SECURE_UCB)
+
+TBL_DB = tbl_msql.o
+TBLMB_DB = multibyte_not_supported_in_this_environment
+
+LIBS_XIL = -lxil
+CFLAGS_X11 = -I/usr/openwin/include
+CFLAGS_MOTIF = -I$(XM_INCLUDE)
+CFLAGS_XIL = -I$(XILHOME)/include
+STATIC = -Bstatic
+
+LONGSIZE=32
+INTSIZE=32
+SHORTSIZE=16
+C_OPTS = -g -Dsparc -D$(ARCHITECTURE) -D$(OS) -DSHARED_MEMORY \
+-DSEMAPHORE -DX11 -DATHENA -DMOTIF -DX11R4 -DUSLEEP -DMSQL \
+-DTBL_REQUIRES_HAT_ESCAPE \
+-I$(DICOM_INCLUDE) -I$(MSQL_ROOT)/include \
+$(CFLAGS_MOTIF) $(CFLAGS_X11) \
+-DLONGSIZE=$(LONGSIZE) -DINTSIZE=$(INTSIZE) -DSHORTSIZE=$(SHORTSIZE) \
+-DTIMEOFDAYARGS=2 -DOS_SOLARIS_2_4 -D_OS_UNIX
+#-DCTN_IDBV2

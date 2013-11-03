@@ -1,0 +1,57 @@
+/* DropFISTables.script 1.0 8-Mar-94 */
+/* set nocount on */
+print " "
+go
+print " "
+go
+
+use <DATABASENAME>
+go
+drop table PatientTable
+print "Dropped PatientTable"
+go
+
+drop table StudyTable
+print "Dropped StudyTable"
+go
+
+drop table ResultsTable
+print "Dropped Results Table"
+go
+
+drop table InterpretationTable
+print "Dropped Interpretation Table"
+go
+
+drop table StudyComponentTable
+print "Dropped Study Component Table"
+go
+
+drop table StudyComponentSeriesTable
+print "Dropped Study Component Series Table"
+go
+
+drop table StudyComponentImageTable
+print "Dropped Study Component Image Table"
+go
+
+drop table UniqueNumbers
+print "Dropped Unique Numbers"
+go
+
+drop table StorageComitReq
+print "Dropped Storage Commitment Req"
+go
+
+drop table CommitSOPRef
+print "Dropped Commitment SOP Reference"
+go
+
+drop table WorkQueue
+print "Dropped Work Queue"
+go
+
+print " "
+go
+print " "
+go

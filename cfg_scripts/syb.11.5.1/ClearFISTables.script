@@ -1,0 +1,57 @@
+/* ClearDIMTables.script 1.0 25-Aug-94 */
+/* set nocount on */
+print " "
+go
+print " "
+go
+
+use <DATABASENAME>
+go
+delete from PatientTable
+go
+print "Cleared PatientTable Table"
+go
+go
+delete from StudyTable
+go
+print "Cleared StudyTable Table"
+go
+delete from ResultsTable
+go
+print "Cleared ResultsTable Table"
+go
+delete from InterpretationTable
+go
+print "Cleared Interpretation Table"
+go
+delete from StudyCmpTable
+go
+print "Cleared Study Component Table"
+go
+delete from StudyCmpTableSeriesTable
+go
+print "Cleared Study Component Series Table"
+go
+delete from StudyCmpTableImageTable
+go
+print "Cleared Study Component Image Table"
+go
+print "Unique Numbers Table not cleared (because we did not want to)"
+go
+delete from StorageCommitReq
+go
+print "Storage Commitment Request Table cleared"
+go
+delete from CommitSOPRef
+go
+print "Commit SOP Reference Table cleared"
+go
+delete from WorkQueue
+go
+print "Work Queue cleared"
+go
+
+print " "
+go
+print " "
+go

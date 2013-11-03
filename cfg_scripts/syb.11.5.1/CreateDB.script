@@ -1,0 +1,69 @@
+/*
+ *  CreateDB.script 1.0 7-Mar-94, David E. Beecher
+ *
+ *  This is a template for creating new databases
+ *  for the dicom image server.
+ *
+ *  <DATABASENAME> is the name of the database to create
+ *
+ *  <DBDEVICE> is the device for the database
+ *  <LOGDEVICE> is the device for the log
+ *  <DBSIZE> is the size (in megabytes) of the database
+ *  <LOGSIZE> is the size (in megabytes) of the log
+ */
+
+if exists (select * from master.dbo.sysdatabases
+		where name = "<DATABASENAME>")
+begin
+	drop database DicomImageServer
+end
+go
+
+print " "
+go
+print " "
+go
+print " "
+go
+print 'Creating database "<DATABASENAME>" on "<DBDEVICE>"'
+go
+
+create database <DATABASENAME> on <DBDEVICE> = <DBSIZE>
+log on <LOGDEVICE> = <LOGSIZE>
+go
+use <DATABASENAME>
+go
+
+print 'Successfully created "<DATABASENAME>"'
+go
+
+use master
+go
+/*
+ * Set this option so the log doesn't get too big
+ */
+sp_dboption <DATABASENAME>,"trunc. log on chkpt.",true
+go
+/*
+ * Reset this option so we can log writetext operations
+ */
+sp_dboption <DATABASENAME>,"select into/bulkcopy",false
+go
+use <DATABASENAME>
+go
+/*
+ * Change the owner to sybase...this is the common login
+ */
+sp_changedbowner sybase
+go
+/*
+ * Open up the access privileges to everyone
+ */
+grant ALL to PUBLIC
+go
+sp_helpdb <DATABASENAME>
+go
+print " "
+go
+print " "
+go

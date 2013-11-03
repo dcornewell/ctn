@@ -1,0 +1,4 @@
+DROP TABLE TBL_Persons
+\g
+DROP TABLE UniqueNumbers
+\g

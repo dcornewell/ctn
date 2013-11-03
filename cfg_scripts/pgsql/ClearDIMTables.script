@@ -1,0 +1,11 @@
+
+	delete from patientlevel;
+
+	delete from studylevel;
+
+	delete from serieslevel;
+
+	delete from imagelevel;
+
+	delete from instancetable;
+

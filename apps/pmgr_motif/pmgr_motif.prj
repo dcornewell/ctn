@@ -1,0 +1,493 @@
+! UIMX ascii 2.5 key: 5327                                                      
+
+*pmgr_motif.class: Project
+*pmgr_motif.PjName: pmgr_motif
+*pmgr_motif.PjDoMain: 1
+*pmgr_motif.PjDoMake: 0
+*pmgr_motif.PjWriteAll: 1
+*pmgr_motif.PjRunMake: 0
+*pmgr_motif.PjWriteCDir: .
+*pmgr_motif.PjMode: 1
+
+*applicationShell1_PJinterface.class: PJinterface
+*applicationShell1_PJinterface.PjName: applicationShell1_PJinterface
+*applicationShell1_PJinterface.PjSwName: applicationShell1
+*applicationShell1_PJinterface.PjParent: pmgr_motif
+*applicationShell1_PJinterface.PjFileName: applicationShell1.i
+*applicationShell1_PJinterface.PjShowFlag: 0
+*applicationShell1_PJinterface.PjGuiDate: 797534655
+*applicationShell1_PJinterface.PjDate: 797534619
+*applicationShell1_PJinterface.PjMode: 1
+*applicationShell1_PJinterface.PjCFileName: applicationShell1.c
+
+*selectPrinterDialog_PJinterface.class: PJinterface
+*selectPrinterDialog_PJinterface.PjName: selectPrinterDialog_PJinterface
+*selectPrinterDialog_PJinterface.PjSwName: selectPrinterDialog
+*selectPrinterDialog_PJinterface.PjParent: pmgr_motif
+*selectPrinterDialog_PJinterface.PjFileName: selectPrinterDialog.i
+*selectPrinterDialog_PJinterface.PjShowFlag: 0
+*selectPrinterDialog_PJinterface.PjGuiDate: 797534656
+*selectPrinterDialog_PJinterface.PjDate: 797534622
+*selectPrinterDialog_PJinterface.PjMode: 1
+*selectPrinterDialog_PJinterface.PjCFileName: selectPrinterDialog.c
+
+*filmInformationForm_PJinterface.class: PJinterface
+*filmInformationForm_PJinterface.PjName: filmInformationForm_PJinterface
+*filmInformationForm_PJinterface.PjSwName: filmInformationForm
+*filmInformationForm_PJinterface.PjParent: pmgr_motif
+*filmInformationForm_PJinterface.PjFileName: filmInformationForm.i
+*filmInformationForm_PJinterface.PjShowFlag: 0
+*filmInformationForm_PJinterface.PjGuiDate: 797534657
+*filmInformationForm_PJinterface.PjDate: 797534625
+*filmInformationForm_PJinterface.PjMode: 1
+*filmInformationForm_PJinterface.PjCFileName: filmInformationForm.c
+
+*filmSessionForm_PJinterface.class: PJinterface
+*filmSessionForm_PJinterface.PjName: filmSessionForm_PJinterface
+*filmSessionForm_PJinterface.PjSwName: filmSessionForm
+*filmSessionForm_PJinterface.PjParent: pmgr_motif
+*filmSessionForm_PJinterface.PjFileName: filmSessionForm.i
+*filmSessionForm_PJinterface.PjShowFlag: 0
+*filmSessionForm_PJinterface.PjGuiDate: 797534659
+*filmSessionForm_PJinterface.PjDate: 797534628
+*filmSessionForm_PJinterface.PjMode: 1
+*filmSessionForm_PJinterface.PjCFileName: filmSessionForm.c
+
+*filmBoxForm_PJinterface.class: PJinterface
+*filmBoxForm_PJinterface.PjName: filmBoxForm_PJinterface
+*filmBoxForm_PJinterface.PjSwName: filmBoxForm
+*filmBoxForm_PJinterface.PjParent: pmgr_motif
+*filmBoxForm_PJinterface.PjFileName: filmBoxForm.i
+*filmBoxForm_PJinterface.PjShowFlag: 0
+*filmBoxForm_PJinterface.PjGuiDate: 797534660
+*filmBoxForm_PJinterface.PjDate: 797534631
+*filmBoxForm_PJinterface.PjMode: 1
+*filmBoxForm_PJinterface.PjCFileName: filmBoxForm.c
+
+*studyListForm_PJinterface.class: PJinterface
+*studyListForm_PJinterface.PjName: studyListForm_PJinterface
+*studyListForm_PJinterface.PjSwName: studyListForm
+*studyListForm_PJinterface.PjParent: pmgr_motif
+*studyListForm_PJinterface.PjFileName: studyListForm.i
+*studyListForm_PJinterface.PjShowFlag: 0
+*studyListForm_PJinterface.PjGuiDate: 797534661
+*studyListForm_PJinterface.PjDate: 797534634
+*studyListForm_PJinterface.PjMode: 1
+*studyListForm_PJinterface.PjCFileName: studyListForm.c
+
+*previewStudyForm_PJinterface.class: PJinterface
+*previewStudyForm_PJinterface.PjName: previewStudyForm_PJinterface
+*previewStudyForm_PJinterface.PjSwName: previewStudyForm
+*previewStudyForm_PJinterface.PjParent: pmgr_motif
+*previewStudyForm_PJinterface.PjFileName: previewStudyForm.i
+*previewStudyForm_PJinterface.PjShowFlag: 0
+*previewStudyForm_PJinterface.PjGuiDate: 797534662
+*previewStudyForm_PJinterface.PjDate: 797534637
+*previewStudyForm_PJinterface.PjMode: 1
+*previewStudyForm_PJinterface.PjCFileName: previewStudyForm.c
+
+*BasicFilmBox_Standard_PJinterface.class: PJinterface
+*BasicFilmBox_Standard_PJinterface.PjName: BasicFilmBox_Standard_PJinterface
+*BasicFilmBox_Standard_PJinterface.PjSwName: BasicFilmBox_Standard
+*BasicFilmBox_Standard_PJinterface.PjParent: pmgr_motif
+*BasicFilmBox_Standard_PJinterface.PjFileName: BasicFilmBox_Standard.i
+*BasicFilmBox_Standard_PJinterface.PjShowFlag: 0
+*BasicFilmBox_Standard_PJinterface.PjGuiDate: 797534664
+*BasicFilmBox_Standard_PJinterface.PjDate: 797534640
+*BasicFilmBox_Standard_PJinterface.PjMode: 1
+*BasicFilmBox_Standard_PJinterface.PjCFileName: BasicFilmBox_Standard.c
+
+*PrintMessage_PJinterface.class: PJinterface
+*PrintMessage_PJinterface.PjName: PrintMessage_PJinterface
+*PrintMessage_PJinterface.PjSwName: PrintMessage
+*PrintMessage_PJinterface.PjParent: pmgr_motif
+*PrintMessage_PJinterface.PjFileName: PrintMessage.i
+*PrintMessage_PJinterface.PjShowFlag: 0
+*PrintMessage_PJinterface.PjGuiDate: 797534665
+*PrintMessage_PJinterface.PjDate: 797534642
+*PrintMessage_PJinterface.PjMode: 1
+*PrintMessage_PJinterface.PjCFileName: PrintMessage.c
+
+*MultipleSelection_PJinterface.class: PJinterface
+*MultipleSelection_PJinterface.PjName: MultipleSelection_PJinterface
+*MultipleSelection_PJinterface.PjSwName: MultipleSelection
+*MultipleSelection_PJinterface.PjParent: pmgr_motif
+*MultipleSelection_PJinterface.PjFileName: MultipleSelection.i
+*MultipleSelection_PJinterface.PjShowFlag: 0
+*MultipleSelection_PJinterface.PjGuiDate: 797534667
+*MultipleSelection_PJinterface.PjDate: 797534645
+*MultipleSelection_PJinterface.PjMode: 1
+*MultipleSelection_PJinterface.PjCFileName: MultipleSelection.c
+
+*ImageAttribute_PJinterface.class: PJinterface
+*ImageAttribute_PJinterface.PjName: ImageAttribute_PJinterface
+*ImageAttribute_PJinterface.PjSwName: ImageAttribute
+*ImageAttribute_PJinterface.PjParent: pmgr_motif
+*ImageAttribute_PJinterface.PjFileName: ImageAttribute.i
+*ImageAttribute_PJinterface.PjShowFlag: 0
+*ImageAttribute_PJinterface.PjGuiDate: 797534668
+*ImageAttribute_PJinterface.PjDate: 797534648
+*ImageAttribute_PJinterface.PjMode: 1
+*ImageAttribute_PJinterface.PjCFileName: ImageAttribute.c
+
+*uxmain.class: PJuxmain
+*uxmain.PjName: uxmain
+*uxmain.PjParent: pmgr_motif
+*uxmain.PjFileName: pmgr_motif.c
+*uxmain.PjDate: 0
+*uxmain.PjMode: -1
+
+*xtmain.class: PJxtmain
+*xtmain.PjName: xtmain
+*xtmain.PjParent: pmgr_motif
+*xtmain.PjFileName: pmgr_motif.c
+*xtmain.PjDate: 797534649
+*xtmain.PjMode: 1
+*xtmain.PjBody: /*\
+          Copyright (C) 1993, 1994, RSNA and Washington University\
+ \
+          The software and supporting documentation for the Radiological\
+          Society of North America (RSNA) 1993, 1994 Digital Imaging and\
+          Communications in Medicine (DICOM) Demonstration were developed\
+          at the\
+                  Electronic Radiology Laboratory\
+                  Mallinckrodt Institute of Radiology\
+                  Washington University School of Medicine\
+                  510 S. Kingshighway Blvd.\
+                  St. Louis, MO 63110\
+          as part of the 1993, 1994 DICOM Central Test Node project for, and\
+          under contract with, the Radiological Society of North America.\
+ \
+          THIS SOFTWARE IS MADE AVAILABLE, AS IS, AND NEITHER RSNA NOR\
+          WASHINGTON UNIVERSITY MAKE ANY WARRANTY ABOUT THE SOFTWARE, ITS\
+          PERFORMANCE, ITS MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR\
+          USE, FREEDOM FROM ANY COMPUTER DISEASES OR ITS CONFORMITY TO ANY\
+          SPECIFICATION. THE ENTIRE RISK AS TO QUALITY AND PERFORMANCE OF\
+          THE SOFTWARE IS WITH THE USER.\
+ \
+          Copyright of the software and supporting documentation is\
+          jointly owned by RSNA and Washington University, and free access\
+          is hereby granted as a license to use this software, copy this\
+          software and prepare derivative works based upon this software.\
+          However, any distribution of this software source code or\
+          supporting documentation or derivative works (source code and\
+          supporting documentation) must include the three paragraphs of\
+          the copyright notice.\
+*/\
+/* Copyright marker.  Copyright will be inserted above.  Do not remove */\
+ \
+/*\
+**                   Electronic Radiology Laboratory\
+**                 Mallinckrodt Institute of Radiology\
+**              Washington University School of Medicine\
+**\
+** Module Name(s):	main\
+** Author, Date:	Chander Sabharwal\
+** Intent:		This is the "main" program generated by uimx for\
+**			the Motif print manager program.  It performs some\
+**			initialization and then kicks off the Xt Loop\
+** Last Update:		$Author: smm $, $Date: 1998-08-03 16:19:18 $\
+** Source File:		$RCSfile: pmgr_motif.prj,v $\
+** Revision:		$Revision: 1.24 $\
+** Status:		$State: Exp $\
+*/\
+ \
+static char rcsid[] = "$Revision: 1.24 $ $RCSfile: pmgr_motif.prj,v $";\
+\
+\
+/*-----------------------------------------------------------\
+ * This is the project main program file for Xt generated \
+ * code. You may add application dependent source code \
+ * at the appropriate places. \
+ * 			     \
+ * Do not modify the statements preceded by the dollar\
+ * sign ($), these statements will be replaced with\
+ * the appropriate source code when the main program is  \
+ * generated.  \
+ *\
+ * $Date: 1998-08-03 16:19:18 $  		$Revision: 1.24 $ \
+ *-----------------------------------------------------------*/ \
+\
+#include <X11/Intrinsic.h>\
+#include <X11/StringDefs.h>\
+#include <X11/Xlib.h>\
+\
+#include <Xm/Xm.h>\
+\
+#include <stdio.h>\
+\
+#include "dicom.h"\
+#include "ctnthread.h"\
+#include "condition.h"\
+\
+#include "lst.h"\
+#include "tbl.h"\
+#include "manage.h"\
+\
+static int jj;\
+extern DMAN_HANDLE *dmanHandle;\
+extern char *serverGroup;\
+char\
+   *icon_file = "icon.file",\
+   *icon_index = "icon.index",\
+   *db_file = "print.db";\
+extern CTNBOOLEAN silent ;\
+CTNBOOLEAN Send_BIB_when_print = TRUE;\
+CTNBOOLEAN associationActive = FALSE;\
+\
+/*---------------------------------------------------- \
+ * UxXt.h needs to be included only when compiling a \
+ * stand-alone application. \
+ *---------------------------------------------------*/\
+#ifndef DESIGN_TIME\
+#include "UxXt.h"\
+#endif /* DESIGN_TIME */\
+\
+XtAppContext	UxAppContext;\
+Widget		UxTopLevel;\
+Display		*UxDisplay;\
+int		UxScreen;\
+\
+/*----------------------------------------------\
+ * Insert application global declarations here\
+ *---------------------------------------------*/\
+static void usageerror();\
+char applicationTitle[20] = "PRINT_MANAGER";\
+\
+#ifdef _NO_PROTO\
+main(argc,argv)\
+        int     argc;\
+        char    *argv[];\
+#else\
+main( int argc, char *argv[])\
+#endif /* _NO_PROTO */\
+{\
+  char\
+    *databaseName = "CTNControl";\
+  CONDITION\
+    cond;\
+  CTNBOOLEAN\
+    verboseTBL = FALSE,\
+    verboseSRV = FALSE;\
+\
+\
+	/*-----------------------------------------------------------\
+	 * Declarations.\
+         * The default identifier - mainIface will only be declared \
+	 * if the interface function is global and of type swidget.\
+	 * To change the identifier to a different name, modify the\
+	 * string mainIface in the file "xtmain.dat". If "mainIface"\
+         * is declared, it will be used below where the return value\
+	 * of  PJ_INTERFACE_FUNCTION_CALL will be assigned to it.\
+         *----------------------------------------------------------*/ \
+\
+  	$PJ_INTERFACE_RETVAL_TYPE\
+\
+	/*---------------------------------\
+	 * Interface function declaration\
+	 *--------------------------------*/	\
+\
+ 	$PJ_INTERFACE_FUNCTION_DECL\
+	$PJ_INTERFACE_FUNCTION_ARG_DECL\
+\
+	/*---------------------\
+	 * Initialize program\
+	 *--------------------*/\
+\
+#ifdef XOPEN_CATALOG\
+	if (XSupportsLocale()) {\
+		XtSetLanguageProc(NULL,(XtLanguageProc)NULL,NULL);\
+	}\
+#endif\
+\
+	SgePreInitialize(&argc, argv);\
+  	UxTopLevel = XtAppInitialize(&UxAppContext, "$PJ_APP_CLASS_NAME",\
+				     NULL, 0, &argc, argv, NULL, NULL, 0);\
+\
+	UxDisplay = XtDisplay(UxTopLevel);\
+	UxScreen = XDefaultScreen(UxDisplay);\
+\
+	/* We set the geometry of UxTopLevel so that dialogShells\
+	   that are parented on it will get centered on the screen\
+	   (if defaultPosition is true). */\
+\
+	XtVaSetValues(UxTopLevel,\
+			XtNx, 0,\
+			XtNy, 0,\
+			XtNwidth, DisplayWidth(UxDisplay, UxScreen),\
+			XtNheight, DisplayHeight(UxDisplay, UxScreen),\
+			NULL);\
+\
+	/*-------------------------------------------------------\
+	 * Insert initialization code for your application here \
+	 *------------------------------------------------------*/\
+\
+	while (--argc > 0 && (*++argv)[0] == '-') {\
+	switch (*(argv[0] + 1)) {\
+	   case 'a':\
+	   argv++;\
+	   argc--;\
+	   strcpy(applicationTitle ,*argv);\
+	   break;\
+	case 'D':\
+	   argv++;\
+	   argc--;\
+	   db_file = *argv;\
+	   break;\
+	case 'f':\
+	    if (argc-- < 1)\
+		usageerror();\
+	    databaseName = *++argv;\
+	    break;\
+	case 'F':\
+	   argv++;\
+	   argc--;\
+	   icon_file = *argv;\
+	   break;\
+	case 'h':\
+	    usageerror();\
+	    break;\
+	case 'I':\
+	   argv++;\
+	   argc--;\
+	   icon_index = *argv;\
+	   break;\
+	case 's':\
+	   silent = TRUE;\
+	   break;\
+	case 'S':\
+	   printf("BIBs sent as they are filled with an image.\n");\
+	   Send_BIB_when_print = FALSE;\
+	   break; \
+	case 'x':\
+	    if (argc-- < 1)\
+		usageerror();\
+	    argv++;\
+	    if (strcmp(*argv, "TBL") == 0)\
+		verboseTBL = TRUE;\
+	    else if (strcmp(*argv, "SRV") == 0)\
+		verboseSRV = TRUE;\
+	    else\
+		usageerror();\
+	    break;\
+	case 'v':\
+	    printf("Forcing all facilities into verbose mode.\n");\
+	   verboseTBL = TRUE;\
+	   verboseSRV = TRUE;\
+	   break;\
+	default:\
+	    printf("Unrecognized option: %s\n", *argv);\
+	    break;\
+	}\
+	}\
+\
+	if (argc < 1)\
+	    usageerror();\
+	serverGroup = *argv;  \
+\
+	THR_Init();\
+	TBL_Debug(verboseTBL);\
+	SRV_Debug(verboseSRV);\
+	cond = DMAN_Open(databaseName, "", "", &dmanHandle);\
+	if (cond != DMAN_NORMAL) {\
+	    COND_DumpConditions();\
+	    exit(1);\
+	}\
+\
+	/*----------------------------------------------------------------\
+	 * Create and popup the first window of the interface.  The 	 \
+	 * return value can be used in the popdown or destroy functions.\
+         * The Widget return value of  PJ_INTERFACE_FUNCTION_CALL will \
+         * be assigned to "mainIface" from  PJ_INTERFACE_RETVAL_TYPE. \
+	 *---------------------------------------------------------------*/\
+\
+	$PJ_INTERFACE_FUNCTION_CALL\
+	$PJ_POPUP_CALL\
+\
+	/*-----------------------\
+	 * Enter the event loop \
+	 *----------------------*/\
+\
+  	$PJ_EVENT_LOOP\
+	THR_Shutdown();\
+\
+}\
+\
+static void usageerror()\
+{\
+    char msg[] = "\\
+Usage: pmgr_motif [switches] printerGroup\n\\
+\n\\
+    -a appTitle  Use appTitle as the AE Title of the print manager\n\\
+                 rather than the default (PRINT_MANAGER)\n\\
+    -D database  Set the print database name (default: print.db)\n\\
+    -f control   Set the control database name (default: CTNControl)\n\\
+    -F file      Set the icon file pathname (default: icon.file)\n\\
+    -h           Print help page\n\\
+    -I index     Set the icon index pathname (default: icon.index)\n\\
+    -s           Place print manager in silent mode\n\\
+    -S           Set Basic Image Box attributes as user creates\n\\
+                 each BIB rather than waiting until the end\n\\
+    -x fac       Place facility fac in verbose mode (DUL, DCM, SRV, TBL)\n\\
+    -v           Place all facilities in verbose mode\n\\
+\n\\
+    printerGroup The group name which identifies the set of printers\n\\
+                 which will be targets for this invocation\n";\
+\
+    fprintf(stderr, msg);\
+    exit(1);\
+}\
+
+*xtmain.PjExplicitEventLoop: {\
+\
+	XEvent event;\
+\
+	for (;;)\
+	{\
+	    XtAppNextEvent(UxAppContext, &event);\
+\
+	    switch (event.type)\
+	    {\
+\
+	       /*---------------------------------------------------\
+	 	* Insert code here to handle any events that you do\
+		* not wish to be handled by the interface.\
+		*---------------------------------------------------*/\
+\
+		default:\
+	    	    XtDispatchEvent(&event);\
+	    	    break;\
+	    }\
+	}\
+}
+*xtmain.PjEdited: 1
+*xtmain.PjHasImplicitLoop: 1
+*xtmain.PjHasExplicitLoop: 0
+
+*uilmain.class: PJuilmain
+*uilmain.PjName: uilmain
+*uilmain.PjParent: pmgr_motif
+*uilmain.PjFileName: pmgr_motif.c
+*uilmain.PjDate: 0
+*uilmain.PjMode: -1
+
+*uxmake.class: PJuxmake
+*uxmake.PjName: uxmake
+*uxmake.PjParent: pmgr_motif
+*uxmake.PjFileName: pmgr_motif.mk
+*uxmake.PjDate: 0
+*uxmake.PjMode: -1
+
+*xtmake.class: PJxtmake
+*xtmake.PjName: xtmake
+*xtmake.PjParent: pmgr_motif
+*xtmake.PjFileName: pmgr_motif.mk
+*xtmake.PjDate: 0
+*xtmake.PjMode: -1
+
+*uilmake.class: PJuilmake
+*uilmake.PjName: uilmake
+*uilmake.PjParent: pmgr_motif
+*uilmake.PjFileName: pmgr_motif.mk
+*uilmake.PjDate: 0
+*uilmake.PjMode: -1

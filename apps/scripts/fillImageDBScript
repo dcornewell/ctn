@@ -1,0 +1,32 @@
+#!/bin/csh
+# This script is used to fill the image db with the images
+# submitted by vendors for RSNA95.  It assumes a certain
+# directory layout.
+# Usage is: fillImageDBScript directory database
+# where: directory is the directory holding the studies to be placed
+#	 in the image database (by vendor).
+#	 database is the name of the image DB to hold the image information.
+
+if ($2 == "") then
+echo "Usage: $0 directory database"
+goto abort
+endif
+
+cd $1
+foreach i (*)
+ echo $i
+ if (-d $i) then
+  fillImageDB -o $i $2 $1/$i/*/*
+  if ($status != 0) then
+   echo fillImageDB failed
+   goto abort
+  endif
+ else
+  echo $i is not a directory
+ endif
+end
+
+exit 0
+
+abort:
+exit 1

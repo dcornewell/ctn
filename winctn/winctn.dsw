@@ -1,0 +1,644 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "archive_agent"=.\ctn_apps\archive_agent\archive_agent.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "archive_cleaner"=.\ctn_apps\archive_cleaner\archive_cleaner.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "archive_server"=.\ctn_apps\archive_server\archive_server.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "clone_study"=.\ctn_apps\clone_study\clone_study.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ctn_apps"=.\ctn_apps\ctn_apps.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name archive_server
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_create_object
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_ctnto10
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_diff
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_dump_compressed
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_dump_element
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_dump_file
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_make_object
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_map_to_8
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_modify_elements
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_modify_object
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_print_dictionary
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_template
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_verify
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_w_disp
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dicom_echo
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name send_image
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name storage_classes
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name load_control
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name simple_storage
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name archive_agent
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name archive_cleaner
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name clone_study
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ctn_version
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_replace_element
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_resize
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_rm_element
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_rm_group
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dcm_to_html
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dump_commit_requests
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ttdelete
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ttinsert
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ttlayout
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ttselect
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ttunique
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ttupdate
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "ctn_lib"=.\ctn_lib\ctn_lib.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ctn_version"=.\ctn_apps\ctn_version\ctn_version.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_create_object"=.\ctn_apps\dcm_create_object\dcm_create_object.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_ctnto10"=.\ctn_apps\dcm_ctnto10\dcm_ctnto10.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_diff"=.\ctn_apps\dcm_diff\dcm_diff.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_dump_compressed"=.\ctn_apps\dcm_dump_compressed\dcm_dump_compressed.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_dump_element"=.\ctn_apps\dcm_dump_element\dcm_dump_element.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_dump_file"=.\ctn_apps\dcm_dump_file\dcm_dump_file.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_make_object"=.\ctn_apps\dcm_make_object\dcm_make_object.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_map_to_8"=.\ctn_apps\dcm_map_to_8\dcm_map_to_8.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_modify_elements"=.\ctn_apps\dcm_modify_elements\dcm_modify_elements.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_modify_object"=.\ctn_apps\dcm_modify_object\dcm_modify_object.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_print_dictionary"=.\ctn_apps\dcm_print_dictionary\dcm_print_dictionary.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_replace_element"=.\ctn_apps\dcm_replace_element\dcm_replace_element.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_resize"=.\ctn_apps\dcm_resize\dcm_resize.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_rm_element"=.\ctn_apps\dcm_rm_element\dcm_rm_element.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_rm_group"=.\ctn_apps\dcm_rm_group\dcm_rm_group.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_template"=.\ctn_apps\dcm_template\dcm_template.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_to_analyze"=.\private_apps\dcm_to_analyze\dcm_to_analyze.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_to_html"=.\ctn_apps\dcm_to_html\dcm_to_html.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_verify"=.\ctn_apps\dcm_verify\dcm_verify.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_vr_patterns"=.\ctn_apps\dcm_vr_patterns\dcm_vr_patterns.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dcm_w_disp"=.\ctn_apps\dcm_w_disp\dcm_w_disp.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dicom_echo"=.\ctn_apps\dicom_echo\dicom_echo.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dump_commit_requests"=.\ctn_apps\dump_commit_requests\dump_commit_requests.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "javactn"=.\javactn\javactn.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "load_control"=.\ctn_apps\load_control\load_control.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "private_apps"=.\private_apps\private_apps.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name dcm_to_analyze
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "query_client"=.\ctn_apps\query_client\query_client.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "send_image"=.\ctn_apps\send_image\send_image.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "simple_storage"=.\ctn_apps\simple_storage\simple_storage.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "storage_classes"=.\ctn_apps\storage_classes\storage_classes.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ttdelete"=.\ctn_apps\ttdelete\ttdelete.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ttinsert"=.\ctn_apps\ttinsert\ttinsert.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ttlayout"=.\ctn_apps\ttlayout\ttlayout.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ttselect"=.\ctn_apps\ttselect\ttselect.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ttunique"=.\ctn_apps\ttunique\ttunique.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "ttupdate"=.\ctn_apps\ttupdate\ttupdate.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

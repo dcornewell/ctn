@@ -1,0 +1,7 @@
+	drop view PatientStudyView;
+	drop table Limits;
+	drop table patientlevel;
+	drop table studylevel;
+	drop table serieslevel;
+	drop table imagelevel;
+	drop table instancetable;

@@ -1,0 +1,78 @@
+# !/bin/csh
+#
+# This script stops the image display programs (and removes the
+# shared memory queues).
+# $Revision: 1.9 $
+
+if( $1 == "" ) then
+	echo Usage: $0 ctn_nname
+	exit
+endif
+
+set Q1 = 0
+set Q2 = 0
+set Q3 = 0
+set Q4 = 0
+
+set SUCCESS = 1
+setenv ROOT /mir_ctn/img
+setenv QUEUE_DIRECTORY $ROOT/q
+
+switch($1)
+	case "ctn1":
+		set Q1 = 10
+		set Q2 = 12
+		set Q3 = 14
+		breaksw
+	case "ctn2":
+		set Q1 = 20
+		set Q2 = 22
+		breaksw
+	case "ctn3":
+		set Q1 = 30
+		set Q2 = 32
+		set Q3 = 34
+		breaksw
+	case "ctn4":
+		set Q1 = 40
+		set Q2 = 42
+		breaksw
+	case "ctn5":
+		set Q1 = 50
+		set Q2 = 52
+		set Q3 = 54
+		breaksw
+	case "ctn6":
+		set Q1 = 60
+		set Q2 = 62
+		breaksw
+	case "ctn7":
+		set Q1 = 70
+		set Q2 = 72
+		set Q3 = 74
+		breaksw
+	case "ctn8":
+		set Q1 = 80
+		set Q2 = 82
+		breaksw
+	case "demo":
+		set Q1 = 40
+		set Q2 = 14
+		set Q3 = 74
+		breaksw
+	default:
+		set SUCCESS = 0
+		echo $0\: $1 not found.
+		breaksw
+endsw
+
+if( $SUCCESS == 1 ) then
+
+foreach i ($Q1 $Q2 $Q3 $Q4)
+if ($i != 0) kill_ctndisp $i
+end
+
+kill_ctnnetwork 100
+endif
+
+exit

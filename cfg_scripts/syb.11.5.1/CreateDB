@@ -1,0 +1,21 @@
+#!/bin/csh
+#
+# CreateDB
+#
+if ($1 == "" || $2 == "" || $3 == "" || $4 == "" || $5 == "" || $6 == "") then
+  echo " "
+  echo Usage: "$0 <DB Name> <DB Device> <LOG Device> <DB Size(Mb)> <LOG Size(Mb)> <SA password>"
+  echo " "
+  echo  Note: At MIR use DEV_DICOMIS for DB Device
+  echo  Note: At MIR use LOG_DICOMIS for LOG Device
+  echo  Note: LOG Size should be about 1/4 of DB Size
+  echo " "
+  exit
+endif
+sed -e "s/<DATABASENAME>/$1/g" CreateDB.script > foo1
+sed -e "s/<DBDEVICE>/$2/g" foo1 > foo2
+sed -e "s/<LOGDEVICE>/$3/g" foo2 > foo3
+sed -e "s/<DBSIZE>/$4/g" foo3 > foo4
+sed -e "s/<LOGSIZE>/$5/g" foo4 > foo5
+./irun.11.5.1 $6 foo5
+rm foo1 foo2 foo3 foo4 foo5

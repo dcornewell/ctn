@@ -1,0 +1,193 @@
+
+The current implementation of the SCU of the Basic Print Management Meta
+SOP class follows the following algorithm.
+
+
+   Establish an association with a peer i.e. SCP
+   If association established then
+	Get Printer attributes
+	Create BASIC FILM SESSION SOP instance
+	For (each film of the film session)
+		Create a BASIC FILM BOX SOP instance
+		For (every image in the FILM BOX)
+			Set attributes of the BASIC IMAGE BOX SOP instance
+        	Send action request
+        	Delete the film box instance
+   Release Association
+
+
+Description
+-----------
+
+This SCU implementation allows the users to provide the following
+command line arguments.
+
+Usage:
+      print_client [-a] [-c calledAPTitle] [-d] [-f films] [-i imageFormat]
+                              [-p] [-t callingAPTitle] [-v] node port
+Options:
+      a       Abort Association after echo requests
+      c       Called AP title to use during Association setup
+      d       Drop Association after echo requests
+      f       Number of films
+      i       Image display format
+      p       Dump service parameters after Association Request
+      t       Calling AP title to use during Association setup
+      v       Verbose mode for DUL facility
+      node    node name
+      port    port number
+
+
+The SCU (client) starts with initializing the network and proposing the 
+role of an application entity requestor i.e. one who will request services.
+Then the SCU requests service for the following two classes :
+	1) Basic Greyscale Print Management Meta SOP class
+	2) Basic Color Print Management Meta SOP class
+Once these classes are negotiated, an association is established with the
+peer by invoking the DUL routine viz. DUL_RequestAssociation.
+
+If the initial phase of association establishment is successful, the
+SCU proceeds to make use of the various DIMSE-N services useful for 
+this application.
+
+A typical dump of the various parameters proposed in the association
+look as follows :
+
+Association accepted, parameters:
+APP CTX NAME:1.2.840.10008.3.1.1.1
+AP TITLE:    PRINT_CLIENT_SCU
+AP TITLE:    PRINT_SERVER_SCP
+AP TITLE:    PRINT_SERVER_SCP
+MAX PDU:     16384
+PRES ADDR:   dicom1
+PRES ADDR:   dicom1:2700
+REQ IMP UID: 1.2.840.113654.2.3.1993.1.1
+REQ VERSION: MIRCTN20JUL93
+ACC IMP UID: 1.2.840.113654.2.3.1993.1.1
+ACC VERSION: MIRCTN20JUL93
+Requested Presentation Ctx
+  Context ID:           1
+  Abstract Syntax:      1.2.840.10008.5.1.1.18
+  Result field:         0
+  Proposed Xfer Syntax(es)
+                  1.2.840.10008.1.2
+  Accepted Xfer Syntax:
+  Context ID:           3
+  Abstract Syntax:      1.2.840.10008.5.1.1.9
+  Result field:         0
+  Proposed Xfer Syntax(es)
+                  1.2.840.10008.1.2
+  Accepted Xfer Syntax:
+Accepted Presentation Ctx
+  Context ID:           1
+  Abstract Syntax:      1.2.840.10008.5.1.1.18
+  Result field:         0
+  Proposed Xfer Syntax(es)
+  Accepted Xfer Syntax: 1.2.840.10008.1.2
+  Context ID:           3
+  Abstract Syntax:      1.2.840.10008.5.1.1.9
+  Result field:         0
+  Proposed Xfer Syntax(es)
+  Accepted Xfer Syntax: 1.2.840.10008.1.2
+
+The SCU now sends an N-GET request to its peer (SCP) to get the 
+attributes of the PRINTER SOP instance which is maintained by the peer.
+To send this N-GET request, the SCU is required to first build up the 
+N-GET request message. The request message is built up in the routine
+"sendGetPrinterInstance". Whichever attributes the SCU wants are indicated
+in the "attributeList" field of the request message. Once the request
+message is built up, it is sent to the peer by invoking the SRV routine
+viz. SRV_NGetRequest. This routine, on success, will provide a pointer
+to the response message received from the SCP. The SCP then dumps the
+various attributes received from the SCP as indicated in a typical 
+output below :
+
+SCU : Sending N-GET Request to get printer attributes
+ 
+SCU : N-GET response from the printer
+  Attributes of the printer are : -
+ 
+DCM Dump Elements
+Object type: ELEMENT LIST
+Object size: 186
+Group: 0008, Length:        0
+0008 0000        4 //                ID Group Length//      22 34
+0008 0070       10 //                ID Manufacturer//ABXY Inc.
+0008 1090        8 //     ID Manufacturer Model Name//ABXY-LPF
+Group: 0018, Length:        0
+0018 0000        4 //               ACQ Group Length//      44 68
+0018 1000       10 //       ACQ Device Serial Number//pq34mn.V8
+0018 1002       12 //           ACQ Software Version//las-pri v3.2
+0018 1200        8 //   ACQ Date of Last Calibration//19930721
+0018 1201        6 //   ACQ Time of Last Calibration//141550
+Group: 2110, Length:        0
+2110 0000        4 //                               //Unimplemented
+2110 0010        6 //          printer device status//NORMAL
+2110 0020        8 //         additional information//NO-INFO
+2110 0030       10 //                   printer name//XYZ Laser
+DCM Dump Elements Complete
+
+This actions are all taken in the "ngetCallback" routine.
+
+The next step is to create an instance of the BASIC FILM SESSION SOP
+class. The SCU uses the N-CREATE DIMSE service for this purpose.
+TThis is handled by the routine "sendCreateFilmSession". In this
+rotine the N-CREATE request message is built. The various mandatory
+and optional attribute values are provided by the SCU in the request
+message "dataSet" field. Since a data set is present, the SCU also
+sets the dataSetType field to DCM_CMDDATAOTHER to indicate this.
+In this implementation of the SCU, no facility is provided to dynamically 
+provide the attributes. Rather, all attributes are hard coded in the
+form of a DCM_FLAGGED_ELEMENT map array. This array is converted into a 
+DCM_OBJECT i.e. dataSet using the DCM_ModifyElements routine.
+Finally the request message is sent to the peer using the SRV routine
+viz. SRV_NCreateRequest. On success, this SRV function provides
+a pointer to the N-CREATE response message received from the SCP.
+The SCU dumps the data set in the response message inside the 
+call back function - "ncreateBFSCallback".
+
+Depending upon the command line argument value for number of films, 
+(default value = 1) the SCU then issues N-CREATE requests to create
+instances of the BASIC FILM BOX SOP class. For each film box to be created,
+the SCU proceeds in the same manner as described above. The N-CREATE 
+request message is built up in the "sendCreateFilmBox" routine and 
+the dumping of the data set received from peer takes in the 
+"ncreateBFBCallback" routine.
+
+For every film box, once it is created, the SCU then proceeds to set
+the attributes of the BASIC IMAGE BOX SOP instances which were created
+as a result of creation of the FILM BOX instance. For this the N-SET
+DIMSE service is used. The N-SET request message is built in the 
+"sendSetImageBox" routine. The data set returned by the SCP in the
+response message is dumped in the "nsetBIBCallback" routine.
+
+Now the SCU sends the N-ACTION request to the SCP requesting it to
+print the images stored in the current FILM BOX instance. This 
+request message is built in the "sendActionRequest" routine and 
+the data set returned in the response message is dumped in the 
+"nactionBFBCallback" routine. This data set contains only the 
+instance uid of the PRINT JOB SOP class instance (if supported by
+the SCP).
+
+Finally, the SCU requests the SCP to delete the current FILM BOX
+instance and the hierarchy rooted at that FILM BOX instance.
+For this, the SCU builds up the N-DELETE request message (in the 
+routine "sendDeleteRequest") and upon receiving a response, verifies
+if the status is a success or not (in routine "ndeleteCallback")
+
+
+Status of current implementation
+--------------------------------
+
+The N-ACTION response does not contain the correct instance uid of
+the PRINT JOB SOP instance since we are trying to figure out the 
+tag value for the actionReply field. So for now, to just test if the
+code works, the SCP just sends some instance uid not encoded as an
+ACTION REPLY.
+
+The N-DELETE response will always be SUCCESS as of now since the SCP
+code to handle delete requests is incomplete. So the SCP just sends
+a SUCCESS code.
+
+The N-EVENT-REPORT is not used by SCP/SCU as of now.
+

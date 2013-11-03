@@ -1,0 +1,31 @@
+#!/bin/csh
+
+# Script which tests for some definitions in $DICOM_MAKE
+# to make sure proper settings are in place for the baseline
+# build of the CTN software (no multi-byte characters).
+
+set x = 0
+
+if (! (-e $DICOM_MAKE) ) then
+  echo The file "$DICOM_MAKE" is not defined.
+  echo Check your environment
+  exit 1
+endif
+
+grep lctnmb $DICOM_MAKE >& /dev/null
+if ($status == 0) then
+  echo We DO NOT expect -lctnmb to be defined for LIBS_CTN in $DICOM_MAKE
+  echo Make sure this is the right master Makefile and/or right environment.
+  echo "If this is in a comment, remove it to satisfy this script."
+  set x = 2
+endif
+
+grep CTN_MULTIBYTE $DICOM_MAKE >& /dev/null
+if ($status == 0) then
+  echo We DO NOT expect CTN_MULTIBYTE to be defined in $DICOM_MAKE in C_OPTS.
+  echo Make sure this is the right master Makefile and/or right environment.
+  echo "If this is in a comment, remove it to satisfy this script."
+  set x = 3
+endif
+
+exit $x

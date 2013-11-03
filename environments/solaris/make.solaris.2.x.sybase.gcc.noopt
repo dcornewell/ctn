@@ -1,0 +1,66 @@
+#  Global rules for compilation for solaris
+
+X11_LIBS = -L/usr/openwin/lib -lX11 
+XAW_LIBS = -lXaw -lXmu -lXt -lXext -lm
+XM_INCLUDE = /usr/dt/include
+X11_INCLUDE = /usr/openwin/share/include
+SYBASE_INCLUDE = /usr/sybase/include
+
+LIBPATH_X11 = -L/usr/openwin/lib
+LIBPATH_MOTIF = -L/usr/dt/lib
+LIBPATH_UCB = -L/usr/ucblib
+LIBPATH_DATABASE = -L/usr/sybase/lib
+LIBPATH_XIL = -L$(XILHOME)/lib
+LIBS_X11 = -lXt -lX11
+LIBS_MOTIF = -lXm
+LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm
+LIBS_OS = -lm -lsocket -lnsl -lgen -lelf -lc -lucb
+# Added this macro so we could link explicitly with libucb.  The shared
+# library is not considered secure by Solaris and does not work with
+# setuid apps.
+LIBS_OS_SECURE_UCB = -lm -lsocket -lnsl -lgen -lelf -lc /usr/ucblib/libucb.a
+LIBS_XIL = -lxil
+LIBS_DATABASE = -ltbl_sybase -lsybdb
+LIBS_LEX = -ll
+LIBS_CTN = -lctn $(LIBPATH_DATABASE) -lsybdb $(LIBS_OS)
+
+#	-lmut \
+#	-lmanage \
+#	-liap \
+#	-licon \
+#	-lprint \
+#	-lfis -lidb \
+#	$(LIBS_DATABASE) \
+#	$(LIBPATH_DATABASE) \
+#	-ldatabase -lhunk_man \
+#	-lcfg \
+#	-lservices \
+#	-lmessages \
+#	-lsq -ldcmobjects \
+#	-ldulprotocol -lsnp \
+#	-luid \
+#	-llst \
+#	-lgq \
+#	-lie \
+#	-lutility \
+#	-lcondition \
+#	-lctnthread \
+#	$(LIBS_OS)
+
+TBL_DB = tbl_sybase.o
+TBLMB_DB = multibyte_not_supported_in_this_environment
+
+CFLAGS_X11 = -I/usr/openwin/include
+CFLAGS_MOTIF = -I$(XM_INCLUDE)
+CFLAGS_XIL = -I$(XILHOME)/include
+STATIC = -Bstatic
+
+LONGSIZE=32
+INTSIZE=32
+SHORTSIZE=16
+C_OPTS = -g -Dsun4 -Dsparc -DDEBUG -D$(ARCHITECTURE) -D$(OS) -DSHARED_MEMORY \
+-DSYBASE -DSEMAPHORE -DX11 -DATHENA -DMOTIF -DX11R4 -DUSLEEP \
+-I$(DICOM_INCLUDE) $(CFLAGS_MOTIF) $(CFLAGS_X11) \
+-I$(SYBASE_INCLUDE) \
+-DLONGSIZE=$(LONGSIZE) -DINTSIZE=$(INTSIZE) -DSHORTSIZE=$(SHORTSIZE) \
+-DTIMEOFDAYARGS=2

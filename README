@@ -1,0 +1,24 @@
+						July 29, 2008
+
+Please read the Release Notes carefully.  This is a beta release
+with features for Explicit VR Transfer Syntaxes, including
+those with encapsulated pixels.  This has only
+been tested with a few applications.  If you want to use the image
+archive, do not use this release. Or, use this release after
+you have tested thoroughly the behavior in your environment.
+
+Welcome to the DICOM software produced by the Mallinckrodt Institute of
+Radiology (MIR) under contract to the Radiological Society of North America.
+Copyright notice and terms and conditions for the use of this software
+are found in the file "copyright" in this directory and in all source
+code files.
+
+This is version 3.1.0 of the software.  The release notes
+on our web page contain the changes for this release. This is a new version
+that has been tested as part of the IHE/MESA software. The release notes
+will indicate the main changes are in the dictionary.
+
+Documents are found on our web server at
+http://www.erl.wustl.edu/research/dicom/ctn.html.
+
+Bug reports should be entered on Source Forge under the mirctn project.

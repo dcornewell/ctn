@@ -1,0 +1,4 @@
+INSERT INTO Limits(
+	DBSize, DBLimit, PatientCount, StudyCount, ImageCount) VALUES (
+	0,	40,	 0,	       0,	   0)
+\g

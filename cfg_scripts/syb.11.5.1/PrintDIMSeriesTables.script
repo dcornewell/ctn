@@ -1,0 +1,20 @@
+/* PrintDIMTables.script 1.0 8-Mar-94 */
+/* set nocount on */
+
+use <DATABASENAME>
+go
+
+print "Patient Level"
+go
+select * from PatientLevel
+go
+
+print "Study Level"
+go
+select * from Study Level
+go
+
+print "Series Level"
+go
+select * from SeriesLevel
+go

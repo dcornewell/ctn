@@ -1,0 +1,12 @@
+DROP TABLE PatientLevel
+\g
+DROP TABLE StudyLevel
+\g
+DROP TABLE SeriesLevel
+\g
+DROP TABLE ImageLevel
+\g
+DROP TABLE InstanceTable
+\g
+DROP TABLE Limits
+\g

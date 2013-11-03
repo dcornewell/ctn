@@ -1,0 +1,200 @@
+/* CreateFISTables.script 1.0 8-Mar-94 */
+/* set nocount on */
+print " "
+go
+print " "
+go
+
+use <DATABASENAME>
+go
+	create table PatientTable
+	(
+	PatID		char(16) not null,
+	PatNam		char(64) not null,
+	PatUID		char(64) not null,
+	PatBirDat	int not null,
+	PatSex		char(16) not null,
+	)
+go
+	create unique index P_PatUID_index
+        on PatientTable(PatUID)
+go
+
+print "Created PatientTable"
+go
+
+	create table StudyTable (
+	PatUID		char(64) not null,
+	StuInsUID	char(64) not null,
+	VisUID		char(64) not null,
+	AccNum		char(16) not null,
+	StuID		char(16) not null,
+	SchStuStaDat	int null,
+	SchStuStaTim	real null,
+	SchStuLoc	char(64) null,
+	ProDes		char(64) null,
+	ReqPro		char(16) null,
+	StuStaID	char(16) null,
+	StuReaDat	int null,
+	StuReaTim	float null
+	)
+go
+	create unique index S_StuUID_index
+        on StudyTable(StuInsUID)
+go
+print "Created StudyTable"
+go
+
+	create table ResultsTable (
+	ResUID		char(64) not null,
+	StuInsUID	char(64) not null,
+	ResID		char(16) not null,
+	Imp		text null,
+	InsCreDat	char(8) null,
+	InsCreTim	char(16) null,
+	InsCreUID	char(64) null
+	)
+go
+	create unique index R_ResUID_index
+        on ResultsTable(ResUID)
+go
+print "Created Results Table"
+go
+
+	create table InterpretationTable (
+	IntUID		char(64) not null,
+	ResUID		char(64) not null,
+	IntID		char(16) null,
+	IntTex		text null,
+	IntTypID	char(16) not null,
+	IntStaID	char(16) not null,
+	IntDiaDes       text null,
+        InsCreDat       char(8) null,
+        InsCreTim       char(16) null,
+        InsCreUID       char(64) null,
+        PhyAppInt       char(64) null,
+        IntAppDat       char(8) null,
+        IntAppTim       char(16) null
+
+	)
+go
+	create unique index I_IntUID_index
+        on InterpretationTable(IntUID)
+go
+print "Created Interpretation Table"
+go
+
+	create table StudyCmpTable (
+	StuComUID	char(64) not null,
+	StuInsUID	char(64) not null,
+	Mod		char(16) not null,
+	ProCodVal	char(16) null,
+	ProCodSchDes	char(16) null,
+	ProCodMea	char(64) null,
+	StuDes		char(64) null,
+	StuComStaID	char(16) null,
+	StuID		char(16) null
+	)
+go
+	create unique index SC_StuComUID_index
+        on StudyCmpTable(StuComUID)
+go
+print "Created Study Component Table"
+go
+
+	create table StudyCmpSeriesTable (
+	SerInsUID	char (64) not null,
+	StuComUID	char (64) not null,
+	SerDat		char (8) null,
+	SerTim		char (16) null,
+	RetAETit	char (16) null,
+	StoMedFilSetID	char (16) null,
+	StoMedFilSetUID	char (64) null
+	)
+go
+	create unique index SCSeries_SerInsUID_index
+        on StudyCmpSeriesTable(SerInsUID)
+go
+
+print "Created Study Component Series Table"
+go
+
+	create table StudyCmpImageTable (
+	SOPInsUID	char (64) not null,
+	SOPClaUID	char (64) not null,
+	SerInsUID	char (64) not null,
+	StuComUID	char (64) not null,
+	RetAETit	char (16) null,
+	StoMedFilSetID	char (16) null,
+	StoMedFilSetUID	char (64) null
+	)
+go
+	create unique index SCImage_SOPInsUID_index
+        on StudyCmpImageTable(SOPInsUID)
+go
+
+print "Created Study Component Image Table"
+go
+
+
+
+	create table UniqueNumbers (
+	NumberName	char(23) not null,
+	UniqueNumber	int not null
+	)
+go
+print "Created Unique Numbers"
+go
+
+
+	create table StorageCommitReq (
+	TraUID		char(64) not null,
+	ReqAE		char(16) not null,
+	ResAE		char(16) null,
+	ReqDat		int not null,
+	ReqTim		float not null,
+	ResDat		int null,
+	ResTim		float null
+	)
+go
+	create unique index SCReq_TraUID_index
+        on StorageCommitReq(TraUID)
+go
+
+print "Created Storage Commitment Request"
+go
+
+	create table CommitSOPRef(
+	TraUID		char(64) not null,
+	SOPClaUID	char(64) not null,
+	SOPInsUID	char(64) not null
+	)
+go
+print "Created Commitment SOP Reference"
+go
+
+	create table WorkQueue(
+	TasNam		char(100) not null,
+	TasID		char(100) not null
+	)
+go
+
+print "Created Work Queue"
+go
+	delete from UniqueNumbers
+	insert UniqueNumbers(NumberName, UniqueNumber)
+	values ('PatientID', 1000000)
+	insert UniqueNumbers(NumberName, UniqueNumber)
+	values ('AccessionNumber', 2000000)
+	insert UniqueNumbers(NumberName, UniqueNumber)
+	values ('StudyID', 3000000)
+	insert UniqueNumbers(NumberName, UniqueNumber)
+	values ('ResultsID', 4000000)
+	insert UniqueNumbers(NumberName, UniqueNumber)
+	values ('InterpretationID', 5000000)
+go
+
+print " "
+go
+print " "
+go

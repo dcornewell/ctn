@@ -1,0 +1,7 @@
+Modify the section that closes files. We were trying to close
+the same file twice if the file contained a sequence. Newer
+versions of windows throw an exception when they encounter this
+error. Older versions of windows and Linux seemed to ignore this.
+--This line, and those below, will be ignored--
+
+M    dcm.c

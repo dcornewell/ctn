@@ -1,0 +1,16 @@
+DELETE FROM ApplicationEntity
+\g
+DELETE FROM GroupNames
+\g
+DELETE FROM StorageAccess
+\g
+DELETE FROM StorageControl
+\g
+DELETE FROM SecurityMatrix
+\g
+DELETE FROM FISAccess
+\g
+DELETE FROM PrintServerCFG
+\g
+DELETE FROM VideoImageDest
+\g

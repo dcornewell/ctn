@@ -1,0 +1,103 @@
+#!/bin/csh
+# Intent:       Script for loading database files with images
+# $Revision: 1.4 $
+
+echo This script loads the common database with the images provided by
+echo MIR.  You may choose to alter it for your own purposes.
+echo ""
+
+set ROOT = /mir_ctn
+echo The default root directory for the MIR CTN data files is $ROOT.
+echo You can choose a different directory at this point by entering
+echo the directory name.  If you wish to use the default, just hit RETURN.
+echo ""
+set a = $<
+if ($a != "") then
+echo Do you wish to use $a as the root directory "(y/n)?"
+set b = $<
+if (($b != "y") && ($b != "Y")) then
+echo Script exiting.  Please try again.
+exit
+endif
+set ROOT = $a
+endif
+
+echo Before running this script, you should run img_layout to create
+echo directories for the images.  Once that is done, you should copy the
+echo image directories distributed by MIR to $ROOT/img/db/common.  That
+echo directory should contain the following subdirectories:
+echo "    cr1   cr2   cr3   ct1   ct2   ct3   ct4   mr1   mr2   mr3   mr4"
+echo "    nm1   nm2   nm3   us1   us2   us3"
+echo "    xray1 xray2 xray3"
+
+set PASS = TRUE
+#foreach i (cr1 cr2 cr3 ct1 ct2 ct3 ct4 mr1 mr2 mr3 mr4 xray1 xray2 xray3)
+foreach i (cr1 ct1 mr1 xray1)
+echo Checking for existence of $ROOT/img/db/common/$i
+if (!(-e $ROOT/img/db/common/$i)) then
+set PASS = FALSE
+echo $ROOT/img/db/common/$i missing
+endif
+end
+#foreach i (nm1 nm2 nm3 us1 us2 us3)
+foreach i (nm1 us1)
+echo Checking for existence of $ROOT/img/db/common/$i
+if (!(-e $ROOT/img/db/common/$i)) then
+set PASS = FALSE
+echo $ROOT/img/db/common/$i missing
+endif
+end
+
+if ($PASS == "FALSE") then
+echo ""
+echo This script failed because one or more image subdirectories is missing.
+echo Please copy the image subdirectories to $ROOT/img/db/common and try
+echo again.
+exit
+endif
+
+umask 0
+if (-e $ROOT/img/db/common/db) then
+echo ""
+echo A database file $ROOT/img/db/common/db already exists.  You want
+echo to delete that file before continuing.  If you do not delete that
+echo file, you run the risk of having some of your image files deleted
+echo \(it is a side effect of our code for the demo\).  Should I delete
+echo the file for you "(y/n)?"
+
+set a = $<
+if (($a == "y") || ($a == "Y")) then
+rm -f $ROOT/img/db/common/db
+if (-e $ROOT/img/db/common/db) then
+echo ""
+echo I could not delete $ROOT/img/db/common/db.  I am quitting.
+exit
+endif
+else
+echo I will not delete $ROOT/img/db/common/db.  Should I continue to
+echo fill the database "(y/n)?"
+set a = $<
+if (!(($a == "y") || ($a == "Y"))) then
+echo Exiting with no changes made
+exit
+endif
+endif
+endif
+
+echo ""
+echo The next step is the last part of the script and will take some
+echo time \(6 minutes on a Sparc 10\).  Please hit RETURN when you
+echo are ready to begin.
+set a = $<
+
+#foreach i (cr1 cr2 cr3 ct1 ct2 ct3 ct4 mr1 mr2 mr3 mr4 xray1 xray2 xray3)
+foreach i (cr1 ct1 mr1 xray1)
+echo Populating database for $ROOT/img/db/common/$i
+dbfill $ROOT/img/db/common/db $ROOT/img/db/common/$i/*
+end
+
+#foreach i (nm1 nm2 nm3 us1 us2 us3)
+foreach i (nm1 us1)
+echo Populating database for $ROOT/img/db/common/$i
+dbfill $ROOT/img/db/common/db $ROOT/img/db/common/$i/*
+end

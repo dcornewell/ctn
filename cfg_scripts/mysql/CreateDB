@@ -1,0 +1,15 @@
+#!/bin/csh
+#
+# CreateDB
+#
+if ($1 == "") then
+  echo " "
+  echo Usage: "$0 <DB Name>"
+  echo " "
+  exit
+endif
+mysqladmin -uctn -pctn create $1
+if ($status != 0) then
+  echo Could not create database: $1
+  exit 1
+endif

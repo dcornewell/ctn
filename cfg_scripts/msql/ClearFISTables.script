@@ -1,0 +1,32 @@
+DELETE FROM PatientTable
+\g
+DELETE FROM StudyTable
+\g
+DELETE FROM StudyCmpTable
+\g
+DELETE FROM StudyCmpSeriesTable
+\g
+DELETE FROM StudyCmpImageTable
+\g
+DELETE FROM ResultsTable
+\g
+DELETE FROM InterpretationTable
+\g
+DELETE FROM StorageCommitReq
+\g
+DELETE FROM CommitSOPRef
+\g
+DELETE FROM WorkQueue
+\g
+DELETE FROM UniqueNumbers
+\g
+INSERT INTO UniqueNumbers(NumberName, UniqueNumber) VALUES ('PatientID', 1000000)
+\g
+INSERT INTO UniqueNumbers(NumberName, UniqueNumber) VALUES ('AccessionNumber', 2000000)
+\g
+INSERT INTO UniqueNumbers(NumberName, UniqueNumber) VALUES ('StudyID', 3000000)
+\g
+INSERT INTO UniqueNumbers(NumberName, UniqueNumber) VALUES ('ResultsID', 4000000)
+\g
+INSERT INTO UniqueNumbers(NumberName, UniqueNumber) VALUES ('InterpretationID', 5000000)
+\g

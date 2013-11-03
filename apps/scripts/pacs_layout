@@ -1,0 +1,52 @@
+#!/bin/csh
+#
+# Intent:	This script creates the layout for the PACS demonstration
+# $Revision: 1.1 $
+
+echo This script is used to create a layout for the PACS demonstration
+echo with MIR software.  This is not necessarily the final layout, but it
+echo will serve for testing purposes.  This script is picky about input
+echo so please type carefully \(avoid extra spaces when you type\).
+echo ""
+
+set ROOT = /mir_ctn
+echo The default root directory for the MIR CTN data files is $ROOT.
+echo You can choose a different directory at this point by entering
+echo the directory name.  If you wish to use the default, just hit RETURN.
+echo ""
+set a = $<
+if ($a != "") then
+echo Do you wish to use $a as the root directory "(y/n)?"
+set b = $<
+if (($b != "y") && ($b != "Y")) then
+echo Script exiting.  Please try again.
+exit
+endif
+set ROOT = $a
+endif
+
+if (! (-e $ROOT)) then
+echo This script requires the directory $ROOT to exist before running.
+echo Please create this directory and then run this script again.
+exit
+endif
+
+umask 0
+# Create several subdirectories for the PACS demonstration
+
+echo Making the PACS subdirectories starting from $ROOT
+
+if (! (-e $ROOT/pacs)) then
+mkdir $ROOT/pacs
+endif
+if (! (-e $ROOT/pacs/config)) then
+mkdir $ROOT/pacs/config
+endif
+if (! (-e $ROOT/pacs/q)) then
+mkdir $ROOT/pacs/q
+endif
+
+echo PACS directory layout complete.  Before you run the PACS demonstration,
+echo you will need to create configuration files "(config/pacs_connect.cfg"
+echo and "config/pacs_database.cfg)".  Examples should be supplied with the
+echo CTN software "(look in pacs_demo)."

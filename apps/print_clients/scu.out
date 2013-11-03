@@ -1,0 +1,171 @@
+Script started on Fri Jul 23 10:11:55 1993
+dicom1{asg}51: more do
+print_client -p  -i "STANDARD\\2,1" dicom1 $1
+dicom1{asg}52: do 2700
+Association accepted, parameters:
+APP CTX NAME:1.2.840.10008.3.1.1.1
+AP TITLE:    PRINT_CLIENT_SCU
+AP TITLE:    PRINT_SERVER_SCP
+AP TITLE:    PRINT_SERVER_SCP
+MAX PDU:     16384
+PRES ADDR:   dicom1
+PRES ADDR:   dicom1:2700
+REQ IMP UID: 1.2.840.113654.2.3.1993.1.1
+REQ VERSION: MIRCTN20JUL93
+ACC IMP UID: 1.2.840.113654.2.3.1993.1.1
+ACC VERSION: MIRCTN20JUL93
+Requested Presentation Ctx
+  Context ID:           1
+  Abstract Syntax:      1.2.840.10008.5.1.1.18
+  Result field:         0
+  Proposed Xfer Syntax(es)
+                  1.2.840.10008.1.2
+  Accepted Xfer Syntax: 
+  Context ID:           3
+  Abstract Syntax:      1.2.840.10008.5.1.1.9
+  Result field:         0
+  Proposed Xfer Syntax(es)
+                  1.2.840.10008.1.2
+  Accepted Xfer Syntax: 
+Accepted Presentation Ctx
+  Context ID:           1
+  Abstract Syntax:      1.2.840.10008.5.1.1.18
+  Result field:         0
+  Proposed Xfer Syntax(es)
+  Accepted Xfer Syntax: 1.2.840.10008.1.2
+  Context ID:           3
+  Abstract Syntax:      1.2.840.10008.5.1.1.9
+  Result field:         0
+  Proposed Xfer Syntax(es)
+  Accepted Xfer Syntax: 1.2.840.10008.1.2
+
+
+SCU : Sending N-GET Request to get printer attributes
+
+SCU : N-GET response from the printer
+  Attributes of the printer are : - 
+
+DCM Dump Elements
+Object type: ELEMENT LIST
+Object size: 186
+Group: 0008, Length:        0
+0008 0000        4 //                ID Group Length//      22 34
+0008 0070       10 //                ID Manufacturer//ABXY Inc. 
+0008 1090        8 //     ID Manufacturer Model Name//ABXY-LPF
+Group: 0018, Length:        0
+0018 0000        4 //               ACQ Group Length//      44 68
+0018 1000       10 //       ACQ Device Serial Number//pq34mn.V8 
+0018 1002       12 //           ACQ Software Version//las-pri v3.2
+0018 1200        8 //   ACQ Date of Last Calibration//19930721
+0018 1201        6 //   ACQ Time of Last Calibration//141550
+Group: 2110, Length:        0
+2110 0000        4 //                               //Unimplemented
+2110 0010        6 //          printer device status//NORMAL
+2110 0020        8 //         additional information//NO-INFO 
+2110 0030       10 //                   printer name//XYZ Laser 
+DCM Dump Elements Complete
+
+N-GET Response PROPERLY FREED
+
+SCU : Sending N-CREATE Request to create BASIC FILM SESSION
+
+SCU : Received N-CREATE Response message
+SCU : Received BASIC FILM SESSION instance UID : 1.2.840.113654.2.3.1993.9.123.9.482
+SCU : Received the following updated BFS attributes : 
+
+DCM Dump Elements
+Object type: ELEMENT LIST
+Object size: 90
+Group: 2000, Length:        0
+2000 0000        4 //                               //Unimplemented
+2000 0010        2 //Number of copies to be printed for each film//2 
+2000 0020        4 //Specifies priority of print job//HIGH
+2000 0030        6 //Medium on which page will be printed//PAPER 
+2000 0040        8 //               Film destination//MAGAZINE
+2000 0050        6 //Human readable label that identifies film//XYZ123
+2000 0060        4 //Amount of mem allocated for film session//1000
+DCM Dump Elements Complete
+
+SCU : Sending N-CREATE Request to create BASIC FILM BOX
+
+SCU : Received N-CREATE Response message
+SCU : Received Basic Film Box instance UID : 1.2.840.113654.2.3.1993.9.123.9.483
+SCU : Attributes received via Response message:-
+
+DCM Dump Elements
+Object type: ELEMENT LIST
+Object size: 290
+Group: 2010, Length:        0
+2010 0000        4 //                               //Unimplemented
+2010 0010       12 //   Type of image display format//STANDARD\2,1
+2010 0040       10 //               Film orientation//LANDSCAPE 
+2010 0050       10 //       Film size identification//10INX14IN 
+2010 0060        8 //Interpol. type by which printer mag image//BILINEAR
+2010 0080        4 //Specifies type of the interpolation function//NONE
+2010 0100        6 //density of film areas around and between images//BLACK 
+2010 0110        6 //density of image box area containing no image//BLACK 
+2010 0120        2 //Minimum density of images on the film//10
+2010 0130        4 //Maximum density of images on the film//100 
+2010 0140        2 //specifies whether a trim box shall be printed//NO
+2010 0150        2 //      ID of configuration table//1 
+2010 0500       36 //UID of parent film session instance//1.2.840.113654.2.3.1993.9.123.9.482
+2010 0510       72 //UID of basic image box SOP instance//1.2.840.113654.2.3.1993.9.123.9.484\1.2.840.113654.2.3.1993.9.123.9.485
+DCM Dump Elements Complete
+
+SCU : Sending N-SET Request to set attributes of BASIC IMAGE BOX
+
+SCU : Received N-SET Response message
+SCU : For the Image box instance UID : 1.2.840.113654.2.3.1993.9.123.9.484
+SCU : Received updated Image Box attributes :- 
+
+DCM Dump Elements
+Object type: ELEMENT LIST
+Object size: 96
+Group: 2010, Length:        0
+2010 0000        4 //                               //Unimplemented
+2010 0060       10 //Interpol. type by which printer mag image//REPLICATE 
+Group: 2020, Length:        0
+2020 0000        4 //                               //Unimplemented
+2020 0010        2 //Specifies position of the image in the film//2 
+2020 0020        6 //       Specifies image polarity//NORMAL
+2020 0100       22 //Preformatted image SOP class UID//1.2.840.10008.5.1.1.20
+DCM Dump Elements Complete
+
+SCU : Sending N-SET Request to set attributes of BASIC IMAGE BOX
+
+SCU : Received N-SET Response message
+SCU : For the Image box instance UID : 1.2.840.113654.2.3.1993.9.123.9.485
+SCU : Received updated Image Box attributes :- 
+
+DCM Dump Elements
+Object type: ELEMENT LIST
+Object size: 96
+Group: 2010, Length:        0
+2010 0000        4 //                               //Unimplemented
+2010 0060       10 //Interpol. type by which printer mag image//REPLICATE 
+Group: 2020, Length:        0
+2020 0000        4 //                               //Unimplemented
+2020 0010        2 //Specifies position of the image in the film//2 
+2020 0020        6 //       Specifies image polarity//NORMAL
+2020 0100       22 //Preformatted image SOP class UID//1.2.840.10008.5.1.1.20
+DCM Dump Elements Complete
+
+SCU : Sending N-ACTION request to print the BASIC FILM BOX
+
+SCU : Received N-ACTION Response, status success
+
+DCM Dump Elements
+Object type: ELEMENT LIST
+Object size: 56
+Group: 2010, Length:        0
+2010 0000        4 //                               //Unimplemented
+2010 0500       36 //UID of parent film session instance//1.2.840.113654.2.3.1993.9.123.9.486
+DCM Dump Elements Complete
+
+SCU : Sending N-DELETE Request to delete current FILM BOX
+
+SCU : Received N-DELETE Response message
+FILM BOX DELETED
+dicom1{asg}53: exit
+dicom1{asg}54: 
+script done on Fri Jul 23 10:12:11 1993

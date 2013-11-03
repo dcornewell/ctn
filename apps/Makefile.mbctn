@@ -1,0 +1,652 @@
+# The top-level makefile for CTN/DICOM applications
+
+# For this target (applications), the first action is make install.
+RCS_VER = V2_10_2
+RCS_MSG_FILE = /dicom1a/projects/dicom94/releases/release.19981022.2.10.2
+
+applications:
+	cd apps_include;		make install
+	cd assoc_tool;			make application
+	cd cfg_ctn_tables;		make application
+	cd clone_study;			make application
+	cd create_greyscale_module;	make application
+	cd ctn_cutil;			make application
+	cd ctn_validate_mb;		make application
+	cd ctnnetwork;			make application
+	cd database;			make application
+	cd dbfill;			make application
+	cd dcm_create_object;		make application
+	cd dcm_ctnto10;			make application
+	cd dcm_diff;			make application
+	cd dcm_dump_compressed;		make application
+	cd dcm_dump_element;		make application
+	cd dcm_dump_file;		make application
+	cd dcm_make_object;		make application
+	cd dcm_map_to_8;		make application
+	cd dcm_mb_to_euc;		make application
+	cd dcm_modify_elements;		make application
+	cd dcm_modify_object;		make application
+	cd dcm_print_dictionary;	make application
+	cd dcm_replace_element;		make application
+	cd dcm_resize;			make application
+	cd dcm_rm_element;		make application
+	cd dcm_rm_group;		make application
+	cd dcm_snoop;			make application
+	cd dcm_template;		make application
+	cd dcm_to_html;			make application
+	cd dcm_verify;			make application
+	cd dicom_echo;			make application
+	cd displays;			make application
+	cd fillRSA;			make application
+	cd fis_server;			make application
+	cd gq;				make application
+	cd icon;			make application
+	cd idb_viewer;			make application
+	cd image_archive;		make application.mb
+	cd image_server;		make application
+	cd load_control;		make application
+	cd mb_query;			make application
+	cd mb_xlate_test;		make application
+	cd mwlQuery;			make application
+	cd new_uids;			make application
+	cd object_viewer;		make application
+	cd pdu_examples;		make application
+	cd pmgr_motif;			make application
+	cd print_clients;		make application
+	cd print_server;		make application
+	cd print_server_display;	make application
+	cd query_client;		make application
+	cd ris_gateway;			make application
+	cd rsa_ui;			make application
+	cd scripts;			make application
+	cd send_image;			make application
+	cd send_results;		make application
+	cd send_study;			make application
+	cd simple_pacs;			make application
+	cd simple_storage;		make application
+	cd snp_to_files;		make application
+	cd storage_classes;		make application
+	cd storage_commit;		make application
+	cd tbltest;			make application
+	cd wlma_ui;			make application
+
+install:
+	$(DICOM_ROOT)/apps/scripts/createdirectory $(DICOM_BIN)
+	cd apps_include;		make install
+	cd assoc_tool;			make install
+	cd cfg_ctn_tables;		make install
+	cd clone_study;			make install
+	cd create_greyscale_module;	make install
+	cd ctn_cutil;			make install
+	cd ctn_validate_mb;		make install
+	cd ctnnetwork;			make install
+	cd database;			make install
+	cd dbfill;			make install
+	cd dcm_create_object;		make install
+	cd dcm_ctnto10;			make install
+	cd dcm_diff;			make install
+	cd dcm_dump_compressed;		make install
+	cd dcm_dump_element;		make install
+	cd dcm_dump_file;		make install
+	cd dcm_make_object;		make install
+	cd dcm_map_to_8;		make install
+	cd dcm_mb_to_euc;		make install
+	cd dcm_modify_elements;		make install
+	cd dcm_modify_object;		make install
+	cd dcm_print_dictionary;	make install
+	cd dcm_replace_element;		make install
+	cd dcm_resize;			make install
+	cd dcm_rm_element;		make install
+	cd dcm_rm_group;		make install
+	cd dcm_snoop;			make install
+	cd dcm_template;		make install
+	cd dcm_to_html;			make install
+	cd dcm_verify;			make install
+	cd dicom_echo;			make install
+	cd displays;			make install
+	cd fillRSA;			make install
+	cd fis_server;			make install
+	cd gq;				make install
+	cd icon;			make install
+	cd idb_viewer;			make install
+	cd image_archive;		make install.mb
+	cd image_server;		make install
+	cd load_control;		make install
+	cd mb_query;			make install
+	cd mb_xlate_test;		make install
+	cd mwlQuery;			make install
+	cd new_uids;			make install
+	cd object_viewer;		make install
+	cd pdu_examples;		make install
+	cd pmgr_motif;			make install
+	cd print_clients;		make install
+	cd print_server;		make install
+	cd print_server_display;	make install
+	cd query_client;		make install
+	cd ris_gateway;			make install
+	cd rsa_ui;			make install
+	cd scripts;			make install
+	cd send_image;			make install
+	cd send_results;		make install
+	cd send_study;			make install
+	cd simple_pacs;			make install
+	cd simple_storage;		make install
+	cd snp_to_files;		make install
+	cd storage_classes;		make install
+	cd storage_commit;		make install
+	cd tbltest;			make install
+	cd wlma_ui;			make install
+
+install-lite:
+	$(DICOM_ROOT)/apps/scripts/createdirectory $(DICOM_BIN)
+	cd apps_include;		make install;	make clean
+#	cd assoc_tool;			make install;	make clean
+	cd cfg_ctn_tables;		make install;	make clean
+#	cd clone_study;			make install;	make clean
+#	cd create_greyscale_module;	make install;	make clean
+	cd ctn_cutil;			make install;	make clean
+	cd ctn_validate_mb;		make install;	make clean
+#	cd ctnnetwork;			make install;	make clean
+	cd database;			make install;	make clean
+#	cd dbfill;			make install;	make clean
+	cd dcm_create_object;		make install;	make clean
+	cd dcm_ctnto10;			make install;	make clean
+	cd dcm_diff;			make install;	make clean
+	cd dcm_dump_compressed;		make install;	make clean
+	cd dcm_dump_element;		make install;	make clean
+	cd dcm_dump_file;		make install;	make clean
+	cd dcm_make_object;		make install;	make clean
+	cd dcm_map_to_8;		make install;	make clean
+	cd dcm_mb_to_euc;		make install;	make clean
+	cd dcm_modify_elements;		make install;	make clean
+	cd dcm_modify_object;		make install;	make clean
+	cd dcm_print_dictionary;	make install;	make clean
+	cd dcm_replace_element;		make install;	make clean
+	cd dcm_resize;			make install;	make clean
+	cd dcm_rm_element;		make install;	make clean
+	cd dcm_rm_group;		make install;	make clean
+#	cd dcm_snoop;			make install;	make clean
+#	cd dcm_template;		make install;	make clean
+	cd dcm_to_html;			make install;	make clean
+#	cd dcm_verify;			make install;	make clean
+	cd dicom_echo;			make install;	make clean
+	cd displays;			make install;	make clean
+#	cd fillRSA;			make install;	make clean
+#	cd fis_server;			make install;	make clean
+#	cd gq;				make install;	make clean
+#	cd icon;			make install;	make clean
+	cd idb_viewer;			make install;	make clean
+	cd image_archive;		make install;	make clean
+	cd image_server;		make install;	make clean
+	cd load_control;		make install;	make clean
+	cd mb_query;			make install;	make clean
+	cd mb_xlate_test;		make install;	make clean
+	cd mwlQuery;			make install;	make clean
+	cd new_uids;			make install;	make clean
+#	cd object_viewer;		make install;	make clean
+#	cd pdu_examples;		make install;	make clean
+#	cd pmgr_motif;			make install;	make clean
+#	cd print_clients;		make install;	make clean
+#	cd print_server;		make install;	make clean
+#	cd print_server_display;	make install;	make clean
+	cd query_client;		make install;	make clean
+#	cd ris_gateway;			make install;	make clean
+#	cd rsa_ui;			make install;	make clean
+	cd scripts;			make install;	make clean
+	cd send_image;			make install;	make clean
+#	cd send_results;		make install;	make clean
+	cd send_study;			make install;	make clean
+#	cd simple_pacs;			make install;	make clean
+	cd simple_storage;		make install;	make clean
+#	cd snp_to_files;		make install;	make clean
+	cd storage_classes;		make install;	make clean
+#	cd storage_commit;		make install;	make clean
+#	cd tbltest;			make install;	make clean
+#	cd wlma_ui;			make install;	make clean
+
+
+tools-install:
+#	$(DICOM_ROOT)/apps/scripts/createdirectory $(DICOM_BIN)
+	cd apps_include;		make install
+	cd cfg_ctn_tables;		make install
+	cd dcm_create_object;		make install
+	cd dcm_ctnto10;			make install
+	cd dcm_diff;			make install
+	cd dcm_dump_compressed;		make install
+	cd dcm_dump_element;		make install
+	cd dcm_dump_file;		make install
+	cd dcm_make_object;		make install
+	cd dcm_map_to_8;		make install
+	cd dcm_mb_to_euc;		make install
+	cd dcm_modify_elements;		make install
+	cd dcm_modify_object;		make install
+	cd dcm_print_dictionary;	make install
+	cd dcm_replace_element;		make install
+	cd dcm_resize;			make install
+	cd dcm_rm_element;		make install
+	cd dcm_rm_group;		make install
+	cd dcm_snoop;			make install
+	cd dcm_template;		make install
+	cd dcm_to_html;			make install
+	cd dcm_verify;			make install
+	cd dicom_echo;			make install
+	cd displays;			make install
+	cd image_archive;		make install
+	cd image_server;		make install
+	cd load_control;		make install
+	cd mb_query;			make install
+	cd mb_xlate_test;		make install
+	cd mwlQuery;			make install
+	cd new_uids;			make install
+	cd query_client;		make install
+	cd send_image;			make install
+	cd simple_storage;		make install
+
+checkin:
+	cd apps_include;		make checkin
+	cd assoc_tool;			make checkin
+	cd cfg_ctn_tables;		make checkin
+	cd clone_study;			make checkin
+	cd create_greyscale_module;	make checkin
+	cd ctn_cutil;			make checkin
+	cd ctn_validate_mb;		make checkin
+	cd ctnnetwork;			make checkin
+	cd database;			make checkin
+	cd dbfill;			make checkin
+	cd dcm_create_object;		make checkin
+	cd dcm_ctnto10;			make checkin
+	cd dcm_diff;			make checkin
+	cd dcm_dump_compressed;		make checkin
+	cd dcm_dump_element;		make checkin
+	cd dcm_dump_file;		make checkin
+	cd dcm_make_object;		make checkin
+	cd dcm_map_to_8;		make checkin
+	cd dcm_mb_to_euc;		make checkin
+	cd dcm_modify_elements;		make checkin
+	cd dcm_modify_object;		make checkin
+	cd dcm_print_dictionary;	make checkin
+	cd dcm_replace_element;		make checkin
+	cd dcm_resize;			make checkin
+	cd dcm_rm_element;		make checkin
+	cd dcm_rm_group;		make checkin
+	cd dcm_snoop;			make checkin
+	cd dcm_template;		make checkin
+	cd dcm_to_html;			make checkin
+	cd dcm_verify;			make checkin
+	cd dicom_echo;			make checkin
+	cd displays;			make checkin
+	cd fillRSA;			make checkin
+	cd fis_server;			make checkin
+	cd gq;				make checkin
+	cd icon;			make checkin
+	cd idb_viewer;			make checkin
+	cd image_archive;		make checkin
+	cd image_server;		make checkin
+	cd load_control;		make checkin
+	cd mb_query;			make checkin
+	cd mb_xlate_test;		make checkin
+	cd mwlQuery;			make checkin
+	cd new_uids;			make checkin
+	cd object_viewer;		make checkin
+	cd pdu_examples;		make checkin
+	cd pmgr_motif;			make checkin
+	cd print_clients;		make checkin
+	cd print_server;		make checkin
+	cd print_server_display;	make checkin
+	cd query_client;		make checkin
+	cd ris_gateway;			make checkin
+	cd rsa_ui;			make checkin
+	cd scripts;			make checkin
+	cd send_image;			make checkin
+	cd send_results;		make checkin
+	cd send_study;			make checkin
+	cd simple_pacs;			make checkin
+	cd simple_storage;		make checkin
+	cd snp_to_files;		make checkin
+	cd storage_classes;		make checkin
+	cd storage_commit;		make checkin
+	cd tbltest;			make checkin
+	cd wlma_ui;			make checkin
+
+checkout:
+	cd apps_include;		make checkout
+	cd assoc_tool;			make checkout
+	cd cfg_ctn_tables;		make checkout
+	cd clone_study;			make checkout
+	cd create_greyscale_module;	make checkout
+	cd ctn_cutil;			make checkout
+	cd ctn_validate_mb;		make checkout
+	cd ctnnetwork;			make checkout
+	cd database;			make checkout
+	cd dbfill;			make checkout
+	cd dcm_create_object;		make checkout
+	cd dcm_ctnto10;			make checkout
+	cd dcm_diff;			make checkout
+	cd dcm_dump_compressed;		make checkout
+	cd dcm_dump_element;		make checkout
+	cd dcm_dump_file;		make checkout
+	cd dcm_make_object;		make checkout
+	cd dcm_map_to_8;		make checkout
+	cd dcm_mb_to_euc;		make checkout
+	cd dcm_modify_elements;		make checkout
+	cd dcm_modify_object;		make checkout
+	cd dcm_print_dictionary;	make checkout
+	cd dcm_replace_element;		make checkout
+	cd dcm_resize;			make checkout
+	cd dcm_rm_element;		make checkout
+	cd dcm_rm_group;		make checkout
+	cd dcm_snoop;			make checkout
+	cd dcm_template;		make checkout
+	cd dcm_to_html;			make checkout
+	cd dcm_verify;			make checkout
+	cd dicom_echo;			make checkout
+	cd displays;			make checkout
+	cd fillRSA;			make checkout
+	cd fis_server;			make checkout
+	cd gq;				make checkout
+	cd icon;			make checkout
+	cd idb_viewer;			make checkout
+	cd image_archive;		make checkout
+	cd image_server;		make checkout
+	cd load_control;		make checkout
+	cd mb_query;			make checkout
+	cd mb_xlate_test;		make checkout
+	cd mwlQuery;			make checkout
+	cd new_uids;			make checkout
+	cd object_viewer;		make checkout
+	cd pdu_examples;		make checkout
+	cd pmgr_motif;			make checkout
+	cd print_clients;		make checkout
+	cd print_server;		make checkout
+	cd print_server_display;	make checkout
+	cd query_client;		make checkout
+	cd ris_gateway;			make checkout
+	cd rsa_ui;			make checkout
+	cd scripts;			make checkout
+	cd send_image;			make checkout
+	cd send_results;		make checkout
+	cd send_study;			make checkout
+	cd simple_pacs;			make checkout
+	cd simple_storage;		make checkout
+	cd snp_to_files;		make checkout
+	cd storage_classes;		make checkout
+	cd storage_commit;		make checkout
+	cd tbltest;			make checkout
+	cd wlma_ui;			make checkout
+
+clean:
+	cd apps_include;		make clean
+	cd archive_server;		make clean
+	cd assoc_tool;			make clean
+	cd cfg_ctn_tables;		make clean
+	cd clone_study;			make clean
+	cd create_greyscale_module;	make clean
+	cd ctn_cutil;			make clean
+	cd ctn_validate_mb;		make clean
+	cd ctnnetwork;			make clean
+	cd database;			make clean
+	cd dbfill;			make clean
+	cd dcm_create_object;		make clean
+	cd dcm_ctnto10;			make clean
+	cd dcm_diff;			make clean
+	cd dcm_dump_compressed;		make clean
+	cd dcm_dump_element;		make clean
+	cd dcm_dump_file;		make clean
+	cd dcm_make_object;		make clean
+	cd dcm_map_to_8;		make clean
+	cd dcm_mb_to_euc;		make clean
+	cd dcm_modify_elements;		make clean
+	cd dcm_modify_object;		make clean
+	cd dcm_print_dictionary;	make clean
+	cd dcm_replace_element;		make clean
+	cd dcm_resize;			make clean
+	cd dcm_rm_element;		make clean
+	cd dcm_rm_group;		make clean
+	cd dcm_snoop;			make clean
+	cd dcm_template;		make clean
+	cd dcm_to_html;			make clean
+	cd dcm_verify;			make clean
+	cd dcm_w_disp;			make clean
+	cd dicom_echo;			make clean
+	cd displays;			make clean
+	cd fillRSA;			make clean
+	cd fis_server;			make clean
+	cd gq;				make clean
+	cd icon;			make clean
+	cd idb_viewer;			make clean
+	cd image_archive;		make clean
+	cd image_server;		make clean
+	cd load_control;		make clean
+	cd mb_query;			make clean
+	cd mb_xlate_test;		make clean
+	cd mwlQuery;			make clean
+	cd new_uids;			make clean
+	cd object_viewer;		make clean
+	cd pdu_examples;		make clean
+	cd pmgr_motif;			make clean
+	cd print_clients;		make clean
+	cd print_server;		make clean
+	cd print_server_display;	make clean
+	cd query_client;		make clean
+	cd ris_gateway;			make clean
+	cd rsa_ui;			make clean
+	cd scripts;			make clean
+	cd send_image;			make clean
+	cd send_results;		make clean
+	cd send_study;			make clean
+	cd simple_pacs;			make clean
+	cd simple_storage;		make clean
+	cd snp_to_files;		make clean
+	cd storage_classes;		make clean
+	cd storage_commit;		make clean
+	cd tbltest;			make clean
+	cd ttdelete;			make clean
+	cd ttinsert;			make clean
+	cd ttlayout;			make clean
+	cd ttselect;			make clean
+	cd ttunique;			make clean
+	cd ttupdate;			make clean
+	cd wlma_ui;			make clean
+
+indent:
+	cd apps_include;		make indent
+	cd assoc_tool;			make indent
+	cd cfg_ctn_tables;		make indent
+	cd clone_study;			make indent
+	cd create_greyscale_module;	make indent
+	cd ctn_cutil;			make indent
+	cd ctn_validate_mb;		make indent
+	cd ctnnetwork;			make indent
+	cd database;			make indent
+	cd dbfill;			make indent
+	cd dcm_create_object;		make indent
+	cd dcm_ctnto10;			make indent
+	cd dcm_dump_compressed;		make indent
+	cd dcm_dump_element;		make indent
+	cd dcm_dump_file;		make indent
+	cd dcm_make_object;		make indent
+	cd dcm_map_to_8;		make indent
+	cd dcm_mb_to_euc;		make indent
+	cd dcm_modify_elements;		make indent
+	cd dcm_modify_object;		make indent
+	cd dcm_print_dictionary;	make indent
+	cd dcm_replace_element;		make indent
+	cd dcm_resize;			make indent
+	cd dcm_rm_element;		make indent
+	cd dcm_rm_group;		make indent
+	cd dcm_snoop;			make indent
+	cd dcm_template;		make indent
+	cd dcm_to_html;			make indent
+	cd dcm_verify;			make indent
+	cd dicom_echo;			make indent
+	cd displays;			make indent
+	cd fillRSA;			make indent
+	cd fis_server;			make indent
+	cd gq;				make indent
+	cd icon;			make indent
+	cd idb_viewer;			make indent
+	cd image_archive;		make indent
+	cd image_server;		make indent
+	cd load_control;		make indent
+	cd mb_query;			make indent
+	cd mb_xlate_test;		make indent
+	cd mwlQuery;			make indent
+	cd new_uids;			make indent
+	cd object_viewer;		make indent
+	cd pdu_examples;		make indent
+	cd pmgr_motif;			make indent
+	cd print_clients;		make indent
+	cd print_server;		make indent
+	cd print_server_display;	make indent
+	cd query_client;		make indent
+	cd ris_gateway;			make indent
+	cd rsa_ui;			make indent
+	cd scripts;			make indent
+	cd send_image;			make indent
+	cd send_results;		make indent
+	cd send_study;			make indent
+	cd simple_pacs;			make indent
+	cd simple_storage;		make indent
+	cd snp_to_files;		make indent
+	cd storage_classes;		make indent
+	cd storage_commit;		make indent
+	cd tbltest;			make indent
+	cd wlma_ui;			make indent
+
+lint:
+	cd apps_include;		make lint
+	cd assoc_tool;			make lint
+	cd cfg_ctn_tables;		make lint
+	cd clone_study;			make lint
+	cd create_greyscale_module;	make lint
+	cd ctn_cutil;			make lint
+	cd ctn_validate_mb;		make lint
+	cd ctnnetwork;			make lint
+	cd database;			make lint
+	cd dbfill;			make lint
+	cd dcm_create_object;		make lint
+	cd dcm_ctnto10;			make lint
+	cd dcm_dump_compressed;		make lint
+	cd dcm_dump_element;		make lint
+	cd dcm_dump_file;		make lint
+	cd dcm_make_object;		make lint
+	cd dcm_map_to_8;		make lint
+	cd dcm_mb_to_euc;		make lint
+	cd dcm_modify_elements;		make lint
+	cd dcm_modify_object;		make lint
+	cd dcm_print_dictionary;	make lint
+	cd dcm_replace_element;		make lint
+	cd dcm_resize;			make lint
+	cd dcm_rm_element;		make lint
+	cd dcm_rm_group;		make lint
+	cd dcm_snoop;			make lint
+	cd dcm_template;		make lint
+	cd dcm_to_html;			make lint
+	cd dcm_verify;			make lint
+	cd dicom_echo;			make lint
+	cd displays;			make lint
+	cd fillRSA;			make lint
+	cd fis_server;			make lint
+	cd gq;				make lint
+	cd icon;			make lint
+	cd idb_viewer;			make lint
+	cd image_archive;		make lint
+	cd image_server;		make lint
+	cd load_control;		make lint
+	cd mb_query;			make lint
+	cd mb_xlate_test;		make lint
+	cd mwlQuery;			make lint
+	cd new_uids;			make lint
+	cd object_viewer;		make lint
+	cd pdu_examples;		make lint
+	cd pmgr_motif;			make lint
+	cd print_clients;		make lint
+	cd print_server;		make lint
+	cd print_server_display;	make lint
+	cd query_client;		make lint
+	cd ris_gateway;			make lint
+	cd rsa_ui;			make lint
+	cd scripts;			make lint
+	cd send_image;			make lint
+	cd send_results;		make lint
+	cd send_study;			make lint
+	cd simple_pacs;			make lint
+	cd simple_storage;		make lint
+	cd snp_to_files;		make lint
+	cd storage_classes;		make lint
+	cd storage_commit;		make lint
+	cd tbltest;			make lint
+	cd wlma_ui;			make lint
+
+freeze:
+	cd apps_include;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd assoc_tool;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd cfg_ctn_tables;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd clone_study;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd create_greyscale_module;	rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd ctn_cutil;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd ctn_validate_mb;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd ctnnetwork;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd database;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dbfill;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_create_object;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_ctnto10;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_dump_compressed;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_dump_element;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_dump_file;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_make_object;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_map_to_8;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_mb_to_euc;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_modify_elements;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_modify_object;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_print_dictionary;	rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_replace_element;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_resize;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_rm_element;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_rm_group;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_snoop;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_template;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_to_html;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dcm_verify;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd dicom_echo;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd displays;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd fillRSA;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd fis_server;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd gq;				rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd icon;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd idb_viewer;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd image_archive;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd image_server;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd load_control;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd mb_query;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd mb_xlate_test;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd mwlQuery;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd new_uids;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd object_viewer;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd pdu_examples;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd pmgr_motif;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd print_clients;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd print_server;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd print_server_display;	rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd query_client;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd ris_gateway;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd rsa_ui;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd scripts;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd send_image;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd send_results;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd send_study;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd simple_pacs;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd simple_storage;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd snp_to_files;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd storage_classes;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd storage_commit;		rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd tbltest;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+	cd wlma_ui;			rcsfreeze $(RCS_VER) < $(RCS_MSG_FILE)
+
+stripmb:
+	chmod -R +w ctn_cutil;		rm -r ctn_cutil
+	chmod -R +w ctn_validate_mb;	rm -r ctn_validate_mb
+	chmod -R +w dcm_mb_to_euc;	rm -r dcm_mb_to_euc
+	chmod -R +w dcm_to_html;	rm -r dcm_to_html
+	chmod -R +w mb_query;		rm -r mb_query
+	chmod -R +w mb_xlate_test;	rm -r mb_xlate_test

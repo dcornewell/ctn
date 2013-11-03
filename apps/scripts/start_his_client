@@ -1,0 +1,213 @@
+# !/bin/csh
+#
+# A simple script for starting the his demo for any given company...
+#
+
+#
+# This should be changed to match whatever the real root is
+#
+set ROOT = /mir_ctn/his
+setenv QUEUE_DIRECTORY $ROOT/q
+if ($DISPLAY == "") setenv DISPLAY dicom2:0
+setenv D $ROOT/db
+
+if( $1 == "" ) then
+	echo Usage: $0 company
+	exit
+endif
+
+set SUCCESS = 1
+
+switch($1)
+	case "smm":
+		set HOST = "ctn1"
+		set IDFILE = "smm.id"
+		set UIDFILE = "smm.uid"
+		set LAPTITLE = "CTNHIS1_SMM"
+		set VENDOR = "smm"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/smm.uid
+		breaksw
+	case "aaai":
+		set HOST = "ctn1"
+		set IDFILE = "aaai.id"
+		set UIDFILE = "aaai.uid"
+		set LAPTITLE = "CTNHIS1_AAAI"
+		set VENDOR = "aaai"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/aaai.uid
+		breaksw
+	case "acuson":
+		set HOST = "ctn1"
+		set IDFILE = "acuson.id"
+		set UIDFILE = "acuson.uid"
+		set LAPTITLE = "CTNHIS1_ACUSON"
+		set VENDOR = "acuson"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/acuson.uid
+		breaksw
+	case "adac":
+		set HOST = "ctn1"
+		set IDFILE = "adac.id"
+		set UIDFILE = "adac.uid"
+		set LAPTITLE = "CTNHIS1_ADAC"
+		set VENDOR = "adac"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/adac.uid
+		breaksw
+	case "agfa":
+		set HOST = "ctn1"
+		set IDFILE = "agfa.id"
+		set UIDFILE = "agfa.uid"
+		set LAPTITLE = "CTNHIS1_AGFA"
+		set VENDOR = "agfa"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/agfa.uid
+		breaksw
+	case "ali":
+		set HOST = "ctn1"
+		set IDFILE = "ali.id"
+		set UIDFILE = "ali.uid"
+		set LAPTITLE = "CTNHIS1_ALI"
+		set VENDOR = "ali"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/ali.uid
+		breaksw
+	case "atl":
+		set HOST = "ctn1"
+		set IDFILE = "atl.id"
+		set UIDFILE = "atl.uid"
+		set LAPTITLE = "CTNHIS1_ATL"
+		set VENDOR = "atl"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/atl.uid
+		breaksw
+	case "cemax":
+		set HOST = "ctn1"
+		set IDFILE = "cemax.id"
+		set UIDFILE = "cemax.uid"
+		set LAPTITLE = "CTNHIS1_CEMAX"
+		set VENDOR = "cemax"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/cemax.uid
+		breaksw
+	case "gems":
+		set HOST = "ctn1"
+		set IDFILE = "gems.id"
+		set UIDFILE = "gems.uid"
+		set LAPTITLE = "CTNHIS1_GEMS"
+		set VENDOR = "gems"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/gems.uid
+		breaksw
+	case "isg":
+		set HOST = "ctn1"
+		set IDFILE = "isg.id"
+		set UIDFILE = "isg.uid"
+		set LAPTITLE = "CTNHIS1_ISG"
+		set VENDOR = "isg"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/isg.uid
+		breaksw
+	case "kodak":
+		set HOST = "ctn1"
+		set IDFILE = "kodak.id"
+		set UIDFILE = "kodak.uid"
+		set LAPTITLE = "CTNHIS1_KODAK"
+		set VENDOR = "kodak"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/kodak.uid
+		breaksw
+	case "konica":
+		set HOST = "ctn1"
+		set IDFILE = "konica.id"
+		set UIDFILE = "konica.uid"
+		set LAPTITLE = "CTNHIS1_KONICA"
+		set VENDOR = "konica"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/konica.uid
+		breaksw
+	case "loral":
+		set HOST = "ctn1"
+		set IDFILE = "loral.id"
+		set UIDFILE = "loral.uid"
+		set LAPTITLE = "CTNHIS1_LORAL"
+		set VENDOR = "loral"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/loral.uid
+		breaksw
+	case "merge":
+		set HOST = "ctn1"
+		set IDFILE = "merge.id"
+		set UIDFILE = "merge.uid"
+		set LAPTITLE = "CTNHIS1_MERGE"
+		set VENDOR = "merge"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/merge.uid
+		breaksw
+	case "mitra":
+		set HOST = "ctn1"
+		set IDFILE = "mitra.id"
+		set UIDFILE = "mitra.uid"
+		set LAPTITLE = "CTNHIS1_MITRA"
+		set VENDOR = "mitra"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/mitra.uid
+		breaksw
+	case "3m":
+		set HOST = "ctn1"
+		set IDFILE = "3m.id"
+		set UIDFILE = "3m.uid"
+		set LAPTITLE = "CTNHIS1_MMM"
+		set VENDOR = "3m"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/3m.uid
+		breaksw
+	case "philips":
+		set HOST = "ctn1"
+		set IDFILE = "philips.id"
+		set UIDFILE = "philips.uid"
+		set LAPTITLE = "CTNHIS1_PHILIPS"
+		set VENDOR = "philips"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/philips.uid
+		breaksw
+	case "picker":
+		set HOST = "ctn1"
+		set IDFILE = "picker.id"
+		set UIDFILE = "picker.uid"
+		set LAPTITLE = "CTNHIS1_PICKER"
+		set VENDOR = "picker"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/picker.uid
+		breaksw
+	case "siemens":
+		set HOST = "ctn1"
+		set IDFILE = "siemens.id"
+		set UIDFILE = "siemens.uid"
+		set LAPTITLE = "CTNHIS1_SIEMENS"
+		set VENDOR = "siemens"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/siemens.uid
+		breaksw
+	case "star":
+		set HOST = "ctn1"
+		set IDFILE = "star.id"
+		set UIDFILE = "star.uid"
+		set LAPTITLE = "CTNHIS1_STAR"
+		set VENDOR = "star"
+		set PORT = 3200
+		setenv UIDFILE $ROOT/config/star.uid
+		breaksw
+	default:
+		set SUCCESS = 0
+		echo $0\: $1 not found.
+		breaksw
+endsw
+
+if( $SUCCESS == 1 ) then
+
+his_interface -v -D $ROOT/config/his_database.cfg -C $ROOT/config/$IDFILE -N $ROOT/config/his_connect.cfg -T $LAPTITLE -c $HOST $VENDOR &
+endif
+
+exit

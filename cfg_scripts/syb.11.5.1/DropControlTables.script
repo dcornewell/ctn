@@ -1,0 +1,46 @@
+/* DropControlTables.script 1.0 8-Mar-94 */
+/* set nocount on */
+print " "
+go
+print " "
+go
+
+use <DATABASENAME>
+go
+drop table ApplicationEntity
+print "Dropped ApplicationEntity Table"
+go
+go
+drop table GroupNames
+go
+print "Dropped GroupNames Table"
+go
+drop table StorageAccess
+go
+print "Dropped Storage Access Table"
+go
+drop table StorageControl
+go
+print "Dropped Storage Control Table"
+go
+drop table SecurityMatrix
+go
+print "Dropped SecurityMatrix Table"
+go
+drop table FISAccess
+go
+print "Dropped FIS Access Table"
+go
+drop table PrintServerCFG
+go
+print "Dropped PrintServerCFG Table"
+go
+drop table VideoImageDest
+go
+print "Dropped VideoImageDest Table"
+go
+
+print " "
+go
+print " "
+go

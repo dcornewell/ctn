@@ -1,0 +1,46 @@
+/* PrintControlTables.script 1.0 8-Mar-94 */
+/* set nocount on */
+
+use <DATABASENAME>
+go
+
+print "Application Entity"
+go
+select * from ApplicationEntity
+go
+
+print "Group Names"
+go
+select * from GroupNames
+go
+
+print "Storage Access"
+go
+select * from StorageAccess
+go
+
+print "Storage Control"
+go
+select * from StorageControl
+go
+
+print "Security Matrix"
+go
+select * from SecurityMatrix
+go
+
+
+print "FIS Access"
+go
+select * from FISAccess
+go
+
+print "Print Server CFG"
+go
+select * from PrintServerCFG
+go
+
+print "Video Image Dest"
+go
+select * from VideoImageDest
+go

@@ -1,0 +1,12 @@
+/* PrintFISTables.script 1.0 8-Mar-94 */
+/* set nocount on */
+
+use <DATABASENAME>
+go
+
+select * from StorageCommitReq
+go
+select * from CommitSOPRef
+go
+select * from WorkQueue
+go

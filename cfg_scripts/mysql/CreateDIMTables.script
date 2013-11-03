@@ -1,0 +1,110 @@
+CREATE TABLE PatientLevel
+	(
+	PatNam		char(64)	not null,
+	PatID		char(64) 	not null,
+	PatBirDat	int		not null,
+	PatBirTim	real,
+	PatSex		char(16)	not null,
+	NumPatRelStu	int		not null,
+	NumPatRelSer	int		not null,
+	NumPatRelIma	int		not null,
+	InsertDate	int		not null,
+	InsertTime	real 		not null,
+	Owner		char(16),
+	GroupName	char(16),
+	Priv		char(9)
+	)
+\g
+ALTER TABLE PatientLevel ADD UNIQUE PL_PatID_index (PatID)
+\g
+ALTER TABLE PatientLevel ADD INDEX PL_PatNam_index (PatNam)
+\g
+CREATE TABLE StudyLevel
+	(
+	StuDat		int		not null,
+	StuTim		real		not null,
+	AccNum		char(16)	not null,
+	StuID		char(16)	not null,
+	StuInsUID	char(64)	not null,
+	RefPhyNam	char(64)	not null,
+	StuDes		char(64),
+	PatAge		char(4),
+	PatSiz		char(16),
+	PatWei		char(16),
+	NumStuRelSer	int		not null,
+	NumStuRelIma	int		not null,
+	InsertDate	int		not null,
+	InsertTime	real		not null,
+	Owner		char(16),
+	GroupName	char(16),
+	Priv		char(9),
+	PatParent	char(64)	not null
+	)
+\g
+ALTER TABLE StudyLevel ADD UNIQUE SL_StuInsUID_index (StuInsUID)
+\g
+ALTER TABLE StudyLevel ADD INDEX SL_StuID_index (StuID)
+\g
+ALTER TABLE StudyLevel ADD INDEX SL_PatParent_index (PatParent)
+\g
+CREATE TABLE SeriesLevel
+	(
+	Mod		char(16)	not null,
+	SerNum		char(12)	not null,
+	SerInsUID	char(64)	not null,
+	ProNam		char(64),
+	SerDes		char(64),
+	BodParExa	char(16),
+	ViePos		char(16),
+	NumSerRelIma	int		not null,
+	InsertDate	int		not null,
+	InsertTime	real		not null,
+	Owner		char(16),
+	GroupName	char(16),
+	Priv		char(9),
+	StuParent	char(64)	not null
+	)
+\g
+ALTER TABLE SeriesLevel ADD UNIQUE SL_SerInsUID_index (SerInsUID)
+\g
+ALTER TABLE SeriesLevel ADD INDEX SL_StuParent_index (StuParent)
+\g
+CREATE TABLE ImageLevel
+	(
+	ImaNum		char(12)	not null,
+	SOPInsUID	char(64)	not null,
+	SOPClaUID	char(64)	not null,
+	SamPerPix	int		not null,
+	PhoInt		char(16)	not null,
+	Row		int		not null,
+	Col		int		not null,
+	BitAll		int		not null,
+	BitSto		int		not null,
+	PixRep		int		not null,
+	PatOri		char(16),
+	InsertDate	int		not null,
+	InsertTime	real		not null,
+	Owner		char(16),
+	GroupName	char(16),
+	Priv		char(9),
+	SerParent	char(64)	not null
+	)
+\g
+ALTER TABLE ImageLevel ADD UNIQUE IL_SOPInsUID_index (SOPInsUID)
+\g
+ALTER TABLE ImageLevel ADD INDEX IL_SerParent_index (SerParent)
+\g
+CREATE TABLE InstanceTable
+	(
+	ImageUID	char(64)	not null,
+	RespondingTitle char(16) 	not null,
+	Medium         	char(32),
+	Path           	char(255) 	not null,
+	Size		int 		not null,
+	Transfer	char(64) 	not null
+	)
+\g
+ALTER TABLE InstanceTable ADD INDEX IT_ImageUID_index (ImageUID)
+\g
+ALTER TABLE InstanceTable ADD INDEX IT_RespondingTitle_index (RespondingTitle)
+\g

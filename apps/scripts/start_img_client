@@ -1,0 +1,136 @@
+# !/bin/csh
+#
+# This script starts the imaging demonstration.  It is to be used to
+# start the img_client program when a vendor logs in to the CTN.  It has
+# one required argument:	company name
+#
+
+if( $1 == "" ) then
+	echo Usage: $0 company
+	exit
+endif
+setenv ROOT /mir_ctn/img
+setenv QUEUE_DIRECTORY $ROOT/q
+setenv D $ROOT/db
+setenv I $ROOT/db
+
+set SUCCESS = 1
+
+switch($1)
+	case "smm":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_SMM"
+		set VENDOR = "smm"
+		breaksw
+	case "aaai":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_AAAI"
+		set VENDOR = "aaai"
+		breaksw
+	case "acuson":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_ACUSON"
+		set VENDOR = "acuson"
+		breaksw
+	case "adac":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_ADAC"
+		set VENDOR = "adac"
+		breaksw
+	case "agfa":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_AGFA"
+		set VENDOR = "agfa"
+		breaksw
+	case "ali":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_ALI"
+		set VENDOR = "ali"
+		breaksw
+	case "atl":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_ATL"
+		set VENDOR = "atl"
+		breaksw
+	case "cemax":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_CEMAX"
+		set VENDOR = "cemax"
+		breaksw
+	case "gems":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_GEMS"
+		set VENDOR = "gems"
+		breaksw
+	case "isg":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_ISG"
+		set VENDOR = "isg"
+		breaksw
+	case "kodak":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_KODAK"
+		set VENDOR = "kodak"
+		breaksw
+	case "konica":
+		set HOST = "konica"
+		set LAPTITLE = "CTNIMG1_KONICA"
+		set VENDOR = "konica"
+		breaksw
+	case "loral":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_LORAL"
+		set VENDOR = "loral"
+		breaksw
+	case "merge":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_MERGE"
+		set VENDOR = "merge"
+		breaksw
+	case "mitra":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_MITRA"
+		set VENDOR = "mitra"
+		breaksw
+	case "3m":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_MMM"
+		set VENDOR = "3m"
+		breaksw
+	case "philips":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_PHILIPS"
+		set VENDOR = "philips"
+		breaksw
+	case "picker":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_PICKER"
+		set VENDOR = "picker"
+		breaksw
+	case "radman":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_RADMAN"
+		set VENDOR = "radman"
+		breaksw
+	case "siemens":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_SIEMENS"
+		set VENDOR = "siemens"
+		breaksw
+	case "star":
+		set HOST = "ctn1"
+		set LAPTITLE = "CTNIMG1_STAR"
+		set VENDOR = "star"
+		breaksw
+	default:
+		set SUCCESS = 0
+		echo $0\: $1 not found.
+		breaksw
+endsw
+
+if( $SUCCESS == 1 ) then
+
+img_client -s $HOST -c $ROOT/config/connect.cfg -d $ROOT/config/database.cfg -q 100 -n $LAPTITLE $1
+endif
+
+exit

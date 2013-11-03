@@ -1,0 +1,9 @@
+This directory contains two files donated by Bill Chimiak of
+Bowman Gray.  They are used for installation on Linux.  Since
+we don't have a Linux machine, we have not been able to verify
+these scripts.  If you have problems, I would send mail to
+Bill (chim@medeng.bgsm.edu).  Forward any changes/fixes to
+dicom_bugs@wuerl.wustl.edu  so we can incorporate them into future releases.
+
+The file .makalinuxctn uses .linux.configure.  Note that these
+begin with ., so don't miss them.

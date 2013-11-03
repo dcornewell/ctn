@@ -1,0 +1,10 @@
+SELECT * FROM PatientTable
+\g
+SELECT * FROM StudyTable
+\g
+SELECT * FROM StorageCommitReq
+\g
+SELECT * FROM CommitSOPRef
+\g
+SELECT * FROM WorkQueue
+\g

@@ -1,0 +1,23 @@
+# !/bin/csh
+#
+# A simple script for starting the his server for a ctn...
+#
+
+#
+# This should be changed to match whatever the real root is
+#
+set ROOT = /mir_ctn/his
+
+if( $1 == "" ) then
+	echo Usage: $0 ctnname
+	exit
+endif
+
+set PORT = 3200
+
+setenv QUEUE_DIRECTORY $ROOT/q
+setenv D $ROOT/db
+
+his_server -v -c $1 -p $PORT $ROOT/config/his_connect.cfg $ROOT/config/his_database.cfg &
+
+exit

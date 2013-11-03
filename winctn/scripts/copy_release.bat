@@ -1,0 +1,39 @@
+del D:\ctn\bin\*.*
+set DEST=D:\ctn\bin
+
+copy ..\ctn_apps\archive_agent\Release\archive_agent.exe %DEST%
+copy ..\ctn_apps\archive_cleaner\Release\archive_cleaner.exe %DEST%
+copy ..\ctn_apps\archive_server\Release\archive_server.exe %DEST%
+copy ..\ctn_apps\clone_study\Release\clone_study.exe %DEST%
+copy ..\ctn_apps\ctn_version\Release\ctn_version.exe %DEST%
+copy ..\ctn_apps\dcm_create_object\Release\dcm_create_object.exe %DEST%
+copy ..\ctn_apps\dcm_ctnto10\Release\dcm_ctnto10.exe %DEST%
+copy ..\ctn_apps\dcm_diff\Release\dcm_diff.exe %DEST%
+copy ..\ctn_apps\dcm_dump_compressed\Release\dcm_dump_compressed.exe %DEST%
+copy ..\ctn_apps\dcm_dump_element\Release\dcm_dump_element.exe %DEST%
+copy ..\ctn_apps\dcm_dump_file\Release\dcm_dump_file.exe %DEST%
+copy ..\ctn_apps\dcm_make_object\Release\dcm_make_object.exe %DEST%
+copy ..\ctn_apps\dcm_map_to_8\Release\dcm_map_to_8.exe %DEST%
+copy ..\ctn_apps\dcm_modify_elements\Release\dcm_modify_elements.exe %DEST%
+copy ..\ctn_apps\dcm_modify_object\Release\dcm_modify_object.exe %DEST%
+copy ..\ctn_apps\dcm_print_dictionary\Release\dcm_print_dictionary.exe %DEST%
+copy ..\ctn_apps\dcm_replace_element\Release\dcm_replace_element.exe %DEST%
+copy ..\ctn_apps\dcm_resize\Release\dcm_resize.exe %DEST%
+copy ..\ctn_apps\dcm_rm_element\Release\dcm_rm_element.exe %DEST%
+copy ..\ctn_apps\dcm_rm_group\Release\dcm_rm_group.exe %DEST%
+copy ..\ctn_apps\dcm_template\Release\dcm_template.exe %DEST%
+copy ..\ctn_apps\dcm_to_html\Release\dcm_to_html.exe %DEST%
+copy ..\ctn_apps\dcm_verify\Release\dcm_verify.exe %DEST%
+copy ..\ctn_apps\dcm_w_disp\Release\dcm_w_disp.exe %DEST%
+copy ..\ctn_apps\dicom_echo\Release\dicom_echo.exe %DEST%
+copy ..\ctn_apps\dump_commit_requests\Release\dump_commit_requests.exe %DEST%
+copy ..\ctn_apps\load_control\Release\load_control.exe %DEST%
+copy ..\ctn_apps\query_client\Release\query_client.exe %DEST%
+copy ..\ctn_apps\send_image\Release\send_image.exe %DEST%
+copy ..\ctn_apps\simple_storage\Release\simple_storage.exe %DEST%
+copy ..\ctn_apps\ttdelete\Release\ttdelete.exe %DEST%
+copy ..\ctn_apps\ttinsert\Release\ttinsert.exe %DEST%
+copy ..\ctn_apps\ttlayout\Release\ttlayout.exe %DEST%
+copy ..\ctn_apps\ttselect\Release\ttselect.exe %DEST%
+copy ..\ctn_apps\ttunique\Release\ttunique.exe %DEST%
+copy ..\ctn_apps\ttupdate\Release\ttupdate.exe %DEST%

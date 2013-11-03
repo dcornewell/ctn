@@ -1,0 +1,34 @@
+#  Global rules for compilation for sunos
+
+X11_INCLUDE = /usr/X11R6/include
+XM_INCLUDE = /usr2/lesstif/lesstif-current/include/Motif-1.2
+
+LIBPATH_X11 = -L/usr/X11R6/lib
+LIBPATH_MOTIF = -L/usr2/lesstif/lesstif-current/lib/Motif-1.2
+LIBPATH_UCB =
+LIBPATH_DATABASE =-L$(MYSQL_LIB)
+LIBS_X11 = -lXext -lXt -lX11
+LIBS_MOTIF = -lXm
+LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm
+LIBS_OS = -lz
+LIBS_DATABASE = -ltbl_mysql -lmysqlclient -lcrypt
+LIBS_LEX = -lfl
+LIBS_CTN = -lctn $(LIBPATH_DATABASE) -lmysqlclient -lcrypt
+LIBS_CTN_NODB = -lctn 
+
+TBL_DB = tbl_mysql.o
+TBLMB_DB = not_supported_with_this_software
+
+CFLAGS_X11 = -I$(X11_INCLUDE)
+CFLAGS_MOTIF = -I$(XM_INCLUDE)
+
+#DEBUG_LIBS = -lmalloc
+LONGSIZE=32
+INTSIZE=32
+SHORTSIZE=16
+C_OPTS = -g -DDEBUG -D$(ARCHITECTURE) -D$(OS) -DSHARED_MEMORY \
+-DSEMAPHORE -DX11 -DATHENA -DX11R4 -DUSLEEP -DMYSQLDB \
+-I$(DICOM_INCLUDE) -I$(MYSQL_INCLUDE) \
+$(CFLAGS_MOTIF) $(CFLAGS_X11) \
+-DLONGSIZE=$(LONGSIZE) -DINTSIZE=$(INTSIZE) -DSHORTSIZE=$(SHORTSIZE) \
+-DTIMEOFDAYARGS=2 -DMOTIF -DUSEREGCOMP

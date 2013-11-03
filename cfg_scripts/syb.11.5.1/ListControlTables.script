@@ -1,0 +1,29 @@
+/* ListControlTables.script 1.0 8-Mar-94 */
+/* set nocount on */
+
+use <DATABASENAME>
+go
+
+sp_help ApplicationEntity
+go
+
+sp_help GroupNames
+go
+
+sp_help StorageAccess
+go
+
+sp_help StorageControl
+go
+
+sp_help InstanceTable
+go
+
+sp_help FISAccess
+go
+
+sp_help PrintServerCFG
+go
+
+sp_help VideoImageDest
+go

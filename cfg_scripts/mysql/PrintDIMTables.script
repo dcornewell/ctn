@@ -1,0 +1,10 @@
+SELECT * FROM  PatientLevel
+\g
+SELECT * FROM StudyLevel
+\g
+SELECT * FROM SeriesLevel
+\g
+SELECT * FROM ImageLevel
+\g
+SELECT * FROM InstanceTable
+\g

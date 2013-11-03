@@ -1,0 +1,40 @@
+# General proposed Transfer Syntax list
+PROPOSE/XFER/STORAGE 1.2.840.10008.1.2.1;1.2.840.10008.1.2
+
+# Proposed Transfer Syntax for CT storage
+PROPOSE/XFER/STORAGE/1.2.840.10008.5.1.4.1.1.2  1.2.840.10008.1.2
+
+# Set this flag to 1 to gang all xfer syntaxes into a single
+# presentation context.  If 0 or missing, multiple presentation
+# contexts will be proposed, each with 1 xfer syntax.
+PROPOSE/SINGLE_PRESENTATION 1
+
+# The Transfer Syntaxes that we accept
+# This is how we ship the software; accept explicit VRLE, explict VRBE
+#  and implicit VR LE.
+ACCEPT/XFER/STORAGE 1.2.840.10008.1.2.1;1.2.840.10008.1.2.2;1.2.840.10008.1.2
+
+# This is an example of what you might configure if you have compressed
+# images. The first two entries enable two JPEG compression transfer
+# syntaxes. Those are followed by the usual explicit VR and implicit VR
+# transfer syntaxes.
+#ACCEPT/XFER/STORAGE 1.2.840.10008.1.2.4.70;1.2.840.10008.1.2.4.50;1.2.840.10008.1.2.1;1.2.840.10008.1.2.2;1.2.840.10008.1.2
+
+# Set the flag to 1 to always store as Part 10 when we
+# receive storage SOP instances.
+# Set the flag to 0 to store CTN format for IVRLE and as
+# Part 10 for all explicit VR transfer syntaxes.
+STORAGE/PART10FLAG 0
+
+# Set this flag to 1 if you want the responses to C-Find
+# requests to be sorted by Instance Number (0020 0013)
+
+CFIND/SORT/IMANUM 1
+
+# Set this flag to 1 if you want the responses to C-Move
+# requests to be sorted by Instance Number (0020 0013)
+# That is, instances will be moved in numerical order
+# (starting lowest and working to higher numbers).
+
+CMOVE/SORT/IMANUM 1
+

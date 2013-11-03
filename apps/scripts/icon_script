@@ -1,0 +1,79 @@
+#!/bin/csh
+#
+#  This script is used to populate several databases with information that
+#  will be used to access icons for print management.
+#  Arguments to the script are:
+#	Source root directory
+#	Target root directory
+#	study directory (ct1 mr1...etc, a directory piece)
+#	print database
+#	icon index
+#	icon file
+#	file name(s)
+# $Revision: 1.6 $
+
+
+if ($7 == "") then
+echo You do not have enough arguments.  Since this script is usually run by
+echo create_icons, you should check how you are using this script.
+echo Arguments: src dst study print_database icon_index icon_file file_names
+exit 1
+endif
+
+set src = $1
+shift
+set dst = $1
+shift
+set study = $1
+shift
+set db = $1
+shift
+set icIndex = $1
+shift 
+set icFile = $1
+shift
+
+if (! (-e $src/$study)) then
+echo Missing $src/$study
+exit 1
+endif
+
+if (! (-e $dst/$study)) then
+echo Missing $dst/$study.   Will try to create $dst/$study.
+mkdir $dst/$study
+if ($status != 0) then
+echo Could not create $dst/$study. Exiting.
+exit 1
+endif
+endif
+
+# This program reads a file and extracts the study ID.  That study ID
+# and length of the current icon file are written to the icon index.
+
+icon_append_index $icIndex $icFile $src/$study/$1
+
+while ($1 != "")
+echo $src/$study/$1
+
+dcm_map_to_8 $src/$study/$1 $dst/$study/$1.8bit
+if ($status == 2) goto skip
+
+create_greyscale_module $dst/$study/$1.8bit $dst/$study/$1.print
+
+create_print_entry $db $src/$study/$1 $dst/$study/$1.print
+
+#/usr/bin/rm -f $dst/$study/$1.8bit
+
+dcm_resize -c 64 -r 64 $dst/$study/$1.8bit $dst/$study/$1.64x64
+
+dcm_map_to_8 $dst/$study/$1.64x64 $dst/$study/$1.icon
+
+icon_append_file $icFile $dst/$study/$1.icon
+
+/usr/bin/rm -f $dst/$study/$1.8bit
+/usr/bin/rm -f $dst/$study/$1.64x64 $dst/$study/$1.icon
+
+skip:
+shift
+end
+exit 0

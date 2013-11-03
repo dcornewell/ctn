@@ -1,0 +1,414 @@
+! UIMX ascii 2.5 key: 3064                                                      
+
+*cfg_ctn_tables.class: Project
+*cfg_ctn_tables.PjName: cfg_ctn_tables
+*cfg_ctn_tables.PjDoMain: 1
+*cfg_ctn_tables.PjDoMake: 0
+*cfg_ctn_tables.PjWriteAll: 0
+*cfg_ctn_tables.PjRunMake: 0
+*cfg_ctn_tables.PjWriteCDir: .
+*cfg_ctn_tables.PjMode: 1
+
+*applicationShell1_PJinterface.class: PJinterface
+*applicationShell1_PJinterface.PjName: applicationShell1_PJinterface
+*applicationShell1_PJinterface.PjSwName: applicationShell1
+*applicationShell1_PJinterface.PjParent: cfg_ctn_tables
+*applicationShell1_PJinterface.PjFileName: applicationShell1.i
+*applicationShell1_PJinterface.PjShowFlag: 0
+*applicationShell1_PJinterface.PjGuiDate: 797291106
+*applicationShell1_PJinterface.PjDate: 797291075
+*applicationShell1_PJinterface.PjMode: 1
+*applicationShell1_PJinterface.PjCFileName: applicationShell1.c
+
+*applicationForm_PJinterface.class: PJinterface
+*applicationForm_PJinterface.PjName: applicationForm_PJinterface
+*applicationForm_PJinterface.PjSwName: applicationForm
+*applicationForm_PJinterface.PjParent: cfg_ctn_tables
+*applicationForm_PJinterface.PjFileName: applicationForm.i
+*applicationForm_PJinterface.PjShowFlag: 0
+*applicationForm_PJinterface.PjGuiDate: 797291107
+*applicationForm_PJinterface.PjDate: 797291079
+*applicationForm_PJinterface.PjMode: 1
+*applicationForm_PJinterface.PjCFileName: applicationForm.c
+
+*securityForm_PJinterface.class: PJinterface
+*securityForm_PJinterface.PjName: securityForm_PJinterface
+*securityForm_PJinterface.PjSwName: securityForm
+*securityForm_PJinterface.PjParent: cfg_ctn_tables
+*securityForm_PJinterface.PjFileName: securityForm.i
+*securityForm_PJinterface.PjShowFlag: 0
+*securityForm_PJinterface.PjGuiDate: 797291108
+*securityForm_PJinterface.PjDate: 797291081
+*securityForm_PJinterface.PjMode: 1
+*securityForm_PJinterface.PjCFileName: securityForm.c
+
+*printServerCFGForm_PJinterface.class: PJinterface
+*printServerCFGForm_PJinterface.PjName: printServerCFGForm_PJinterface
+*printServerCFGForm_PJinterface.PjSwName: printServerCFGForm
+*printServerCFGForm_PJinterface.PjParent: cfg_ctn_tables
+*printServerCFGForm_PJinterface.PjFileName: printServerCFGForm.i
+*printServerCFGForm_PJinterface.PjShowFlag: 0
+*printServerCFGForm_PJinterface.PjGuiDate: 797291109
+*printServerCFGForm_PJinterface.PjDate: 797291083
+*printServerCFGForm_PJinterface.PjMode: 1
+*printServerCFGForm_PJinterface.PjCFileName: printServerCFGForm.c
+
+*groupNamesForm_PJinterface.class: PJinterface
+*groupNamesForm_PJinterface.PjName: groupNamesForm_PJinterface
+*groupNamesForm_PJinterface.PjSwName: groupNamesForm
+*groupNamesForm_PJinterface.PjParent: cfg_ctn_tables
+*groupNamesForm_PJinterface.PjFileName: groupNamesForm.i
+*groupNamesForm_PJinterface.PjShowFlag: 0
+*groupNamesForm_PJinterface.PjGuiDate: 797291110
+*groupNamesForm_PJinterface.PjDate: 797291085
+*groupNamesForm_PJinterface.PjMode: 1
+*groupNamesForm_PJinterface.PjCFileName: groupNamesForm.c
+
+*FISAccessForm_PJinterface.class: PJinterface
+*FISAccessForm_PJinterface.PjName: FISAccessForm_PJinterface
+*FISAccessForm_PJinterface.PjSwName: FISAccessForm
+*FISAccessForm_PJinterface.PjParent: cfg_ctn_tables
+*FISAccessForm_PJinterface.PjFileName: FISAccessForm.i
+*FISAccessForm_PJinterface.PjShowFlag: 0
+*FISAccessForm_PJinterface.PjGuiDate: 797291111
+*FISAccessForm_PJinterface.PjDate: 797291088
+*FISAccessForm_PJinterface.PjMode: 1
+*FISAccessForm_PJinterface.PjCFileName: FISAccessForm.c
+
+*imageStorageAccessForm_PJinterface.class: PJinterface
+*imageStorageAccessForm_PJinterface.PjName: imageStorageAccessForm_PJinterface
+*imageStorageAccessForm_PJinterface.PjSwName: imageStorageAccessForm
+*imageStorageAccessForm_PJinterface.PjParent: cfg_ctn_tables
+*imageStorageAccessForm_PJinterface.PjFileName: imageStorageAccessForm.i
+*imageStorageAccessForm_PJinterface.PjShowFlag: 0
+*imageStorageAccessForm_PJinterface.PjGuiDate: 797291112
+*imageStorageAccessForm_PJinterface.PjDate: 797291090
+*imageStorageAccessForm_PJinterface.PjMode: 1
+*imageStorageAccessForm_PJinterface.PjCFileName: imageStorageAccessForm.c
+
+*imageStorageControlForm_PJinterface.class: PJinterface
+*imageStorageControlForm_PJinterface.PjName: imageStorageControlForm_PJinterface
+*imageStorageControlForm_PJinterface.PjSwName: imageStorageControlForm
+*imageStorageControlForm_PJinterface.PjParent: cfg_ctn_tables
+*imageStorageControlForm_PJinterface.PjFileName: imageStorageControlForm.i
+*imageStorageControlForm_PJinterface.PjShowFlag: 0
+*imageStorageControlForm_PJinterface.PjGuiDate: 797291113
+*imageStorageControlForm_PJinterface.PjDate: 797291093
+*imageStorageControlForm_PJinterface.PjMode: 1
+*imageStorageControlForm_PJinterface.PjCFileName: imageStorageControlForm.c
+
+*videoImageForm_PJinterface.class: PJinterface
+*videoImageForm_PJinterface.PjName: videoImageForm_PJinterface
+*videoImageForm_PJinterface.PjSwName: videoImageForm
+*videoImageForm_PJinterface.PjParent: cfg_ctn_tables
+*videoImageForm_PJinterface.PjFileName: videoImageForm.i
+*videoImageForm_PJinterface.PjShowFlag: 0
+*videoImageForm_PJinterface.PjGuiDate: 797291114
+*videoImageForm_PJinterface.PjDate: 797291095
+*videoImageForm_PJinterface.PjMode: 1
+*videoImageForm_PJinterface.PjCFileName: videoImageForm.c
+
+*uxmain.class: PJuxmain
+*uxmain.PjName: uxmain
+*uxmain.PjParent: cfg_ctn_tables
+*uxmain.PjFileName: ctn_editor.c
+*uxmain.PjDate: 0
+*uxmain.PjMode: -1
+
+*xtmain.class: PJxtmain
+*xtmain.PjName: xtmain
+*xtmain.PjParent: cfg_ctn_tables
+*xtmain.PjFileName: cfg_ctn_tables.c
+*xtmain.PjDate: 797291096
+*xtmain.PjMode: 1
+*xtmain.PjBody: /*\
+          Copyright (C) 1993, 1994, RSNA and Washington University\
+ \
+          The software and supporting documentation for the Radiological\
+          Society of North America (RSNA) 1993, 1994 Digital Imaging and\
+          Communications in Medicine (DICOM) Demonstration were developed\
+          at the\
+                  Electronic Radiology Laboratory\
+                  Mallinckrodt Institute of Radiology\
+                  Washington University School of Medicine\
+                  510 S. Kingshighway Blvd.\
+                  St. Louis, MO 63110\
+          as part of the 1993, 1994 DICOM Central Test Node project for, and\
+          under contract with, the Radiological Society of North America.\
+ \
+          THIS SOFTWARE IS MADE AVAILABLE, AS IS, AND NEITHER RSNA NOR\
+          WASHINGTON UNIVERSITY MAKE ANY WARRANTY ABOUT THE SOFTWARE, ITS\
+          PERFORMANCE, ITS MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR\
+          USE, FREEDOM FROM ANY COMPUTER DISEASES OR ITS CONFORMITY TO ANY\
+          SPECIFICATION. THE ENTIRE RISK AS TO QUALITY AND PERFORMANCE OF\
+          THE SOFTWARE IS WITH THE USER.\
+ \
+          Copyright of the software and supporting documentation is\
+          jointly owned by RSNA and Washington University, and free access\
+          is hereby granted as a license to use this software, copy this\
+          software and prepare derivative works based upon this software.\
+          However, any distribution of this software source code or\
+          supporting documentation or derivative works (source code and\
+          supporting documentation) must include the three paragraphs of\
+          the copyright notice.\
+*/\
+/* Copyright marker.  Copyright will be inserted above.  Do not remove */\
+ \
+/*\
+**                   Electronic Radiology Laboratory\
+**                 Mallinckrodt Institute of Radiology\
+**              Washington University School of Medicine\
+**\
+** Module Name(s):	main\
+** Author, Date:	Steve Moore\
+** Intent:		This file contains the "main" for the\
+**			cfg_ctn_tables application.  This main performs\
+**			some initializtion (calling a function to define\
+**			the highest level user interface) and then kicks\
+**			off the X event loop.\
+**			cfg_ctn_tables is used to provide a GUI for\
+**			modifying the CTN configuration tables.  The\
+**			program starts with an empty workspace.  The\
+**			user selects a table to be modified from a\
+**			pulldown menu and works on that table (until\
+**			he or she chooses a different one).  Each\
+**			table is independent of the others.\
+** Last Update:		$Author: smm $, $Date: 1998-08-03 16:08:16 $\
+** Source File:		$RCSfile: cfg_ctn_tables.prj,v $\
+** Revision:		$Revision: 1.14 $\
+** Status:		$State: Exp $\
+*/\
+ \
+static char rcsid[] = "$Revision: 1.14 $ $RCSfile: cfg_ctn_tables.prj,v $";\
+\
+\
+/*-----------------------------------------------------------\
+ * This is the project main program file for Xt generated \
+ * code. You may add application dependent source code \
+ * at the appropriate places. \
+ * 			     \
+ * Do not modify the statements preceded by the dollar\
+ * sign ($), these statements will be replaced with\
+ * the appropriate source code when the main program is  \
+ * generated.  \
+ *\
+ * $Date: 1998-08-03 16:08:16 $  		$Revision: 1.14 $ \
+ *-----------------------------------------------------------*/ \
+\
+#include <X11/Intrinsic.h>\
+#include <X11/StringDefs.h>\
+#include <X11/Xlib.h>\
+\
+#include <Xm/Xm.h>\
+\
+#include <stdio.h>\
+\
+#include "dicom.h"\
+#include "ctnthread.h"\
+#include "condition.h"\
+#include "lst.h"\
+#include "tbl.h"\
+#include "manage.h"\
+\
+DMAN_HANDLE *dmanHandle;\
+\
+/*---------------------------------------------------- \
+ * UxXt.h needs to be included only when compiling a \
+ * stand-alone application. \
+ *---------------------------------------------------*/\
+#ifndef DESIGN_TIME\
+#include "UxXt.h"\
+#endif /* DESIGN_TIME */\
+\
+XtAppContext	UxAppContext;\
+Widget		UxTopLevel;\
+Display		*UxDisplay;\
+int		UxScreen;\
+\
+/*----------------------------------------------\
+ * Insert application global declarations here\
+ *---------------------------------------------*/\
+static void usageerror();\
+\
+#ifdef _NO_PROTO\
+main(argc,argv)\
+        int     argc;\
+        char    *argv[];\
+#else\
+main( int argc, char *argv[])\
+#endif /* _NO_PROTO */\
+{\
+  char\
+    *databaseName = "CTNControl";\
+  CONDITION\
+    cond;\
+  CTNBOOLEAN\
+    verboseTBL = FALSE;\
+\
+	/*-----------------------------------------------------------\
+	 * Declarations.\
+         * The default identifier - mainIface will only be declared \
+	 * if the interface function is global and of type swidget.\
+	 * To change the identifier to a different name, modify the\
+	 * string mainIface in the file "xtmain.dat". If "mainIface"\
+         * is declared, it will be used below where the return value\
+	 * of  PJ_INTERFACE_FUNCTION_CALL will be assigned to it.\
+         *----------------------------------------------------------*/ \
+\
+  	$PJ_INTERFACE_RETVAL_TYPE\
+\
+	/*---------------------------------\
+	 * Interface function declaration\
+	 *--------------------------------*/	\
+\
+ 	$PJ_INTERFACE_FUNCTION_DECL\
+	$PJ_INTERFACE_FUNCTION_ARG_DECL\
+\
+	/*---------------------\
+	 * Initialize program\
+	 *--------------------*/\
+\
+#ifdef XOPEN_CATALOG\
+	if (XSupportsLocale()) {\
+		XtSetLanguageProc(NULL,(XtLanguageProc)NULL,NULL);\
+	}\
+#endif\
+\
+	SgePreInitialize(&argc, argv);\
+\
+  	UxTopLevel = XtAppInitialize(&UxAppContext, "$PJ_APP_CLASS_NAME",\
+				     NULL, 0, &argc, argv, NULL, NULL, 0);\
+\
+	UxDisplay = XtDisplay(UxTopLevel);\
+	UxScreen = XDefaultScreen(UxDisplay);\
+\
+	/* We set the geometry of UxTopLevel so that dialogShells\
+	   that are parented on it will get centered on the screen\
+	   (if defaultPosition is true). */\
+\
+	XtVaSetValues(UxTopLevel,\
+			XtNx, 0,\
+			XtNy, 0,\
+			XtNwidth, DisplayWidth(UxDisplay, UxScreen),\
+			XtNheight, DisplayHeight(UxDisplay, UxScreen),\
+			NULL);\
+\
+	/*-------------------------------------------------------\
+	 * Insert initialization code for your application here \
+	 *------------------------------------------------------*/\
+	while (--argc > 0 && *(++argv)[0] == '-') {\
+	    switch((*argv)[1]) {\
+		case 'f':\
+		    if (argc -- < 1)\
+			exit(1);\
+		    databaseName = *++argv;\
+		    break;\
+		case 'h':\
+		    usageerror();\
+		    break;\
+		case 'x':\
+		    if (argc-- < 0)\
+			usageerror();\
+		    argv++;\
+		    if (strcmp(*argv, "TBL") == 0)\
+			verboseTBL = TRUE;\
+		    else\
+			usageerror();\
+		    break;\
+		default:\
+		    printf("Unrecognized option: %s\n", *argv);\
+		    break;\
+	    }\
+	}\
+	TBL_Debug(verboseTBL);\
+	THR_Init();\
+	cond = DMAN_Open(databaseName, "", "", &dmanHandle);\
+	if (cond != DMAN_NORMAL) {\
+	    COND_DumpConditions();\
+	    exit(1);\
+	}\
+\
+	/*----------------------------------------------------------------\
+	 * Create and popup the first window of the interface.  The 	 \
+	 * return value can be used in the popdown or destroy functions.\
+         * The Widget return value of  PJ_INTERFACE_FUNCTION_CALL will \
+         * be assigned to "mainIface" from  PJ_INTERFACE_RETVAL_TYPE. \
+	 *---------------------------------------------------------------*/\
+\
+	$PJ_INTERFACE_FUNCTION_CALL\
+	$PJ_POPUP_CALL\
+\
+	/*-----------------------\
+	 * Enter the event loop \
+	 *----------------------*/\
+\
+  	$PJ_EVENT_LOOP\
+\
+}\
+\
+static void usageerror()\
+{\
+  char msg[] = "\\
+Usage: [-f db] [-h] [-x <fac>]\n\\
+\n\\
+    -f   Use database with name db  instead of default (Control)\n\\
+    -h   Give help page\n\\
+    -x   Place facility fac in verbose mode (TBL)\n";\
+\
+    fprintf(stderr, msg);\
+    exit(1);\
+}\
+
+*xtmain.PjExplicitEventLoop: {\
+\
+	XEvent event;\
+\
+	for (;;)\
+	{\
+	    XtAppNextEvent(UxAppContext, &event);\
+\
+	    switch (event.type)\
+	    {\
+\
+	       /*---------------------------------------------------\
+	 	* Insert code here to handle any events that you do\
+		* not wish to be handled by the interface.\
+		*---------------------------------------------------*/\
+\
+		default:\
+	    	    XtDispatchEvent(&event);\
+	    	    break;\
+	    }\
+	}\
+}
+*xtmain.PjEdited: 1
+*xtmain.PjHasImplicitLoop: 1
+*xtmain.PjHasExplicitLoop: 0
+
+*uilmain.class: PJuilmain
+*uilmain.PjName: uilmain
+*uilmain.PjParent: cfg_ctn_tables
+*uilmain.PjFileName: ctn_editor.c
+*uilmain.PjDate: 0
+*uilmain.PjMode: -1
+
+*uxmake.class: PJuxmake
+*uxmake.PjName: uxmake
+*uxmake.PjParent: cfg_ctn_tables
+*uxmake.PjFileName: ctn_editor.mk
+*uxmake.PjDate: 0
+*uxmake.PjMode: -1
+
+*xtmake.class: PJxtmake
+*xtmake.PjName: xtmake
+*xtmake.PjParent: cfg_ctn_tables
+*xtmake.PjFileName: ctn_editor.mk
+*xtmake.PjDate: 0
+*xtmake.PjMode: -1
+
+*uilmake.class: PJuilmake
+*uilmake.PjName: uilmake
+*uilmake.PjParent: cfg_ctn_tables
+*uilmake.PjFileName: ctn_editor.mk
+*uilmake.PjDate: 0
+*uilmake.PjMode: -1

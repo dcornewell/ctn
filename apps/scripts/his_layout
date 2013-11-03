@@ -1,0 +1,58 @@
+#!/bin/csh
+#
+# Intent:	This script creates the layout for the HIS demonstration
+# $Revision: 1.1 $
+
+echo This script is used to create a layout for the HIS demonstration
+echo with MIR software.  This is not necessarily the final layout, but it
+echo will serve for testing purposes.  This script is picky about input
+echo so please type carefully \(avoid extra spaces when you type\).
+echo ""
+
+set ROOT = /mir_ctn
+echo The default root directory for the MIR CTN data files is $ROOT.
+echo You can choose a different directory at this point by entering
+echo the directory name.  If you wish to use the default, just hit RETURN.
+echo ""
+set a = $<
+if ($a != "") then
+echo Do you wish to use $a as the root directory "(y/n)?"
+set b = $<
+if (($b != "y") && ($b != "Y")) then
+echo Script exiting.  Please try again.
+exit
+endif
+set ROOT = $a
+endif
+
+if (! (-e $ROOT)) then
+echo This script requires the directory $ROOT to exist before running.
+echo Please create this directory and then run this script again.
+exit
+endif
+
+umask 0
+# Create several subdirectories for the HIS demonstration
+
+echo Making the HIS subdirectories starting from $ROOT
+
+if (! (-e $ROOT/his)) then
+mkdir $ROOT/his
+endif
+if (! (-e $ROOT/his/config)) then
+mkdir $ROOT/his/config
+endif
+if (! (-e $ROOT/his/db)) then
+mkdir $ROOT/his/db
+endif
+if (! (-e $ROOT/his/q)) then
+mkdir $ROOT/his/q
+endif
+
+echo HIS directory layout complete.  Before you run the HIS demonstration,
+echo you will need to create a database file to be used by your company
+echo "(ROOT/his/db/vendor.db)" in the db directory and uid and id files for
+echo your company in the config directory.  You will also need to create
+echo configuration files, his_connect.cfg and his_database.cfg in the config
+echo directory.  There should be examples of these files supplied with
+echo the CTN software "(look in his_demo)."

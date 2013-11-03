@@ -1,0 +1,147 @@
+# !/bin/csh
+#
+# A simple script for starting the print manager for any given company.
+#
+# Arguments:	vendor name (required)
+# $Revision: 1.3 $
+
+#
+# This should be changed to match whatever the real root is
+#
+set ROOT = /mir_ctn/print
+
+if( $1 == "" ) then
+	echo Usage: $0 vendor
+	exit
+endif
+
+set PASS = TRUE
+foreach i (config/pri_connect.cfg db/print.db db/icon.index db/icon.file)
+if (!(-e $ROOT/$i)) then
+echo Missing required file: $ROOT/$i
+set PASS = FALSE
+endif
+end
+
+if ($PASS != "TRUE") then
+echo This script failed because one or more configuration/database files
+echo were missing.
+exit
+endif
+
+set SUCCESS = 1
+
+switch($1)
+	case "smm":
+		set HOST = "print"
+		set VENDOR = "smm"
+		setenv DISPLAY dicom2:0
+		breaksw
+	case "aaai":
+		set HOST = "print"
+		set VENDOR = "aaai"
+		setenv DISPLAY aaai:0
+		breaksw
+	case "acuson":
+		set HOST = "print"
+		set VENDOR = "acuson"
+		setenv DISPLAY acuson:0
+		breaksw
+	case "adac":
+		set HOST = "print"
+		set VENDOR = "adac"
+		setenv DISPLAY adac:0
+		breaksw
+	case "agfa":
+		set HOST = "print"
+		set VENDOR = "agfa"
+		setenv DISPLAY agfa:0
+		breaksw
+	case "ali":
+		set HOST = "print"
+		set VENDOR = "ali"
+		setenv DISPLAY ali:0
+		breaksw
+	case "atl":
+		set HOST = "print"
+		set VENDOR = "atl"
+		setenv DISPLAY atl:0
+		breaksw
+	case "cemax":
+		set HOST = "print"
+		set VENDOR = "cemax"
+		setenv DISPLAY cemax:0
+		breaksw
+	case "gems":
+		set HOST = "print"
+		set VENDOR = "gems"
+		setenv DISPLAY gems:0
+		breaksw
+	case "isg":
+		set HOST = "print"
+		set VENDOR = "isg"
+		setenv DISPLAY isg:0
+		breaksw
+	case "kodak":
+		set HOST = "print"
+		set VENDOR = "kodak"
+		setenv DISPLAY kodak:0
+		breaksw
+	case "konica":
+		set HOST = "print"
+		set VENDOR = "konica"
+		setenv DISPLAY konica:0
+		breaksw
+	case "loral":
+		set HOST = "print"
+		set VENDOR = "loral"
+		setenv DISPLAY loral:0
+		breaksw
+	case "merge":
+		set HOST = "print"
+		set VENDOR = "merge"
+		setenv DISPLAY merge:0
+		breaksw
+	case "mitra":
+		set HOST = "print"
+		set VENDOR = "mitra"
+		setenv DISPLAY mitra:0
+		breaksw
+	case "3m":
+		set HOST = "print"
+		set VENDOR = "3m"
+		setenv DISPLAY 3m:0
+		breaksw
+	case "philips":
+		set HOST = "print"
+		set VENDOR = "philips"
+		setenv DISPLAY philips:0
+		breaksw
+	case "picker":
+		set HOST = "print"
+		set VENDOR = "picker"
+		setenv DISPLAY picker:0
+		breaksw
+	case "siemens":
+		set HOST = "print"
+		set VENDOR = "siemens"
+		setenv DISPLAY siemens:0
+		breaksw
+	case "star":
+		set HOST = "print"
+		set VENDOR = "star"
+		setenv DISPLAY star:0
+		breaksw
+	default:
+		set SUCCESS = 0
+		echo $0\: Vendor name $1 not found.
+		echo Please try again
+		breaksw
+endsw
+
+if( $SUCCESS == 1 ) then
+
+print_mgr -c $ROOT/config/pri_connect.cfg -D $ROOT/db/print.db -C $HOST -I $ROOT/db/icon.index -F $ROOT/db/icon.file $VENDOR &
+endif
+
+exit

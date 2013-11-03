@@ -1,0 +1,84 @@
+CREATE TABLE ApplicationEntity
+	(
+	Title		char(16) 	not null,
+	Node		char(64) 	not null,
+	Port		int,
+	Comment 	char(80),
+	Organization 	char(32) 	not null
+	)
+\g
+ALTER TABLE ApplicationEntity ADD UNIQUE AE_Title_index (Title)
+\g
+ALTER TABLE ApplicationEntity ADD INDEX AE_Node_index (Node)
+\g
+CREATE TABLE GroupNames
+	(
+	GroupName	char(16) 	not null,
+	Title		char(16) 	not null
+	)
+\g
+ALTER TABLE GroupNames ADD INDEX GN_GroupName_index (GroupName)
+\g
+ALTER TABLE GroupNames ADD INDEX GN_Title_index (Title)
+\g
+CREATE TABLE StorageAccess (
+	Title		char(16) 	not null,
+	DbKey		char(64) 	not null,
+	Owner		char(16),
+	GroupName	char(16),
+	Access		int 		not null,
+	Comment		char(80)
+	)
+
+\g
+ALTER TABLE StorageAccess ADD UNIQUE SA_Title_index (Title)
+\g
+CREATE TABLE StorageControl
+	(
+	RequestingTitle	char(16) 	not null,
+	RespondingTitle	char(16) 	not null,
+	Medium		char(32),
+	Root		char(255)	not null,
+	NextDirectory	char(255),
+	Access		char(9)
+	)
+\g
+ALTER TABLE StorageControl ADD INDEX IMS_RequestingTitle_index (RequestingTitle)
+\g
+ALTER TABLE StorageControl ADD INDEX IMS_RespondingTitle_index (RespondingTitle)
+\g
+CREATE TABLE SecurityMatrix
+	(
+	RequestingTitle	char(16) 	not null,
+	RespondingTitle	char(16) 	not null
+	)
+\g
+ALTER TABLE SecurityMatrix ADD INDEX IMS_RequestingTitle_index (RequestingTitle)
+\g
+ALTER TABLE SecurityMatrix ADD INDEX IMS_RespondingTitle_index (RespondingTitle)
+\g
+CREATE TABLE FISAccess (
+	Title		char(16) 	not null,
+	DbKey		char(64)	not null,
+	Owner		char(16),
+	GroupName	char(16),
+	Access		int,
+	Comment		char(80)
+	)
+\g
+ALTER TABLE FISAccess ADD UNIQUE FA_Title_index (Title)
+\g
+CREATE TABLE PrintServerCFG
+	(
+	RequestingTitle	char(16)	not null,
+	RespondingTitle	char(16)	not null,
+	GQId 		int		not null
+	)
+\g
+CREATE TABLE VideoImageDest
+	(
+	RequestingTitle	char(16) 	not null,
+	ImageType	char(6)		not null,
+	RespondingTitle	char(16)	not null
+	)
+\g

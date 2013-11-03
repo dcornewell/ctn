@@ -1,0 +1,61 @@
+#  Global rules for compilation for solaris w/o sybase
+#-D_HPUX_SOURCE \
+
+X11_LIBS = -lX11 
+XM_INCLUDE = /usr/include/Motif1.2
+X11_INCLUDE = /usr/include/X11R5
+SYBASE_INCLUDE = $(DICOM_ROOT)/include
+
+LIBPATH_X11 = -L/usr/lib/X11R5
+LIBPATH_MOTIF = -L/usr/lib/Motif1.2
+LIBPATH_UCB =
+LIBPATH_XIL =
+LIBPATH_DATABASE = -L$(MSQL_ROOT)/lib
+LIBS_X11 = -lXt -lX11
+LIBS_MOTIF = -lXm
+#LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm
+LIBS_XAW =
+LIBS_OS =
+# Added this macro so we could link explicitly with libucb.  The shared
+# library is not considered secure by Solaris and does not work with
+# setuid apps.
+LIBS_OS_SECURE_UCB =
+LIBS_DATABASE = -ltbl_msql -lmsql
+LIBS_LEX = -ll
+LIBS_CTN =  \
+	-lmut \
+	-lmanage \
+        -liap \
+	-licon \
+	-lprint \
+	-lfis -lidb \
+	$(LIBPATH_DATABASE) $(LIBS_DATABASE) \
+	-ldatabase -lhunk_man \
+	-lcfg \
+        -lservices \
+        -lmessages \
+        -lsq -ldcmobjects \
+        -ldulprotocol -lsnp \
+        -luid \
+        -llst \
+        -lgq \
+	-lie \
+	-lutility \
+        -lcondition \
+	-lctnthread
+LIBS_XIL =
+CFLAGS_X11 = -I$(X11_INCLUDE)
+CFLAGS_MOTIF = -I$(XM_INCLUDE)
+CFLAGS_XIL = -I$(XILHOME)/include
+STATIC =
+
+LONGSIZE=32
+INTSIZE=32
+SHORTSIZE=16
+C_OPTS = -g -DDEBUG -D$(ARCHITECTURE) -D$(OS) -DSHARED_MEMORY \
+-DSEMAPHORE -DX11 -DMOTIF -DX11R4 -DMSQL -DUSEREGCOMP -Ae \
+-DTBL_REQUIRES_HAT_ESCAPE \
+-I$(DICOM_INCLUDE) -I$(MSQL_ROOT)/include \
+$(CFLAGS_MOTIF) $(CFLAGS_X11) \
+-DLONGSIZE=$(LONGSIZE) -DINTSIZE=$(INTSIZE) -DSHORTSIZE=$(SHORTSIZE) \
+-DTIMEOFDAYARGS=2

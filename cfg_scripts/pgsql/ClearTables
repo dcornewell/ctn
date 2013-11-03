@@ -1,0 +1,11 @@
+#!/bin/csh
+#
+# ClearTables
+#
+if ($1 == "" || $2 == "" ) then
+  echo " "
+  echo Usage: "$0 <DIM|DIM2|Control|TBLTest|FIS> <Database Name>"
+  echo " "
+  exit
+endif
+psql $2 < Clear$1Tables.script

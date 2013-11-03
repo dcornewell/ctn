@@ -1,0 +1,14 @@
+! ApplicationEntity
+# AE Title	^ Node	^ Port	^ Org	^ Comment
+HEINEKEN	^ heineken	^ 2100	^ ERL	^ERL
+
+! Security Matrix
+HEINEKEN	^ HEINEKEN
+
+! StorageAccess
+# Flag	^ SCP Title	^ Key	^ Owner	^ Group	^ Comment
+0	^ HEINEKEN	^ HEINEKEN	^ ERL	^ ERL	^ERL
+
+! StorageControl
+# Requesting	^ Responding	^ Medium	^ Root
+HEINEKEN	^ HEINEKEN	^ x	^ /heinekena/images/heineken

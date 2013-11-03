@@ -1,0 +1,17 @@
+mySQL Installation Notes
+------------------------
+
+MySQL is a true multi-user, multi-threaded SQL database server. The main goals of MySQL 
+are speed, robustness and ease of use. It can be obtained from www.mysql.com. 
+It is available in both binary and source versions for several platforms, 
+including Windows (please check licensing policies).
+
+Instructions for installing mySQL are included with the documentation and describe
+system-specific problems you may encounter as well as post-installation issues, 
+depending on your particular configuration.
+
+Before using CTN, you must add a user to the mySQL system called ctn, with password 
+ctn (you may change this editing tbl_mysql.h in the facilities/tbl directory) and give 
+this user full permissions (select, insert, delete, update, etc.) on the CTN databases.
+
+

@@ -1,0 +1,6 @@
+# File maps AE titles of sending applications
+# to a queue for display.
+
+DRNO		4
+EUCJP		6
+EUCJPROMAJI	8

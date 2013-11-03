@@ -1,0 +1,21 @@
+CREATE TABLE TBL_Persons
+	(
+	FNAME		char(50)	not null,
+	LNAME		char(50)	not null,
+	AGE		int		not null,
+	ZIP		int		not null,
+	WEIGHT		real		not null
+	)
+\g
+CREATE TABLE UniqueNumbers
+	(
+	NumberName	char(50)	not null,
+	UniqueNumber	int		not null
+	)
+\g
+INSERT INTO UniqueNumbers (NumberName, UniqueNumber) VALUES ('UN1',0)
+\g
+INSERT INTO UniqueNumbers (NumberName, UniqueNumber) VALUES ('UN2',0)
+\g
+INSERT INTO UniqueNumbers (NumberName, UniqueNumber) VALUES ('UN3',0)
+\g

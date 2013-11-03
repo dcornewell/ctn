@@ -1,0 +1,134 @@
+	create table Limits
+	(
+	DBSize		int not null,
+	DBLimit		int not null,
+	PatientCount	int not null,
+	StudyCount	int not null,
+	ImageCount	int not null
+	);
+
+	create table patientlevel
+	(
+	PatNam		varchar(250) not null,
+	PatID		varchar(250) not null,
+	PatBirDat	int not null,
+	PatBirTim	real ,
+	PatSex		char(16) not null,
+	NumPatRelStu	int not null,
+	NumPatRelSer	int not null,
+	NumPatRelIma	int not null,
+	InsertDate	int not null,
+	InsertTime	real not null,
+	Owner		char(16) ,
+	GroupName	char(16) ,
+	Priv		char(9)
+	);
+
+	create unique index PL_PatID_index
+	on patientlevel(PatID);
+
+	create index PL_PatNam_index
+	on patientlevel(PatNam);
+
+	create table studylevel
+	(
+	StuDat		int not null,
+	StuTim		real not null,
+	AccNum		char(16) not null,
+	StuID		char(16) not null,
+	StuInsUID	char(64) not null,
+	RefPhyNam	char(64) not null,
+	StuDes		char(64) ,
+	PatAge		char(4) ,
+	PatSiz		char(16) ,
+	PatWei		char(16) ,
+	NumStuRelSer	int not null,
+	NumStuRelIma	int not null,
+	InsertDate	int not null,
+	InsertTime	real not null,
+	Owner		char(16) ,
+	GroupName	char(16) ,
+	Priv		char(9) ,
+	PatParent	varchar(64) not null
+	);
+
+	create unique index SL_StuInsUID_index
+	on studylevel(StuInsUID);
+
+	create index SL_StuID_index
+	on studylevel(StuID);
+
+	create index SL_PatParent_index
+	on studylevel(PatParent);
+
+	create table serieslevel
+	(
+	Mod		char(16) not null,
+	SerNum		char(12) not null,
+	SerInsUID	char(64) not null,
+	ProNam		char(64) ,
+	SerDes		char(64) ,
+	BodParExa	char(16) ,
+	ViePos		char(16) ,
+	NumSerRelIma	int not null,
+	InsertDate	int not null,
+	InsertTime	real not null,
+	Owner		char(16) ,
+	GroupName	char(16) ,
+	Priv		char(9) ,
+	StuParent	char(64) not null
+	);
+
+	create unique index SL_SerInsUID_index
+	on serieslevel(SerInsUID);
+
+	create index SL_StuParent_index
+	on serieslevel(StuParent);
+
+	create table imagelevel
+	(
+	ImaNum		char(12) not null,
+	SOPInsUID	char(64) not null,
+	SOPClaUID	char(64) not null,
+	SamPerPix	int not null,
+	PhoInt		char(16) not null,
+	Row		int not null,
+	Col		int not null,
+	BitAll		int not null,
+	BitSto		int not null,
+	PixRep		int not null,
+	PatOri		char(16) ,
+	InsertDate	int not null,
+	InsertTime	real not null,
+	Owner		char(16) ,
+	GroupName	char(16) ,
+	Priv		char(9) ,
+	SerParent	char(64) not null
+	);
+
+	create unique index IL_SOPInsUID_index
+	on imagelevel(SOPInsUID);
+
+	create index IL_SerParent_index
+	on imagelevel(SerParent);
+
+	create table instancetable
+	(
+	ImageUID                char(64) not null,
+	RespondingTitle char(16) not null,
+	Medium                  char(32) ,
+	Path                    char(255) not null,
+	Size                    int not null,
+	Transfer                char(64) not null
+	);
+
+	create index IT_ImageUID_index
+	on instancetable(ImageUID);
+
+	create index IT_RespondingTitle_index
+	on instancetable(RespondingTitle);
+
+insert into Limits
+	(DBSize,  DBLimit, PatientCount, StudyCount, ImageCount) VALUES
+	(     0, 10000000,            0,          0,          0);
+

@@ -1,0 +1,20 @@
+/* DropTBLTestTables.script 1.0 8-Mar-94 */
+/* set nocount on */
+print " "
+go
+print " "
+go
+
+
+use <DATABASENAME>
+go
+drop table TBL_Persons
+go
+print "Dropped TBL_Persons Table"
+go
+drop table UniqueNumbers
+go
+print "Dropped UniqueNumbers Table"
+go
+print " "
+go

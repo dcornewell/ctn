@@ -1,0 +1,138 @@
+
+CREATE TABLE PatientTable
+	(
+	PatID		char(16) 	not null,
+	PatNam		char(64) 	not null,
+	PatUID		char(64) 	not null,
+	PatBirDat	int 		not null,
+	PatSex		char(16) 	not null
+	)
+\g
+CREATE UNIQUE INDEX idx1 ON PatientTable(PatID)
+\g
+CREATE TABLE StudyTable (
+	PatUID		char(64) 	not null,
+	StuInsUID	char(64) 	not null,
+	VisUID		char(64) 	not null,
+	AccNum		char(16) 	not null,
+	StuID		char(16) 	not null,
+	SchStuStaDat	int,
+	SchStuStaTim	real,
+	SchStuLoc	char(64),
+	ProDes		char(64),
+	ReqPro		char(16),
+	StuStaID	char(16),
+	StuReaDat	int,
+	StuReaTim	real
+	)
+\g
+CREATE UNIQUE INDEX idx1 ON StudyTable(StuInsUID)
+\g
+CREATE TABLE ResultsTable (
+	ResUID		char(64) 	not null,
+	StuInsUID	char(64) 	not null,
+	ResID		char(16) 	not null,
+	Imp		char(1024),
+	InsCreDat	char(8),
+	InsCreTim	char(16),
+	InsCreUID	char(64)
+	)
+\g
+CREATE UNIQUE INDEX idx1 ON ResultsTable(ResUID)
+\g
+CREATE TABLE InterpretationTable (
+	IntUID		char(64) 	not null,
+	ResUID		char(64) 	not null,
+	IntID		char(16),
+	IntTex		char(1024),
+	IntTypID	char(16) 	not null,
+	IntStaID	char(16) 	not null,
+	IntDiaDes	char(10240),
+	InsCreDat	char(8),
+	InsCreTim	char(16),
+	InsCreUID	char(64),
+	PhyAppInt	char(64),
+	IntAppDat	char(8),
+	IntAppTim	char(16)
+	)
+\g
+CREATE UNIQUE INDEX idx1 ON InterpretationTable(IntUID)
+\g
+CREATE TABLE StudyCmpTable (
+	StuComUID	char(64) 	not null,
+	StuInsUID	char(64)	not null,
+	Mod		char(16)	not null,
+	ProCodVal	char(16),
+	ProCodSchDes	char(16),
+	ProCodMea	char(64),
+	StuDes		char(64),
+	StuComStaID	char(16),
+	StuID		char(16)
+	)
+\g
+CREATE UNIQUE INDEX idx1 ON StudyCmpTable(StuComUID)
+\g
+CREATE TABLE StudyCmpSeriesTable (
+	SerInsUID	char (64) 	not null,
+	StuComUID	char (64)	not null,
+	SerDat		char (8),
+	SerTim		char (16),
+	RetAETit	char (16),
+	StoMedFilSetID	char (16),
+	StoMedFilSetUID	char (64)
+	)
+\g
+CREATE UNIQUE INDEX idx1 ON StudyCmpSeriesTable(SerInsUID)
+\g
+CREATE TABLE StudyCmpImageTable (
+	SOPInsUID	char (64) 	not null,
+	SOPClaUID	char (64)	not null,
+	SerInsUID	char (64)	not null,
+	StuComUID	char (64)	not null,
+	RetAETit	char (16),
+	StoMedFilSetID	char (16),
+	StoMedFilSetUID	char (64)
+	)
+\g
+CREATE UNIQUE INDEX idx1 ON StudyCmpImageTable(SOPInsUID)
+\g
+CREATE TABLE UniqueNumbers (
+	NumberName	char(23)	not null,
+	UniqueNumber	int		not null
+	)
+\g
+CREATE TABLE StorageCommitReq (
+	TraUID		char(64)	not null,
+	ReqAE		char(16)	not null,
+	ResAE		char(16),
+	ReqDat		int		not null,
+	ReqTim		real		not null,
+	ResDat		int,
+	ResTim		real
+	)
+\g
+CREATE UNIQUE INDEX idx1 ON StorageCommitReq(TraUID)
+\g
+CREATE TABLE CommitSOPRef (
+	TraUID		char(64)	not null,
+	SOPClaUID	char(64)	not null,
+	SOPInsUID	char(64)	not null
+	)
+\g
+CREATE TABLE WorkQueue(
+	TasNam		char(100)	not null,
+	TasID		char(100)	not null
+	)
+\g
+DELETE FROM UniqueNumbers
+\g
+INSERT INTO UniqueNumbers(NumberName, UniqueNumber) VALUES ('PatientID', 1000000)
+\g
+INSERT INTO UniqueNumbers(NumberName, UniqueNumber) VALUES ('AccessionNumber', 2000000)
+\g
+INSERT INTO UniqueNumbers(NumberName, UniqueNumber) VALUES ('StudyID', 3000000)
+\g
+INSERT INTO UniqueNumbers(NumberName, UniqueNumber) VALUES ('ResultsID', 4000000)
+\g
+INSERT INTO UniqueNumbers(NumberName, UniqueNumber) VALUES ('InterpretationID', 5000000)
+\g

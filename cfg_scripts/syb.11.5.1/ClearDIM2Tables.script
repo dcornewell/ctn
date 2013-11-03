@@ -1,0 +1,41 @@
+/* ClearDIMTables.script 1.0 25-Aug-94 */
+/* set nocount on */
+print " "
+go
+print " "
+go
+
+use <DATABASENAME>
+go
+delete from PatientLevel
+go
+print "Cleared PatientLevel Table"
+go
+go
+delete from StudyLevel
+go
+print "Cleared StudyLevel Table"
+go
+delete from SeriesLevel
+go
+print "Cleared SeriesLevel Table"
+go
+delete from ImageLevel
+go
+print "Cleared ImageLevel Table"
+go
+delete from InstanceTable
+go
+print "Cleared InstanceLevel Table"
+go
+delete from Limits
+go
+insert into Limits
+	(DBSize,  DBLimit, PatientCount, StudyCount, ImageCount) VALUES
+	(     0, 10000000,            0,          0,          0)
+go
+
+print " "
+go
+print " "
+go

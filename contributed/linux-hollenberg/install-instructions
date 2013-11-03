@@ -1,0 +1,108 @@
+        Directions for installing msql and CTN on linux to run DICOM
+
+Editor's note:  These instructions were written for releases where
+we included the msql software.  You now have to get that for yourself
+from bond.edu.au.
+
+  6.1.  linux/version.h: No such file or directory
+
+  Can't compile any source file that includes ctype.h because
+  /usr/include/linux/version.h doesn't exist.  The CND-kernel-source RPM
+  is built wrong.
+
+  Workaround: To create the version.h file, perform thefollowing steps
+  as root:
+
+  +  cd /usr/src/linux
+
+  +  make include/linux/version.h
+
+        adduser msql   /usr/sbin/adduser as root
+
+        su
+
+        passwd msql
+
+        Ctrl-D
+
+       # check GID for msql in /etc/passwd and record here _____
+
+        move CTN-tar-file to /home/msql and untar
+
+        cd /home
+
+        su
+
+        chgrp -R msql msql
+
+        chown -R msql msql
+
+        su - msql
+
+        cd /home/msql/pd_software/msql-xxxx
+
+        # check that libmsql.a is in "/home/msql/lib" if not copy
+        # it there.
+
+        make target
+
+        cd targets
+
+        cd Linux-1.2.13-i586    (or the appropriate target)
+
+        ./setup
+
+        make all
+
+        make install
+
+        cd /usr/local/Minerva/bin
+
+        cp * /usr/local/Program_Groups/DICOM
+
+        # check to see that UID and GID are msql.
+        cd /usr/local/Program_Groups ; ls -l
+
+        # check to see that UID and GID are msql.
+        cd DICOM ; ls -l
+
+        # if they are not, execute the next four commands
+
+        cd /usr/local/Program_Groups
+
+        su
+
+        chgrp -R msql DICOM
+
+        chown -R msql DICOM
+
+        su - msql
+
+        cd /home/msql/environments/linux/linux...env
+
+        vi linux....env
+
+        # "x" to delete a character, "a" to append,
+        # "i" to insert
+        # change line
+        # "setenv DICOM_BIN $DICOM_ROOT/bin/linux.msql.noopt"
+        # "setenv DICOM_BIN /usr/local/Program_Groups/DICOM"
+
+        # Press "Esc"  ":wq" then ENTER to save
+
+        csh
+
+        source linux....env
+
+        bash
+
+        cd /home/msql/facilities
+
+        make install
+
+        cd ../apps
+
+        make install
+
+        Run your tests!
+

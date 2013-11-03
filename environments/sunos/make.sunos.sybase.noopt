@@ -1,0 +1,50 @@
+#  Global rules for compilation for sunos
+
+#X11_LIBS = -L/usr/openwin/lib -lX11 
+#XAW_LIBS = -lXaw -lXmu -lXt -lXext -lm
+
+LIBPATH_X11 = -L/data3/MotifBuilders/UIMX/X11R5/usr/lib
+LIBPATH_MOTIF = -L/data3/MotifBuilders/UIMX/motif12/usr/lib
+LIBPATH_UCB =
+LIBPATH_DATABASE = -L/usr/sybase/lib
+LIBS_X11 =   -lXext -lXt -lX11 -lm
+LIBS_MOTIF = -lXm
+LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm
+LIBS_OS = 
+LIBS_DATABASE = -ltbl_sybase -lsybdb
+LIBS_LEX = -ll
+LIBS_CTN =  \
+	-lmut \
+	-lmanage \
+        -liap \
+	-licon \
+	-lprint \
+        -lsnp \
+	-lfis -lidb \
+	$(LIBPATH_DATABASE) $(LIBS_DATABASE) \
+	-ldatabase -lhunk_man \
+	-lcfg \
+        -lservices \
+        -lmessages \
+        -lsq -ldcmobjects \
+        -ldulprotocol \
+        -luid \
+        -llst \
+        -lgq \
+	-lie \
+	-lutility \
+        -lcondition
+
+CFLAGS_X11 = -I/data3/MotifBuilders/UIMX/X11R5/usr/include
+CFLAGS_MOTIF = -I/data3/MotifBuilders/UIMX/motif12/usr/include
+
+#DEBUG_LIBS = -lmalloc
+LONGSIZE=32
+INTSIZE=32
+SHORTSIZE=16
+C_OPTS =  -g -DDEBUG -D$(ARCHITECTURE) -D$(OS) -DSHARED_MEMORY \
+-DSEMAPHORE -DX11 -DATHENA -DMOTIF -DX11R4 -DUSLEEP -DSYBASE \
+-I$(DICOM_INCLUDE) -I/usr/sybase/include \
+$(CFLAGS_MOTIF) $(CFLAGS_X11) \
+-DLONGSIZE=$(LONGSIZE) -DINTSIZE=$(INTSIZE) \
+-DSHORTSIZE=$(SHORTSIZE)

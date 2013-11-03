@@ -1,0 +1,40 @@
+#!/bin/csh
+#
+# Intent:       Script for starting the DICOM Demonstration
+# $Revision: 1.3 $
+
+echo Starting DICOM Demo
+
+set SUCCESS = 1
+
+echo "Enter 1 for imaging demo"
+echo "Enter 2 to run Print demonstration"
+echo "Enter 3 to run CTN as a HIS"
+echo "Enter 4 to run CTN as a PACS"
+set a = $<
+
+switch($a)
+	case "1":
+		set S = start_img_client
+		breaksw
+	case "2":
+		set S = start_print_client
+		breaksw
+	case "3":
+		set S = start_his_client
+		breaksw
+	case "4":
+		set S = start_pacs_client
+		breaksw
+	default:
+		set SUCCESS = 0
+		echo $0\: $a not found.
+		breaksw
+endsw
+
+if( $SUCCESS == 1 ) then
+
+	$S $LOGNAME
+endif
+
+exit

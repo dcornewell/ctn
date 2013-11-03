@@ -1,0 +1,10 @@
+DELETE FROM PatientLevel
+\g
+DELETE FROM StudyLevel
+\g
+DELETE FROM SeriesLevel
+\g
+DELETE FROM ImageLevel
+\g
+DELETE FROM InstanceTable
+\g

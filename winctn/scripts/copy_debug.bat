@@ -1,0 +1,39 @@
+del D:\ctn\bin\*.*
+set DEST=D:\ctn\bin
+
+copy ..\ctn_apps\archive_agent\Debug\archive_agent.exe %DEST%
+copy ..\ctn_apps\archive_cleaner\Debug\archive_cleaner.exe %DEST%
+copy ..\ctn_apps\archive_server\Debug\archive_server.exe %DEST%
+copy ..\ctn_apps\clone_study\Debug\clone_study.exe %DEST%
+copy ..\ctn_apps\ctn_version\Debug\ctn_version.exe %DEST%
+copy ..\ctn_apps\dcm_create_object\Debug\dcm_create_object.exe %DEST%
+copy ..\ctn_apps\dcm_ctnto10\Debug\dcm_ctnto10.exe %DEST%
+copy ..\ctn_apps\dcm_diff\Debug\dcm_diff.exe %DEST%
+copy ..\ctn_apps\dcm_dump_compressed\Debug\dcm_dump_compressed.exe %DEST%
+copy ..\ctn_apps\dcm_dump_element\Debug\dcm_dump_element.exe %DEST%
+copy ..\ctn_apps\dcm_dump_file\Debug\dcm_dump_file.exe %DEST%
+copy ..\ctn_apps\dcm_make_object\Debug\dcm_make_object.exe %DEST%
+copy ..\ctn_apps\dcm_map_to_8\Debug\dcm_map_to_8.exe %DEST%
+copy ..\ctn_apps\dcm_modify_elements\Debug\dcm_modify_elements.exe %DEST%
+copy ..\ctn_apps\dcm_modify_object\Debug\dcm_modify_object.exe %DEST%
+copy ..\ctn_apps\dcm_print_dictionary\Debug\dcm_print_dictionary.exe %DEST%
+copy ..\ctn_apps\dcm_replace_element\Debug\dcm_replace_element.exe %DEST%
+copy ..\ctn_apps\dcm_resize\Debug\dcm_resize.exe %DEST%
+copy ..\ctn_apps\dcm_rm_element\Debug\dcm_rm_element.exe %DEST%
+copy ..\ctn_apps\dcm_rm_group\Debug\dcm_rm_group.exe %DEST%
+copy ..\ctn_apps\dcm_template\Debug\dcm_template.exe %DEST%
+copy ..\ctn_apps\dcm_to_html\Debug\dcm_to_html.exe %DEST%
+copy ..\ctn_apps\dcm_verify\Debug\dcm_verify.exe %DEST%
+copy ..\ctn_apps\dcm_w_disp\Debug\dcm_w_disp.exe %DEST%
+copy ..\ctn_apps\dicom_echo\Debug\dicom_echo.exe %DEST%
+copy ..\ctn_apps\dump_commit_requests\Debug\dump_commit_requests.exe %DEST%
+copy ..\ctn_apps\load_control\Debug\load_control.exe %DEST%
+copy ..\ctn_apps\query_client\Debug\query_client.exe %DEST%
+copy ..\ctn_apps\send_image\Debug\send_image.exe %DEST%
+copy ..\ctn_apps\simple_storage\Debug\simple_storage.exe %DEST%
+copy ..\ctn_apps\ttdelete\Debug\ttdelete.exe %DEST%
+copy ..\ctn_apps\ttinsert\Debug\ttinsert.exe %DEST%
+copy ..\ctn_apps\ttlayout\Debug\ttlayout.exe %DEST%
+copy ..\ctn_apps\ttselect\Debug\ttselect.exe %DEST%
+copy ..\ctn_apps\ttunique\Debug\ttunique.exe %DEST%
+copy ..\ctn_apps\ttupdate\Debug\ttupdate.exe %DEST%

@@ -1,0 +1,34 @@
+#  Global rules for compilation for sunos
+
+X11_INCLUDE = /usr/X11R6/include
+XM_INCLUDE = /usr/local/LessTif/Motif1.2/include
+
+LIBPATH_X11 = -L/usr/X11R6/lib
+LIBPATH_MOTIF = -L/usr/local/LessTif/Motif1.2/lib
+LIBPATH_UCB =
+LIBPATH_DATABASE =-L$(PSQL_LIB)
+LIBS_X11 = -lXext -lXt -lX11
+LIBS_MOTIF = -lXm
+LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm
+LIBS_OS = 
+LIBS_DATABASE = -ltbl_psql -lpq -lcrypt
+LIBS_LEX = -lfl
+LIBS_CTN = -lctn $(LIBPATH_DATABASE) -lpq -lcrypt
+LIBS_CTN_NODB = -lctn
+
+TBL_DB = tbl_psql.o
+TBLMB_DB = not_supported_with_this_software
+
+CFLAGS_X11 = -I$(X11_INCLUDE)
+CFLAGS_MOTIF = -I$(XM_INCLUDE)
+
+#DEBUG_LIBS = -lmalloc
+LONGSIZE=32
+INTSIZE=32
+SHORTSIZE=16
+C_OPTS = -g -DDEBUG -D$(ARCHITECTURE) -D$(OS) -DSHARED_MEMORY \
+-DSEMAPHORE -DX11 -DATHENA -DX11R4 -DUSLEEP -DPSQL \
+-I$(DICOM_INCLUDE) -I$(PSQL_INCLUDE) \
+$(CFLAGS_MOTIF) $(CFLAGS_X11) \
+-DLONGSIZE=$(LONGSIZE) -DINTSIZE=$(INTSIZE) -DSHORTSIZE=$(SHORTSIZE) \
+-DTIMEOFDAYARGS=2 -DMOTIF -DUSEREGCOMP

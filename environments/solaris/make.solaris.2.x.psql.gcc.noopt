@@ -1,0 +1,65 @@
+#  Global rules for compilation for solaris w/o sybase
+
+.SUFFIXES: .cpp
+.cpp.o:
+	$(CXX) $(CXX_FLAGS) -c $<
+
+CC = gcc
+XCC = gcc
+DBLINK = gcc
+ARCHITECTURE = BIG_ENDIAN_ARCHITECTURE
+OS = SOLARIS
+
+X11_LIBS = -L/usr/openwin/lib -lX11 
+XAW_LIBS = -lXaw -lXmu -lXt -lXext -lm
+XM_INCLUDE = /usr/dt/include
+X11_INCLUDE = /usr/openwin/share/include
+SYBASE_INCLUDE =
+
+LIBPATH_X11 = -L/usr/openwin/lib
+LIBPATH_MOTIF = -L/usr/dt/lib
+LIBPATH_UCB = -L/usr/ucblib
+LIBPATH_XIL = -L$(XILHOME)/lib
+LIBPATH_DATABASE = -L$(PSQL_ROOT)/lib
+LIBS_X11 = -lXt -lX11
+LIBS_MOTIF = -lXm
+LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm
+LIBS_OS = -L/usr/ucblib -lm -lsocket -lnsl -lgen -lelf -lc -lucb
+# Added this macro so we could link explicitly with libucb.  The shared
+# library is not considered secure by Solaris and does not work with
+# setuid apps.
+LIBS_OS_SECURE_UCB = -lm -lsocket -lnsl -lgen -lelf -lc /usr/ucblib/libucb.a
+LIBS_DATABASE = -ltbl_psql -lpq
+LIBS_LEX = -ll
+
+LIBS_CTN =  -lctn $(LIBPATH_DATABASE) -lpq
+LIBS_CTN_NODB =  -lctn $(LIBPATH_DATABASE)
+LIBS_CTN_STATIC = -lctn $(PSQL_ROOT)/lib/libpq.a  $(LIBS_OS_SECURE_UCB)
+
+TBL_DB = tbl_psql.o
+TBLMB_DB = multibyte_not_supported_in_this_environment
+
+LIBS_XIL = -lxil
+CFLAGS_X11 = -I/usr/openwin/include
+CFLAGS_MOTIF = -I$(XM_INCLUDE)
+CFLAGS_XIL = -I$(XILHOME)/include
+STATIC = -Bstatic
+
+LONGSIZE=32
+INTSIZE=32
+SHORTSIZE=16
+C_OPTS = -g -Dsparc -D$(ARCHITECTURE) -D$(OS) -DSHARED_MEMORY \
+-DSEMAPHORE -DX11 -DATHENA -DMOTIF -DX11R4 -DUSLEEP -DPSQL \
+-DTBL_REQUIRES_HAT_ESCAPE \
+-I$(DICOM_INCLUDE) -I$(PSQL_ROOT)/include \
+$(CFLAGS_MOTIF) $(CFLAGS_X11) \
+-DLONGSIZE=$(LONGSIZE) -DINTSIZE=$(INTSIZE) -DSHORTSIZE=$(SHORTSIZE) \
+-DTIMEOFDAYARGS=2
+
+# Enable the switch below if you want the V2 version of the database
+# software. This version allows you to set a limit on the size of
+# partition used to store the incoming images. The database tracks
+# the number of bytes of each image and keeps a count. When you go
+# over that size, it starts to delete images. This is mainly used
+# for demonstrations and not everyday systems.
+#-DCTN_IDBV2

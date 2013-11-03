@@ -1,0 +1,53 @@
+#!/bin/sh
+# makalinuxctn Version 0.1
+# This makes a ctn after all is built
+
+THISHEREDIRECTORY=$PWD
+
+echo Checking For disk space:
+/bin/df . | awk '{ if (NR==2) printf ("\t%.1f MBytes are avaialble\n", $4) }'
+DISK_AMOUNT=`/bin/df . | awk '{ if (NR==2) print $4 }'`
+if [ $DISK_AMOUNT -lt 90000 ]; then
+	echo Not enough Disk space
+	exit 1
+else
+	/bin/echo -n  "\tThere is enough disk space for the installation\n\n"
+fi
+
+/bin/echo "Now configuring the Central Test Node system \n\n"
+
+source .linux.configure
+if [ $? -ne 0 ]; then
+	echo "someting went wrong in the .linux.configure"
+	exit 1
+fi
+
+/bin/echo "Now Entering the $THISHEREDIRECTORY/facilities directory"
+/bin/echo "to make the Central Test Node facilities\n\n"
+cd $THISHEREDIRECTORY/facilities
+#make
+make install
+
+/bin/echo "Now Entering the $THISHEREDIRECTORY/apps directory"
+/bin/echo "to make the Central Test Node applications\n\n"
+cd $THISHEREDIRECTORY/apps
+#make
+make install
+
+/bin/echo "\n\n\tCTN Completed\n\n"
+
+/bin/echo "Now become root and type ${MSQL_ROOT}/bin/msqld & \n\n"
+
+/bin/echo Then become root or whoever is the DICOM user and 
+/bin/echo "type $DICOM_ROOT/cfg_scripts/msql/CreateDB CTNControl"
+/bin/echo "to create the Control data base.\n\n"
+
+/bin/echo "type $DICOM_ROOT/cfg_scripts/msql/CreateTables Control CTNControl"
+/bin/echo "to create the Control data base tables \n\n"
+
+/bin/echo "I recommend going to $DICOM_ROOT/cfg_scripts/other copying"
+/bin/echo "example_load to your_load and then typing"
+/bin/echo "$DICOM_ROOT/bin/linux.msql/load_control < your_load "
+echo To get your DICOM permissions up and usable
+echo have a pleasant day
+

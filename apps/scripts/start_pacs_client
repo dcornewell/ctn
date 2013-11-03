@@ -1,0 +1,124 @@
+# !/bin/csh
+#
+# A simple script for starting the pacs demo for any given company...
+#
+
+#
+# This should be changed to match whatever the real root is
+#
+set ROOT = /mir_ctn/pacs
+setenv QUEUE_DIRECTORY $ROOT/q
+if ($DISPLAY == "") setenv DISPLAY dicom2:0
+
+if( $1 == "" ) then
+	echo Usage: $0 company
+	exit
+endif
+
+set SUCCESS = 1
+
+switch($1)
+	case "smm":
+		set HOST = "ctn1"
+		set VENDOR = "smm"
+		breaksw
+	case "aaai":
+		set HOST = "ctn1"
+		set VENDOR = "aaai"
+		breaksw
+	case "acuson":
+		set HOST = "ctn1"
+		set VENDOR = "acuson"
+		breaksw
+	case "adac":
+		set HOST = "ctn1"
+		set VENDOR = "adac"
+		breaksw
+	case "agfa":
+		set HOST = "ctn1"
+		set VENDOR = "agfa"
+		breaksw
+	case "ali":
+		set HOST = "ctn1"
+		set VENDOR = "ali"
+		breaksw
+	case "atl":
+		set HOST = "ctn1"
+		set VENDOR = "atl"
+		breaksw
+	case "cemax":
+		set HOST = "ctn1"
+		set VENDOR = "cemax"
+		breaksw
+	case "gems":
+		set HOST = "ctn1"
+		set VENDOR = "gems"
+		breaksw
+	case "isg":
+		set HOST = "ctn1"
+		set VENDOR = "isg"
+		breaksw
+	case "kodak":
+		set HOST = "ctn1"
+		set VENDOR = "kodak"
+		breaksw
+	case "konica":
+		set HOST = "ctn1"
+		set VENDOR = "konica"
+		breaksw
+	case "loral":
+		set HOST = "ctn1"
+		set VENDOR = "loral"
+		breaksw
+	case "mds":
+		set HOST = "ctn1"
+		set VENDOR = "mds"
+		breaksw
+	case "merge":
+		set HOST = "ctn1"
+		set VENDOR = "merge"
+		breaksw
+	case "mitra":
+		set HOST = "ctn1"
+		set VENDOR = "mitra"
+		breaksw
+	case "mks":
+		set HOST = "ctn1"
+		set VENDOR = "mks"
+		breaksw
+	case "3m":
+		set HOST = "ctn1"
+		set VENDOR = "3m"
+		breaksw
+	case "philips":
+		set HOST = "ctn1"
+		set VENDOR = "philips"
+		breaksw
+	case "picker":
+		set HOST = "ctn1"
+		set VENDOR = "picker"
+		breaksw
+	case "radman":
+		set HOST = "ctn1"
+		set VENDOR = "radman"
+		breaksw
+	case "siemens":
+		set HOST = "ctn1"
+		set VENDOR = "siemens"
+		breaksw
+	case "star":
+		set HOST = "ctn1"
+		set VENDOR = "star"
+		breaksw
+	default:
+		set SUCCESS = 0
+		echo $0\: $1 not found.
+		breaksw
+endsw
+
+if( $SUCCESS == 1 ) then
+
+pacs_interface -v -N $ROOT/config/pacs_connect.cfg -c $HOST $VENDOR &
+endif
+
+exit

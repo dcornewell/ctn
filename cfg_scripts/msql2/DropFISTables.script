@@ -1,0 +1,22 @@
+DROP TABLE PatientTable
+\g
+DROP TABLE StudyTable
+\g
+DROP TABLE ResultsTable
+\g
+DROP TABLE InterpretationTable
+\g
+DROP TABLE StudyCmpTable
+\g
+DROP TABLE StudyCmpSeriesTable
+\g
+DROP TABLE StudyCmpImageTable
+\g
+DROP TABLE UniqueNumbers
+\g
+DROP TABLE StorageCommitReq
+\g
+DROP TABLE CommitSOPRef
+\g
+DROP TABLE WorkQueue
+\g

@@ -1,0 +1,16 @@
+DELETE FROM PatientLevel
+\g
+DELETE FROM StudyLevel
+\g
+DELETE FROM SeriesLevel
+\g
+DELETE FROM ImageLevel
+\g
+DELETE FROM InstanceTable
+\g
+DELETE FROM Limits
+\g
+INSERT INTO Limits(
+	DBSize, DBLimit, PatientCount,  StudyCount, ImageCount) VALUES (
+	0,	500,	 0,		0,	    0)
+\g

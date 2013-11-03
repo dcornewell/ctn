@@ -1,0 +1,22 @@
+# !/bin/csh
+#
+# A simple script for starting the pacs server for any ctn...
+#
+
+#
+# This should be changed to match whatever the real root is
+#
+set ROOT = /mir_ctn/pacs
+
+if( $1 == "" ) then
+	echo Usage: $0 ctnname
+	exit
+endif
+
+set PORT = 3100
+
+setenv QUEUE_DIRECTORY $ROOT/q
+
+pacs_server -v -c $ROOT/config/pacs_connect.cfg -d $ROOT/config/pacs_database.cfg -n $1 $PORT &
+
+exit

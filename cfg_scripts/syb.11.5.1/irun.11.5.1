@@ -1,0 +1,16 @@
+#!/bin/csh
+#
+# Arguments: <password> <command file>
+#
+if ($DSQUERY == "") then
+  echo "This script expects env variable DSQUERY to be defined"
+  exit 1
+endif
+
+if ($2 == "") then
+  echo " "
+  echo Usage: "irun.11.5.1 <password> <Sybase isql command file>"
+  echo " "
+  exit
+endif
+/usr/sybase/bin/isql -Usa -P$1 < $2

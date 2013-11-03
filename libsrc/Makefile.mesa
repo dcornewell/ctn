@@ -1,0 +1,71 @@
+# Makefile to make a static library for CTN software
+
+include $(DICOM_MAKE)
+VPATH = ../../include
+CFLAGS = $(C_OPTS) -I$(DICOM_INCLUDE)
+
+BASE_OBJS = \
+ build.o cfg.o cmd_valid.o condition.o control.o ctnthread.o database.o \
+ dcm.o dcm1.o dcmcond.o dcmdict.o dcmsupport.o ddr.o decode.o \
+ delete.o  dicom_chr.o \
+ dlroutines.o dulcond.o dulconstruct.o dulfsm.o dulparse.o \
+ dulpresent.o dulprotocol.o dulsnoop.o dump.o event.o find.o fis.o fiscond.o \
+ fisdelete.o fisget.o fisinsert.o get.o gq.o hapbuildinterp.o \
+ hapbuildpatient.o hapbuildresults.o hapbuildstudy.o hapbuildvisit.o hapcond.o \
+ hisdb.o hunk_man.o iap.o iapcond.o icon.o iconcond.o \
+ ie.o iecond.o insert.o irs.o irscond.o lst.o lstcond.o \
+ mancond.o messages.o motifutil.o move.o msgcond.o naction.o ncreate.o \
+ ndelete.o neventreport.o nget.o nset.o print.o printcond.o private.o \
+ record.o ref_item.o select.o send.o sequences.o set.o \
+ snp.o snpcond.o sqcond.o srv1.o srv2.o srvcond.o storage.o \
+ thrcond.o uid.o uidcond.o \
+ update.o utility.o verify.o
+
+#OBJS = $(BASE_OBJS) tbl_psql.o tblcond.o idb.o idbcond.o
+# Defintions of $(DB_OBJS) is found in $DICOM_MAKE
+OBJS = $(BASE_OBJS) $(DB_OBJS)
+OBJS_MBCTN = $(BASE_OBJS) dicom_chr.o tblmb_psql.o tblmbcond.o idbmb.o idbmbcond.o xutl_mb.o
+
+BASE_HEADER_FILES = cfg.h condition.h ctn_os.h ctnthread.h dbquery.h decode.h dicom.h \
+dicom_ddr.h dicom_ie.h dicom_irs.h dicom_messages.h \
+dicom_objects.h dicom_platform.h dicom_print.h dicom_services.h \
+dicom_sq.h dicom_uids.h dulfsm.h dulprotocol.h dulsnoop.h \
+dulstructures.h fis.h gq.h hap.h hisdb.h hunk_man.h iap.h \
+icon.h idb.h lst.h manage.h mut.h snp.h tables.h tbl.h \
+tbl_msql.h tbl_psql.h tbl_sqlserver.h tbl_sybase.h tbl_ufs.h \
+utility.h xutl.h
+
+HEADER_FILES = $(BASE_HEADER_FILES) tbl.h tbl_msql.h tbl_psql.h tbl_sqlserver.h\
+tbl_sybase.h tbl_ufs.h
+
+HEADER_FILES_MBCTN = $(BASE_HEADER_FILES) dicom_chr.h idbmb.h tblmb.h tblmb_psql.h xutl.h
+
+libctn.a: $(OBJS)
+#	cc $(CFLAGS) -G -o libctn.so $(OBJS)
+	ar cvr libctn.a $(OBJS)
+
+libctnmb.a: $(OBJS_MBCTN)
+	ar cvr libctnmb.a $(OBJS_MBCTN)
+
+libctn.so: $(OBJS)
+	$(CC) $(CFLAGS) -G -o libctn.so $(OBJS)
+
+shared:	libctn.so
+	cp libctn.so /usr/local/lib
+
+windows-export:
+	cp *.c *.h ../libwindows
+	cp ctnlib.mak ../libwindows
+
+install: libctn.a
+	../apps/scripts/createdirectory $(DICOM_LIB)
+	cp libctn.a $(DICOM_LIB)
+#	$(INSTALLINCLUDE) $(HEADER_FILES) $(DICOM_INCLUDE)
+
+install.mb: libctnmb.a
+	../apps/scripts/createdirectory $(DICOM_LIB)
+	cp libctnmb.a $(DICOM_LIB)
+	$(INSTALLINCLUDE) $(HEADER_FILES_MBCTN) $(DICOM_INCLUDE)
+
+clean:
+	rm -f *.a *.o

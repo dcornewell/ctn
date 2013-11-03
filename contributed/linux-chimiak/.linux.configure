@@ -1,0 +1,400 @@
+#!/bin/sh
+# This file is to configure the CTN software for Linux
+
+echo "Requirements: "
+echo "   1) This file should be in it's final place where the CTN binaries"
+echo "      and libraries will live."
+echo "   2) This installation assumes that you will use Minerva SQL as the"
+echo "      data base."
+echo "If any of these requirements is repellant to you or you have "
+echo "not installed Minerva just say no to the continue question."
+
+/bin/echo -n "Do you wish to continue (Y/N - Y is default)? "
+read ANZ
+case $ANZ in
+	[Nn]) exit ;;
+	[Nn]o) exit ;;
+esac
+
+############### VARIABLE DEFININTIONS ########################
+
+ROOTSKI=$PWD
+DICOM_ROOT=$ROOTSKI
+export DICOM_ROOT
+/bin/echo "Your DICOM Root Directory is $DICOM_ROOT \n\n"
+############### END VARIABLE DEFININTIONS ########################
+
+############### Function DEFININTIONS ########################
+#This function finds out where X libaries are located
+whereisX()
+{
+	# Find out where X11 is hiding
+echo Searching for X11 libraries
+XLIBRARYSTUFF=`find /usr/X11/lib -name "libX11*" -print`
+
+	# remember the directory
+XLIBRARYSTUFF=`echo $XLIBRARYSTUFF | awk '{print $1 }'`
+
+if [ ! -z $XLIBRARYSTUFF ]; then
+XLIBRARYSTUFF=`dirname $XLIBRARYSTUFF`
+/bin/echo "\t Got it.   X11 library is at $XLIBRARYSTUFF\n"
+else
+	/bin/echo "\t Could not find X windows in /usr. You are on your own"
+	exit 1
+fi
+XLIBVAR="-L$XLIBRARYSTUFF"
+}
+	whereisX;
+
+# For finding out where any of the rest of the X Libraries are
+librarysrchr()
+{
+# Note that whereisX must be run first
+/bin/echo Searching for $1 library
+
+DALIB=""
+DALIB=`find $XLIBRARYSTUFF -name $2 -print | awk '{ if (NR == 1 ) print $1 }'`
+case $DALIB in
+	"") DALIB=`find /usr -name $2 -print | awk '{if (NR == 1 ) print $1 }'`
+	DALIB=`dirname $DALIB`
+	if [ -z $DALIB ] ; then
+		echo Could not find $2 libraries
+		exit 1
+	fi
+	;;
+	*) /bin/echo "\t got it. The $1 library is at $DALIB"
+	DALIB=`dirname $DALIB`
+	;;
+esac
+# if a library is in another place, the LIBPATH variable better know about it
+echo $XLIBRARYSTUFF | grep  $DALIB > /dev/null
+if [ $? != 0 ]; then
+	XLIBVAR="$XLIBVAR -L$DALIB"
+	/bin/echo "\t XLibrary variable is $XLIBVAR"
+fi
+}
+
+findXincludes()
+{
+# 1st variable is the name of the library
+# 2nd variable is the actual Directory name
+# Note that whereisX must be run first
+/bin/echo "\nSearching for $1 Includes"
+
+DAINC=""
+
+if [ -d /usr/include/$2 ] ; then
+        DAINC=/usr/include/$2
+elif [ -d /usr/X11/include/$2 ] ; then
+        DAINC=/usr/X11/include/$2
+elif [ -d /usr/include/X11/$2 ] ; then
+        DAINC=/usr/X11/include/$2
+else
+  DAINC=`find /usr -name $2 -print | awk '{ if (NR == 1 ) print $1 }'`
+  case $DAINC in
+        "") DAINC=`find /usr -name $2 -print | awk '{if (NR == 1 ) print $1 }'`
+        DAINC=`dirname $DAINC`
+        if [ -z $DAINC ] ; then
+                echo Could not find $2 libraries
+                exit 1
+        fi
+        ;;
+        *) /bin/echo "\t got it. The $1 library is at $DAINC"
+        DAINC=`dirname $DAINC`
+        ;;
+  esac
+fi
+
+# if a library is in another place, the LIBPATH variable better know about it
+echo $XLIBRARYINCS | grep  $DAINC
+if [ $? != 0 ]; then
+        XINCVAR="$XINCVAR -I$DAINC"
+        /bin/echo "\t  XInclude variable is $XINCVAR"
+fi
+}
+
+findlinux_env()
+{
+echo "Finding (or creating) the Linux Environments directory"
+if [ -d ./environments ]; then
+  if [ ! -d ./environments/linux ]; then
+        mkdir ./environments/linux
+  else
+	echo "found the environments/linux directory"
+  fi
+else
+  echo Somehow this is not in the ctn directory.  Change to the ctn directory
+  echo and run this.  There should be an environments subdirectory.
+fi
+}
+
+#To find out where the data base is
+wheresminerva()
+{
+	######### Autofind #############
+/bin/echo "\n I am looking for the Minerva Data base"
+MSQL_ROOT=`find /usr/local -name Minerva -print | awk '{if (NR == 1) print $1}'`
+
+if [ `basename $MSQL_ROOT`="Minerva" -a -d "$MSQL_ROOT" ]; then
+	/bin/echo "The Minerva SQL data base is at $MSQL_ROOT \n\n"
+else
+	# Autofind failed #
+	echo "I did not find it under /usr/local"
+
+	/bin/echo "Do you know where Minerva is?  "
+	/bin/echo "Input either C for me to look through all of your disks"
+	/bin/echo -n "and filesystems, or enter the path"
+
+	read ANZ
+	case $ANZ in
+		[Cc]*)
+	  	MSQL_ROOT=`find / -name Minerva -exec echo {} \;`
+	  	MSQL_ROOT=`echo $MSQL_ROOT | awk '{print $1}'`
+		echo it is $MSQL_ROOT ;;
+
+		"")
+	  	MSQL_ROOT=`find / -name Minerva -exec echo {} \;`
+	  	MSQL_ROOT=`echo $MSQL_ROOT | awk '{print $1}'`
+		echo it is $MSQL_ROOT ;;
+
+		*) MSQL_ROOT=$ANZ ;;
+	esac
+
+	if [ `basename $MSQL_ROOT`="Minerva" -a -d "$MSQL_ROOT" ]; then
+        	  echo I have found it at $MSQL_ROOT
+	else
+		  echo "I did not find it. Exitting"
+		  exit 1
+	fi
+fi
+}
+
+find_the_bin_root()
+{
+/bin/echo "\nLooking for the DICOM binary root directory"
+if [ -d ${DICOM_ROOT}/bin/linux.msql ]; then
+	DICOM_BIN=${DICOM_ROOT}/bin/linux.msql
+	export DICOM_BIN
+elif [ -d ${DICOM_ROOT}/bin/ ]; then
+	mkdir ${DICOM_ROOT}/bin/linux.msql
+	DICOM_BIN=${DICOM_ROOT}/bin/linux.msql
+	export DICOM_BIN
+	/bin/echo "Your DICOM Binary root is $DICOM_BIN \n\n"
+else
+	echo I could not find the DICOM_ROOT Directory.  Are you sure
+	echo "you just did a tar extraction in this directory?"
+	echo "You did not move the $0 to another directory, did you?"
+	exit 1
+fi
+}
+
+find_the_library_root()
+{
+if [ -d ${DICOM_ROOT}/lib/linux.msql ]; then
+	DICOM_LIB=${DICOM_ROOT}/lib/linux.msql
+	export DICOM_LIB
+	/bin/echo "Your DICOM Library root is $DICOM_LIB \n\n"
+elif [ -d ${DICOM_ROOT}/lib/ ]; then
+	mkdir ${DICOM_ROOT}/lib/linux.msql
+	DICOM_LIB=${DICOM_ROOT}/lib/linux.msql
+	export DICOM_LIB
+	/bin/echo "Your DICOM Library root is $DICOM_LIB \n\n"
+else
+	echo I could not find the DICOM_ROOT Directory.  Are you sure
+	echo "you just did a tar extraction in this directory?"
+	echo "You did not move the $0 to another directory, did you?"
+	exit 1
+fi
+}
+
+find_the_shell()
+{
+/bin/echo -n "Finding the shell for your environment.  "
+/bin/echo -n "It is >>>  "
+
+if [ `basename $SHELL` = "bash" ]; then
+	/bin/echo "bash \n\n"
+elif [ `basename $SHELL` = "csh" ]; then
+	/bin/echo "csh \n\n"
+elif [ `basename $SHELL` = "tcsh" ]; then
+	/bin/echo "tcsh \n\n"
+elif [ `basename $SHELL` = "ksh" ]; then
+	/bin/echo "ksh \n\n"
+elif [ `basename $SHELL` = "zsh" ]; then
+	/bin/echo "zsh \n\n"
+elif [ `basename $SHELL` = "sh" ]; then
+	/bin/echo "sh \n\n"
+else 
+	echo " "; echo could not find it
+	echo bummers
+	echo Adios
+	exit 1
+fi
+}
+
+get_cpu_info()
+{
+PROCR=`/bin/cat /proc/cpuinfo | /usr/bin/grep  "cpu	" | cut -d : -f 2`
+echo You have a $PROCR Processor
+case $PROCR in
+	" "[3456]86) ARCHITECTURE=LITTLE_ENDIAN_ARCHITECTURE 
+		export ARCHITECTURE
+		;;
+	[3456]86) ARCHITECTURE=LITTLE_ENDIAN_ARCHITECTURE 
+		export ARCHITECTURE
+		;;
+	*) /bin/echo "Is this a Big Endian or Little Endian Machine "
+	   /bin/echo -n " (B or L   LITTLE_ENDIAN_ARCHITECTURE is default)?"
+	   read $ARCHITECTURE
+		case $ARCHITECTURE in 
+		[Bb]) ARCHITECTURE=BIG_ENDIAN_ARCHITECTURE
+			export ARCHITECTURE
+		;;
+		[Ll]) ARCHITECTURE=LITTLE_ENDIAN_ARCHITECTURE
+			export ARCHITECTURE=LITTLE_ENDIAN_ARCHITECTURE
+		;;
+		esac
+esac
+}
+
+############### ENDFunction DEFININTIONS ########################
+
+         # # # # # # Begin Populate Variables # # # # # # # # # # # #
+
+find_the_shell ;
+
+find_the_bin_root;
+
+find_the_library_root;
+
+DICOM_INCLUDE=${DICOM_ROOT}/include 
+export DICOM_INCLUDE
+echo Your DICOM includes are at $DICOM_INCLUDE
+
+DICOM_MAKE=${DICOM_ROOT}/environments/linux/make.linux.msql
+export DICOM_MAKE
+
+
+############### Populate the variables of the Global Makefile ###############
+
+librarysrchr XPM libXpm.a
+XPM_L="-L$DALIB"
+
+librarysrchr XExtension libXext*
+XEXTFIND=$DALIB
+
+librarysrchr Motif libXm.a
+XEXTFIND=$DALIB
+
+/bin/echo "The X lib variable is $XLIBVAR \n\n"
+
+findXincludes XWindows X11 ; findXincludes Motif Xm
+MOTIF_BASE_INC=`dirname $DAINC`
+
+	########### Find the Data Base ######################
+wheresminerva ;
+export MSQL_ROOT
+MSQL_LIB="-L$MSQL_ROOT/lib"
+
+PACSLIB=${DICOM_LIB}
+export PACSLIB
+
+get_cpu_info;
+
+###############################################################
+LEX=flex
+export LEX
+
+#SUNOS works pretty good with Linux and for 2.8 works well
+# was OS=SUNOS
+OS=LINUX
+export OS
+
+CC=gcc
+XCC=gcc
+DBLINK=gcc
+export CC XCC DBLINK
+echo Your compiler is $CC
+
+INSTALL=install
+INSTALLUID="install -m 4775"
+INSTALLINCLUDE="install -c -m 444 "
+export INSTALLUID INSTALL INSTALLINCLUDE
+
+echo "You are using $INSTALL as install, $INSTALLUID for INSTALLUID"
+echo "and $INSTALLINCLUDE for INSTALLINCLUDE"
+
+CI=ci
+CO="co -l"
+export CI CO
+
+#indent changes the appearance of a C program by inserting/deleting whitespace.
+INDENT="indent -i4 -nfc1 -di4 -nip -bc"
+export INDENT
+
+LINTOPTIONS=${DICOM_ROOT}/lint/minimal.lnt
+export LINTOPTIONS
+
+RANLIB=/usr/bin/ranlib
+LD_LIBRARY_PATH=$DICOM_LIB
+export RANLIB LD_LIBRARY_PATH
+
+	 # # # # # Make the Global Makefile # # # # # # # # # # # # # 
+#findlinux_env;  # this is not needed as the linux directory is there
+
+cat > ${DICOM_ROOT}/environments/linux/make.linux.msql <<-end
+# never used X11_LIBS variable in ctn: X11_LIBS = -L/usr/lib -lX11  -lXpm
+# X11_LIBS = -L/usr/lib -lX11  -lXpm
+#XAW_LIBS used in apps/print_clients
+XAW_LIBS = -lXaw -lXmu -lXt -lXext -lm -lXpm
+
+#LIBPATH_X11 = -L/usr/lib/X11
+LIBPATH_X11 = $XLIBVAR
+
+# LIBPATH_MOTIF used in apps in assoc_tool cfg_ctn_tables idb_viewer
+# object_viewer pmgr_motif print_server query_client rsa_ui wlma_ui
+# Do not believe this is a necessary variable as LIBPATH_X11 will contain
+# the neccesary libraries as called by the Makefiles
+# LIBPATH_MOTIF = -L/usr/X11/lib
+LIBPATH_MOTIF =
+
+LIBPATH_UCB =
+LIBS_X11 =   -lXext -lXt -lICE -lSM -lX11  -lXm -lXpm -lm
+LIBS_MOTIF = -lXm
+LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm -lXm -lXpm
+#LIBS_OS = -lm -lsocket -lnsl -lgen -lc 
+LIBS_OS = 
+
+LIBPATH_DATABASE = $MSQL_LIB
+LIBS_DATABASE = -ltbl_msql -lmsql
+LIBS_LEX = -lfl
+LIBS_CTN =  -lmanage -liap  -licon -lprint  -lsnp  -lfis -lidb \\
+	-ldatabase -lhunk_man -lcfg  -lservices  -lmessages \\
+        -lsq -ldcmobjects  -ldulprotocol  -luid  -llst  -lgq \\
+	-lie  -lutility  -lcondition  -lmut\\
+	\$(LIBPATH_DATABASE) \$(LIBS_DATABASE)
+
+XM_INCLUDE = /usr/X11R6/include
+
+# malincrodt says no CFLAGS_X11 CFLAGS_X11 = $XINCVAR
+CFLAGS_X11 =
+
+#CFLAGS_MOTIF = -I/usr/X11/include
+CFLAGS_MOTIF = -I$MOTIF_BASE_INC
+#DEBUG_LIBS = -lmalloc
+
+# malincrodt says do this SYBASE_INCLUDE = .
+SYBASE_INCLUDE = .
+
+LONGSIZE=32
+INTSIZE=32
+SHORTSIZE=16
+C_OPTS = -g -DDEBUG -D\$(ARCHITECTURE) -DLINUX \\
+-DSHARED_MEMORY \\
+-DSEMAPHORE -DX11 -DATHENA -DMOTIF -DX11R4 -DUSLEEP -DMSQL -DLINUX \\
+-DUSEREGCOMP -I\$(DICOM_INCLUDE) -I\$(MSQL_ROOT)/include \\
+\$(CFLAGS_MOTIF) \$(CFLAGS_X11) \\
+-DLONGSIZE=\$(LONGSIZE) -DINTSIZE=\$(INTSIZE) \\
+-DSHORTSIZE=\$(SHORTSIZE)
+end
+

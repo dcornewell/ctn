@@ -1,0 +1,39 @@
+#  Global rules for compilation for Irix using miniSQL
+
+X11_LIBS = -L/usr/openwin/lib -lX11 
+XAW_LIBS = -lXaw -lXmu -lXt -lXext -lm
+XM_INCLUDE = /usr/dt/include
+X11_INCLUDE = /usr/openwin/share/include
+SYBASE_INCLUDE =
+
+LIBPATH_X11 = -L/usr/openwin/lib
+LIBPATH_MOTIF = -L/usr/dt/lib
+LIBPATH_UCB = -L/usr/ucblib
+LIBPATH_XIL = -L$(XILHOME)/lib
+LIBPATH_DATABASE = -L$(MSQL_ROOT)/lib
+LIBS_X11 = -lXt -lX11
+LIBS_MOTIF = -lXm
+LIBS_XAW = -lXaw -lXmu -lXt -lXext -lm
+#LIBS_OS = -lm -lsocket -lnsl -lgen -lelf -lc -lucb
+LIBS_OS = -lm
+LIBS_DATABASE = -ltbl_msql -lmsql
+LIBS_LEX = -ll
+LIBS_CTN =  -lctn $(LIBPATH_DATABASE) $(LIBS_DATABASE)
+LIBS_CTN_NODB = -lctn $(LIBPATH_DATABASE)
+LIBS_CTN_STATIN = -lctn $(LIBPATH_DATABASE) $(LIBS_DATABASE)
+
+LIBS_XIL = -lxil
+CFLAGS_X11 = -I/usr/openwin/include
+CFLAGS_MOTIF = -I$(XM_INCLUDE)
+CFLAGS_XIL = -I$(XILHOME)/include
+#STATIC = -Bstatic
+
+LONGSIZE=32
+INTSIZE=32
+SHORTSIZE=16
+C_OPTS = -g -Dsparc -DDEBUG -D$(ARCHITECTURE) -D$(OS) -DSHARED_MEMORY \
+-DSEMAPHORE -DX11 -DATHENA -DMOTIF -DX11R4 -DUSLEEP -DMSQL \
+-DTBL_REQUIRES_HAT_ESCAPE \
+-I$(DICOM_INCLUDE) -I$(MSQL_ROOT)/include \
+$(CFLAGS_MOTIF) $(CFLAGS_X11) \
+-DLONGSIZE=$(LONGSIZE) -DINTSIZE=$(INTSIZE) -DSHORTSIZE=$(SHORTSIZE)

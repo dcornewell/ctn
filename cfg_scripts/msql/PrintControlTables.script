@@ -1,0 +1,16 @@
+select * from ApplicationEntity
+\g
+select * from GroupNames
+\g
+select * from StorageAccess
+\g
+select * from StorageControl
+\g
+select * from SecurityMatrix
+\g
+select * from FISAccess
+\g
+select * from PrintServerCFG
+\g
+select * from VideoImageDest
+\g

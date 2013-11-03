@@ -1,0 +1,113 @@
+#!/bin/csh
+#
+# Intent:	This script creates the layout for the print demonstration
+# $Revision: 1.5 $
+
+echo This script is used to create a layout for the print demonstration
+echo with MIR software.  This is not necessarily the final layout, but it
+echo will serve for testing purposes.  This script is picky about input
+echo so please type carefully \(avoid extra spaces when you type\).
+echo ""
+
+set ROOT = /dicomctnc
+echo The default root directory for the MIR CTN data files is $ROOT.
+echo You can choose a different directory at this point by entering
+echo the directory name.  If you wish to use the default, just hit RETURN.
+echo ""
+set a = $<
+if ($a != "") then
+echo Do you wish to use $a as the root directory "(y/n)?"
+set b = $<
+if (($b != "y") && ($b != "Y")) then
+echo Script exiting.  Please try again.
+exit
+endif
+set ROOT = $a
+endif
+
+if (! (-e $ROOT)) then
+echo This script requires the directory $ROOT to exist before running.
+echo Please create this directory and then run this script again.
+exit
+endif
+
+umask 0
+# Create several subdirectories for the print demonstration
+
+echo Making the print subdirectories starting from $ROOT
+
+if (! (-e $ROOT/print)) then
+mkdir $ROOT/print
+endif
+if (! (-e $ROOT/print/config)) then
+mkdir $ROOT/print/config
+endif
+if (! (-e $ROOT/print/db)) then
+mkdir $ROOT/print/db
+endif
+if (! (-e $ROOT/print/images)) then
+mkdir $ROOT/print/images
+endif
+
+# When MONOCHROME1 is handled by the print routines, add the following :
+#  fuji kodak
+foreach i (acuson \
+	   algotec \
+	   atl \
+	   ge \
+	   philips \
+	   picker \
+	   siemens \
+	   toshiba)
+if (! (-e $ROOT/print/images/$i)) then
+echo Making $ROOT/print/images/$i
+mkdir $ROOT/print/images/$i
+endif
+end
+
+# When MONOCHROME1 is handled by the print routines, add the following :
+# 	   fuji/FUJI95701 \
+#	   fuji/FUJI95706 \
+#	   fuji/FUJI95707 \
+#	   fuji/FUJI95714 \
+#	   kodak/KHIS073006030 \
+#	   kodak/KHIS073013420 \
+#	   kodak/KHIS080105590 \
+#	   kodak/KHIS080107130 \
+
+foreach i (acuson/ACN000001 \
+	   acuson/ACN000004 \
+	   acuson/ACN000104 \
+	   algotec/ALGO00000 \
+	   algotec/ALGO00002 \
+	   atl/ATL000001 \
+	   atl/ATL000007 \
+	   atl/ATL000013 \
+	   atl/ATL000015 \
+	   ge/1.2.840.113674.1115.261.200 \
+	   ge/1.2.840.113674.1118.54.200 \
+	   ge/1.2.840.113674.1140.196.200 \
+	   ge/1.2.840.113674.1242.214.200 \
+	   ge/1.2.840.113674.1335.106.200 \
+	   ge/THU9948 \
+	   philips/PMS000022 \
+	   picker/2.16.840.1.113662.2.1.53544936282433.12345.336.16650 \
+	   picker/2.16.840.1.113662.4.8796818069641.798806497.93296077602350.10 \
+	   picker/2.16.840.1.113662.4.8796818069641.798806497.93296077602350.20 \
+	   picker/2.16.840.1.113662.4.8796818069641.798806497.93296077602350.30 \
+	   siemens/SMS000005 \
+	   siemens/SMS000009 \
+	   siemens/SMS000013 \
+	   siemens/SMS000017 \
+	   siemens/SMS000018 \
+	   siemens/SMS000019 \
+	   siemens/SMS000023 \
+	   toshiba/TMS061001)
+if (! (-e $ROOT/print/images/$i)) then
+echo Making $ROOT/print/images/$i
+mkdir $ROOT/print/images/$i
+endif
+end
+
+echo Print directory layout complete.  You probably want to run the script
+echo create_icons to create the files needed by print_mgr.

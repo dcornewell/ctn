@@ -1,0 +1,37 @@
+/* DropDIMTables.script 1.0 8-Mar-94 */
+/* set nocount on */
+print " "
+go
+print " "
+go
+
+use <DATABASENAME>
+go
+drop table PatientLevel
+print "Dropped PatientLevel Table"
+go
+drop table StudyLevel
+go
+print "Dropped StudyLevel Table"
+go
+drop view PatientStudyView
+go
+print "Dropped PatientStudy View"
+go
+drop table SeriesLevel
+go
+print "Dropped SeriesLevel Table"
+go
+drop table ImageLevel
+go
+print "Dropped ImageLevel Table"
+go
+drop table InstanceTable
+go
+print "Dropped InstanceLevel Table"
+go
+
+print " "
+go
+print " "
+go

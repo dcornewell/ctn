@@ -1,0 +1,12 @@
+# This file maps terms defined in the CTN software to
+# X-Windows font names.
+
+ISOIR6		-adobe-courier-bold-r-normal--14-*
+ISOIR13		-sony-fixed-medium-r-normal--16-*jisx0201*
+ISOIR14		-sony-fixed-medium-r-normal--16-*jisx0201*
+ISOIR87		-jis-fixed-medium-r-normal--16-*jisx0208*
+ISOIR159	-jis-fixed-medium-r-normal--16-*jisx0208*
+ISOIR13		-adobe-courier-bold-r-normal--14-*
+ISOIR14		-adobe-courier-bold-r-normal--14-*
+ISOIR149	-daewoo-gothic-medium-r-normal--16-120-100-100-c-160-ksc5601*
+#ISOIR149	-daewoo-mincho-medium-r-normal--24-170-100-100-c-240-ksc5601*
