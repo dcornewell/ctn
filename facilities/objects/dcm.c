@@ -133,7 +133,7 @@ static CTNBOOLEAN debug = FALSE;/* Flag for debugging messages to stdout */
 #else
 #define OPEN   open
 #define CLOSE  close
-#define LSEEK  seek
+#define LSEEK  lseek
 #define READ   read
 #define WRITE  write
 #define UNLINK unlink
