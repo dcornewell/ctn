@@ -4339,6 +4339,7 @@ fileSizeWithStatus(int fd, U32* size)
   LSEEK(fd, 0, 0);
   return 0;
 #else
+  struct stat im_stat;
   status = fstat(fd, &im_stat);
   if (status < 0){
     return status;
