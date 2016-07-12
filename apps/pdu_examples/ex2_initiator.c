@@ -102,7 +102,7 @@ main(int argc, char **argv)
 					 * Association */
 	params = {
 	DICOM_STDAPPLICATIONCONTEXT, "DEMO_SENDER_93", "DICOM_STORAGE",
-	    "", 16384, 0, 0, 0,
+	    "", 65000, 0, 0, 0,
 	    "calling addr", "called addr", NULL, NULL, 0, 0,
 	    MIR_IMPLEMENTATIONCLASSUID, MIR_IMPLEMENTATIONVERSIONNAME,
 	    "", ""
@@ -116,7 +116,7 @@ main(int argc, char **argv)
     int
         scratch;		/* Used to check syntax of port number */
     unsigned long
-        maxPDU = 16384;
+        maxPDU = 65000;
 
     CTNBOOLEAN
 	verboseDCM = FALSE,

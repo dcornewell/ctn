@@ -110,7 +110,7 @@ main(int argc, char **argv)
 					 * Association */
 	params = {
 	DICOM_STDAPPLICATIONCONTEXT, "Calling AP Title", "DICOM_STORAGE",
-	    "", 16384, 0, 0, 0,
+	    "", 65000, 0, 0, 0,
 	    "calling presentation addr", "called presentation addr",
 	    NULL, NULL, 0, 0,
 	    MIR_IMPLEMENTATIONCLASSUID, MIR_IMPLEMENTATIONVERSIONNAME,

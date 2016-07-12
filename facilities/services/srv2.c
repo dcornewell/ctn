@@ -381,7 +381,7 @@ SRV_ReceiveDataSet(DUL_ASSOCIATIONKEY ** association,
     CONDITION
 	cond;
     unsigned char
-        stream[16384],
+        stream[65000],
        *s;
     unsigned long
         bytesRead;

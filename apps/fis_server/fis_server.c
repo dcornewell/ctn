@@ -92,7 +92,7 @@ addChildProcess(DUL_ASSOCIATESERVICEPARAMETERS * service,
 		int pid, LST_HEAD ** list);
 static CONDITION harvestChildrenProcesses(LST_HEAD ** list);
 int
-    maxPDU = 16384;
+    maxPDU = 65000;
 CTNBOOLEAN
 verboseDUL = FALSE,
 verboseTBL = FALSE;

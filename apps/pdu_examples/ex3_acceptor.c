@@ -211,7 +211,7 @@ setuid root (see chmod)\n";
     while (!CTN_ERROR(cond)) {
 	drop = FALSE;
 	(void) memset(&service, 0, sizeof(service));
-	service.maxPDU = 16384;
+	service.maxPDU = 65000;
 	strcpy(service.calledImplementationClassUID,
 	       MIR_IMPLEMENTATIONCLASSUID);
 	strcpy(service.calledImplementationVersionName,

@@ -112,7 +112,7 @@ static char rcsid[] = "$Revision: 1.15 $ $RCSfile: archive_server.c,v $";
 #include "image_archive.h"
 #include "archive_queue.h"
 
-int maxPDU = 16384;
+int maxPDU = 65000;
 CTNBOOLEAN verboseDUL = FALSE;
 CTNBOOLEAN verboseTBL = FALSE;
 CTNBOOLEAN verboseSRV = FALSE;

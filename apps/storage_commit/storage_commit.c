@@ -428,7 +428,7 @@ createAssociationParameters()
     DUL_DefaultServiceParameters(p);
     (void) gethostname(localHost, sizeof(localHost));
     strcpy(p->callingPresentationAddress, localHost);
-    p->maxPDU = 16384;
+    p->maxPDU = 65000;
 
     return p;
 }

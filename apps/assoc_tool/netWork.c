@@ -63,7 +63,7 @@ static DUL_ASSOCIATESERVICEPARAMETERS	/* The items which describe this
     params =
 {
     DICOM_STDAPPLICATIONCONTEXT, "DICOM_TEST", "DICOM_VERIFY",
-    "", 16384, 0, 0, 0,
+    "", 65000, 0, 0, 0,
     "calling presentation addr", "called presentation addr",
     NULL, NULL, 0, 0,
     MIR_IMPLEMENTATIONCLASSUID, MIR_IMPLEMENTATIONVERSIONNAME,

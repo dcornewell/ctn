@@ -535,7 +535,7 @@ static void
 parseDataITOA(u_char * buf, u_long pdvLength)
 {
 
-    static u_char stream[16384];
+    static u_char stream[65000];
     static u_long ptr = 0;
     DCM_OBJECT *object;
     CONDITION cond;
@@ -621,7 +621,7 @@ static void
 parseDataATOI(u_char * buf, u_long pdvLength)
 {
 
-    static u_char stream[16384];
+    static u_char stream[65000];
     static u_long ptr = 0;
     DCM_OBJECT *object;
     CONDITION cond;

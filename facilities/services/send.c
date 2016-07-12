@@ -282,7 +282,7 @@ SRV_SendDataSet(DUL_ASSOCIATIONKEY ** association,
     unsigned char
        *buf;
 #else
-    unsigned char buf[16384];
+    unsigned char buf[65000];
 #endif
     unsigned long
         options;
