@@ -1574,6 +1574,7 @@ storeRequest(DUL_ASSOCIATIONKEY ** association,
 	{"RTDOSE", DICOM_SOPRTDOSESTORAGE},
 	{"RTSSET", DICOM_SOPRTSTRUCTURESETSTORAGE},
 	{"RTPLAN", DICOM_SOPRTPLANSTORAGE},
+	{"BTOMO", DICOM_SOPCLASSBREASTTOMOSYNTHESIS_STORAGE},
 	{"RAWCT", "1.3.12.2.1107.5.9.1"},
 	{"RAW", "1.2.840.10008.5.1.4.1.1.66"},
 	{"SPECTROSCOPY", "1.2.840.10008.5.1.4.1.1.4.2"},
@@ -1604,7 +1605,7 @@ storeRequest(DUL_ASSOCIATIONKEY ** association,
 	printf("SOP Class: %s\n", (*request)->classUID);
     }
     cond = SRV_CStoreResponse(association, ctx, request, &response,
-			  fileName, storageCallback, "callback string", "");
+			  fileName, storageCallback, "storeRequest", "");
 
     if (killFlag) {
 	if (unlink(fileName) != 0)

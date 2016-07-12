@@ -106,7 +106,7 @@ static void
     UpdateSlot(int index, CTNNETWORK_Queue *element);
 
 /*******************************************************************/
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     CONDITION
 	retval;

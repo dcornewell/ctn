@@ -420,7 +420,9 @@ static UID_DESCRIPTION table[] = {
     {UID_CLASS_K_SOPCLASS, DICOM_SOPPATIENTSTUDYQUERY_GET,
     "Patient/Study Only Query/Retrieve Information Model-GET", "NEMA"},
     {UID_CLASS_K_SOPCLASS, DICOM_SOPMODALITYWORKLIST_FIND,
-    "Modality Worklist Information Model-FIND", "NEMA"}
+    "Modality Worklist Information Model-FIND", "NEMA"},
+    {UID_CLASS_K_SOPCLASS, DICOM_SOPCLASSBREASTTOMOSYNTHESIS_STORAGE,
+    "Breast TomosynthesisImage Storage", "NEMA"}
 };
 
 /* UID_Lookup
