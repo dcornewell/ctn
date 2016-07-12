@@ -1197,7 +1197,7 @@ SRV_SendDataSet(DUL_ASSOCIATIONKEY ** association,
 {
     /* repair */
     unsigned char
-        buf[16384];
+        buf[65000];
     unsigned long
         options;
     CONDITION
@@ -1298,7 +1298,7 @@ SRV_ReceiveDataSet(DUL_ASSOCIATIONKEY ** association,
     CONDITION
 	cond;
     unsigned char
-        stream[16384],
+        stream[65000],
        *s;
     unsigned long
         bytesRead;

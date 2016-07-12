@@ -68,7 +68,7 @@ void exitApplication(CONDITION cond);
 void clearAssociationKeyAndServiceParameters(CONDITION cond);
 
 int
-    maxPDU = 16384;
+    maxPDU = 65000;
 char *controlDatabase = "CTNControl";	/* name of database holding
 					 * configuration information */
 CTNBOOLEAN

@@ -151,7 +151,7 @@ initNetwork(DUL_ASSOCIATESERVICEPARAMETERS * params,
     (void) strcpy(params->callingAPTitle, "PRINT_CLIENT");
     (void) strcpy(params->calledAPTitle, "PRINT_SERVER");
     (void) strcpy(params->respondingAPTitle, "");
-    params->maxPDU = 16384;
+    params->maxPDU = 65000;
     params->result = 0;
     params->resultSource = 0;
     params->diagnostic = 0;

@@ -128,7 +128,7 @@ struct my_srcmgr_struct {
 int seg_header[] = {0xe000fffe, 0x00000000, 0xe000fffe, 0x00000000};
 int seg_footer[] = {0xe0ddfffe, 0x00000000};
 
-#define MY_JPEG_INPUT_BUF_SIZE 16384
+#define MY_JPEG_INPUT_BUF_SIZE 65000
 
 
 static size_t strlcat_(char *dst, const char *src, size_t siz)

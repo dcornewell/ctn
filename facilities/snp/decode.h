@@ -127,7 +127,7 @@ struct tcphdr {
 
 #define IP_HDR_LEN 20
 
-#define TCP_WIN 16384
+#define TCP_WIN 65000
 
 /*
  * The IEE802.3 SAP to filter for TCP/IP

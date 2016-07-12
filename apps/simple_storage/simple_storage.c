@@ -505,7 +505,7 @@ main(int argc, char **argv)
         classCount = 0,
         releaseDelay = 0;
     unsigned long
-        maxPDU = 16384;
+        maxPDU = 65000;
     CTNBOOLEAN
 	verboseDUL = FALSE,
 	verboseSRV = FALSE,
@@ -1899,7 +1899,7 @@ moveCallback(MSG_C_MOVE_REQ * request, MSG_C_MOVE_RESP * response,
     static DUL_ASSOCIATESERVICEPARAMETERS
         sendParams = {
 	DICOM_STDAPPLICATIONCONTEXT, "DICOM_TEST", SIMPLE_STORAGE_AE_TITLE,
-	"", 16384, 0, 0, 0,
+	"", 65000, 0, 0, 0,
 	"calling presentation addr", "called presentation addr",
 	NULL, NULL, 0, 0,
 	MIR_IMPLEMENTATIONCLASSUID, MIR_IMPLEMENTATIONVERSIONNAME,

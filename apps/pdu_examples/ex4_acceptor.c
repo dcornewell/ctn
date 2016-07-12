@@ -132,7 +132,7 @@ main(int argc, char **argv)
         classCount = 0,
         releaseDelay = 0;
     unsigned long
-        maxPDU = 16384;
+        maxPDU = 65000;
     CTNBOOLEAN
 	verboseDUL = FALSE,
 	verboseSRV = FALSE,

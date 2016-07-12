@@ -96,7 +96,7 @@ static CONDITION harvestChildrenProcesses(LST_HEAD ** list);
 static CONDITION
 checkOrganizationConnections(char *organization,
 			     LST_HEAD ** l, int connections);
-int maxPDU = 16384;
+int maxPDU = 65000;
 CTNBOOLEAN verboseDUL = FALSE;
 CTNBOOLEAN verboseTBL = FALSE;
 CTNBOOLEAN verboseSRV = FALSE;

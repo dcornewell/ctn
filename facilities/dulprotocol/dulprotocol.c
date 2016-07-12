@@ -2069,7 +2069,7 @@ DUL_DefaultServiceParameters(DUL_ASSOCIATESERVICEPARAMETERS * params)
 	"Calling AP Title",	/* Calling AP Title */
 	"Called AP Title",	/* Called AP Title */
 	"",			/* Responding AP Title */
-	16384,			/* Max PDU */
+	65000,			/* Max PDU */
 	0,			/* result */
 	0,			/* result source */
 	0,			/* diagnostic */
