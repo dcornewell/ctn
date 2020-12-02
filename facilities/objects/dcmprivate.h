@@ -117,7 +117,7 @@ typedef union {
 }   SHORT_WORD;
 
 typedef union {
-#ifdef __alpha
+#if defined(__alpha) || INTPTR_MAX == INT32_MAX
     unsigned int l;
 #else
     unsigned long l;
