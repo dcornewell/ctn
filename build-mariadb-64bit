@@ -1,0 +1,4 @@
+#!/bin/csh
+
+source ./environments/linux/linux.mariadb.noopt.64bit.env
+make
