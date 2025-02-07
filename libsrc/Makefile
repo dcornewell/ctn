@@ -34,8 +34,9 @@ icon.h idb.h lst.h manage.h mut.h snp.h tables.h tbl.h \
 tbl_msql.h tbl_psql.h tbl_sqlserver.h tbl_sybase.h tbl_ufs.h \
 utility.h xutl.h
 
-HEADER_FILES = $(BASE_HEADER_FILES) tbl.h tbl_msql.h tbl_psql.h tbl_sqlserver.h\
-tbl_sybase.h tbl_ufs.h
+HEADER_FILES = $(BASE_HEADER_FILES) 
+# tbl.h tbl_msql.h tbl_psql.h tbl_sqlserver.h\
+# tbl_sybase.h tbl_ufs.h
 
 HEADER_FILES_MBCTN = $(BASE_HEADER_FILES) dicom_chr.h idbmb.h tblmb.h tblmb_psql.h
 
