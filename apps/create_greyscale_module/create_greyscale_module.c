@@ -60,7 +60,7 @@ static char rcsid[] = "$Revision: 1.10 $ $RCSfile: create_greyscale_module.c,v $
 
 static void usageerror();
 
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     DCM_OBJECT
 	* object;

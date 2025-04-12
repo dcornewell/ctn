@@ -68,9 +68,7 @@ static char rcsid[] = "$Revision: 1.10 $ $RCSfile: icon.c,v $";
 #include <sys/stat.h>
 #endif
 #include <fcntl.h>
-#ifdef GCCSUNOS
 #include <unistd.h>
-#endif
 
 #include "dicom.h"
 #include "condition.h"

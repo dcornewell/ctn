@@ -75,12 +75,14 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
+#include <unistd.h>
 /*#include <sys/time.h> */
 #include "dicom.h"
 #include "condition.h"
 #include "hunk_man.h"
 #include "hisdb.h"
 #include "hisprivate.h"
+
 static char rcsid[] = "$Revision: 1.24 $ $RCSfile: hisdb.c,v $";
 
 static Root

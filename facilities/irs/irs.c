@@ -52,6 +52,7 @@ static char rcsid[] = "$Revision: 1.1 $ $RCSfile: irs.c,v $";
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "dicom.h"
 #include "condition.h"

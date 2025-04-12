@@ -71,6 +71,7 @@ static char rcsid[] = "$Revision: 1.11 $ $RCSfile: hunk_man.c,v $";
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <unistd.h>
 #ifdef _MSC_VER
 #include <io.h>
 #include <sys/types.h>

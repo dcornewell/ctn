@@ -63,6 +63,10 @@ static char rcsid[] = "$Revision: 1.32 $ $RCSfile: control.c,v $";
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <ctype.h>
+#include <arpa/inet.h>
 #include <stdlib.h>
 #ifdef _MSC_VER
 #include <direct.h>
