@@ -61,6 +61,7 @@ static char rcsid[] = "$Revision: 1.18 $ $RCSfile: hapbuildvisit.c,v $";
 #include "hap.h"
 #include "dicom_sq.h"
 #include "dicom_uids.h"
+#include "condition.h"
 
 #define HAP_X_VARIABLE_EVENT	HAP_V_VARIABLE_EVENT
 

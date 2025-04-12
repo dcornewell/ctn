@@ -56,6 +56,7 @@ static char rcsid[] = "$Revision: 1.20 $ $RCSfile: gq.c,v $";
 #include	<stdlib.h>
 #include	<string.h>
 #include	<errno.h>
+#include	<unistd.h>
 
 #if defined(SHARED_MEMORY) && defined(SEMAPHORE)
 #include	<sys/types.h>

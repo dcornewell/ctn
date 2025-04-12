@@ -95,6 +95,7 @@
 
 static char rcsid[] = "$Revision: 1.170 $ $RCSfile: dcm.c,v $";
 
+#include <ctype.h>
 
 #include "ctn_os.h"
 
