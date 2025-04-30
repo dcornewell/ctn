@@ -23,14 +23,8 @@
 #define JPEGBITDEPTH 12
 #endif
 
-
-#if (JPEGBITDEPTH == 12)
-#include "/usr/local/src/jpeg-6b-12bit/jpeglib.h"
-#include "/usr/local/src/jpeg-6b-12bit/jversion.h"
-#else
 #include "jpeglib.h"
 #include "jversion.h"
-#endif
 
 #if (BITS_IN_JSAMPLE != JPEGBITDEPTH)
 #error Inconsistent JPEG bit depth

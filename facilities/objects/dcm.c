@@ -1104,7 +1104,7 @@ DCM_GetElementValue(DCM_OBJECT ** callerObject, DCM_ELEMENT * element,
 		}
 		p += l;
 		*ctx = (void *) p;
-		if ((unsigned) p == elementItem->element.length)
+		if ((U32) p == elementItem->element.length)
 		    return DCM_NORMAL;
 		else
 		    return DCM_GETINCOMPLETE;
@@ -5987,7 +5987,7 @@ readVRLength(const char *name, unsigned char **ptr, int fd, U32 * size,
 	    } else if (e->tag == DCM_MAKETAG(0x0040, 0x0253)) {	/* Dumb implementations again, Performed Procedure Step ID */
 		;
 		/* Use the dictionary definition */
-	    } else if (e->representation == DCM_UN || e->representation == DCM_UNKNOWN ||
+	    } else if (e->representation == DCM_UN ||
 		       e->representation == DCM_CTX ||
 		       e->representation == DCM_RET ||
 		       vrPtr->representation == DCM_OW ||
@@ -6994,7 +6994,7 @@ copyData(PRIVATE_OBJECT ** object, PRV_ELEMENT_ITEM * from,
 	(void) memcpy(to->d.ot, q, l);
     }
     p += l;
-    if ((unsigned) p == from->element.length)
+    if ((U32) p == from->element.length)
 	return DCM_NORMAL;
     else
 	return DCM_GETINCOMPLETE;
