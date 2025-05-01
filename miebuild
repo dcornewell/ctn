@@ -1,0 +1,10 @@
+#!/bin/bash
+
+CONFIG="$1"
+if [ "$CONFIG" = "" ]
+then
+        echo "usage: $0 <config-name>"
+        exit 1
+fi
+export CONFIG
+./build-mariadb-64bit

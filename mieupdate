@@ -1,0 +1,26 @@
+#!/bin/bash
+
+CONFIG="$1"
+if [ "$CONFIG" = "" ]
+then
+	echo "usage: $0 <config-name>"
+	exit 1
+fi
+
+LIBDIR="../../lib/$CONFIG/ctn"
+BINDIR="../../bin/$CONFIG/ctn"
+
+mkdir -v -p "$LIBDIR"
+mkdir -v -p "$LIBDIR/include"
+mkdir -v -p "$LIBDIR/libsrc"
+mkdir -v -p "$BINDIR"
+cp -vf lib/linux.mysql/libctn.a  "$LIBDIR/"
+cp -vf lib/osx.mysql/libctn.a  "$LIBDIR/"
+cp -vf include/*.h  "$LIBDIR/include"
+cp -vf libsrc/dcmprivate.h "$LIBDIR/libsrc"
+cp -v dist/bin/dicom_echo "$BINDIR/"
+cp -v dist/bin/mwlQuery "$BINDIR/"
+cp -v dist/bin/dcm_dump_file "$BINDIR/"
+cp -v dist/bin/dcm_dump_element "$BINDIR/"
+cp -v dist/bin/dcm_print_dictionary "$BINDIR/"
+cp -v apps/send_image/send_image "$BINDIR/"
